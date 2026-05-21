@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Cairo', sans-serif;
+}
+
+body {
+    background-color: #002b26; /* اللون الزيتي الغامق */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: white;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    text-align: center;
+}
+
+.header-nav {
+    text-align: left;
+    color: #c5a367;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.login-icon-wrapper {
+    font-size: 90px;
+    color: #c5a367;
+    margin-bottom: 15px;
+    transform: rotate(180deg); /* لجعل السهم يشير للداخل كالصورة */
+}
+
+h1 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-bottom: 40px;
+}
+
+/* تنسيق الحقول */
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-group input {
+    width: 100%;
+    background: transparent;
+    border: 1px solid #c5a367; /* إطار ذهبي كما في الصورة */
+    border-radius: 12px;
+    padding: 15px 45px;
+    color: white;
+    outline: none;
+}
+
+/* تأثير العنوان الصغير فوق الحقل (الرقم الوطني) */
+.floating-label {
+    position: absolute;
+    top: -10px;
+    right: 20px;
+    background-color: #002b26;
+    padding: 0 10px;
+    font-size: 0.8rem;
+    color: #c5a367;
+}
+
+.input-group i:not(.toggle-password) {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #c5a367;
+}
+
+.toggle-password {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    cursor: pointer;
+}
+
+/* الروابط السفلية */
+.extra-links {
+    margin: 15px 0;
+    font-size: 0.9rem;
+}
+
+.extra-links a {
+    color: white;
+    text-decoration: underline;
+    margin-right: 5px;
+    font-weight: bold;
+}
+
+/* زر تسجيل الدخول */
+.submit-btn {
+    width: 180px;
+    background-color: #c5a367;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
