@@ -6,9 +6,32 @@
     <title>تسجيل الدخول</title>
     <link rel="stylesheet" href="./log1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
 </head>
 <body>
-    
+
+     <div class="icon1 parent-icon-up icon">
+            <img src="/GovFive/image/icons/1.svg" alt="">
+        </div>
+     <div class="icon2 parent-icon-down icon">
+            <img src="/GovFive/image/icons/3.svg" alt="">
+        </div>
+     <div class="icon3 parent-icon-float icon">
+            <img src="/GovFive/image/icons/4.svg" alt="">
+        </div>
+           <div class="icon4 parent-icon-Wave icon">
+            <img src="/GovFive/image/icons/6.svg" alt="">
+        </div>
+        <!-- -------------------------- -->
+         <div class="point point1 parent-icon-float"></div>
+         <div class="point point2"></div>
+         <div class="point point3 parent-icon-scale"></div>
+         <div class="point point4 "></div>
+         <div class="point point5 parent-icon-Wave2"></div>
+         <div class="point point6 parent-icon-float"></div>
+
+
+
     <div class="login-container">
         <div class="header-nav">
           
@@ -21,17 +44,16 @@
             <h1>تسجيل الدخول</h1>
             <p>أهلاً بك! تابع معاملاتك بكل سهولة من خلال تسجيل الدخول</p>
         </div>
-
-        <form class="login-form">
+       
+        <form class="login-form" id="loginform">
             <div class="input-group">
-                <label class="floating-label">الرقم الوطني</label>
-                <input type="text" placeholder=" ">
+                <input type="text" placeholder=" الرقم الوطني" id="nationalNumber">
                 <i class="fas fa-id-card"></i>
             </div>
 
             <div class="input-group">
                 <i class="fas fa-eye-slash toggle-password" data-target="login-pass"></i>
-                <input type="password" id="login-pass" placeholder="كلمة المرور">
+                <input type="password" id="login-pass" placeholder="كلمة المرور" >
                 <i class="fas fa-lock"></i>
             </div>
 
@@ -56,6 +78,43 @@
                 this.classList.replace('fa-eye', 'fa-eye-slash');
             }
         });
+        // /////////////////                الربط                  /////////////////////////
+        document.getElementById("loginform").addEventListener("submit",async function(e){
+            e.preventDefault()
+        
+        const nationalNumber=document.getElementById("nationalNumber").value
+        const password=document.getElementById("login-pass").value
+
+        try{
+            const response= await fetch('http://egovservices.runasp.net/api/Auth/login',{
+                method :'POST',
+                headers : {
+                'content-type': 'application/json'
+                },
+                body:JSON.stringify({
+                    nationalNumber :nationalNumber,
+                    password : password
+                })
+            }
+            )
+            const result = await response.json()
+        
+
+        if(result.success === true){
+            localStorage.setItem('userToken' , result.data.token)
+            // لازم نعمل تنسيق ل لودينغ 
+            window.location.href="choise.html"
+        }
+        else{
+            alert(result.message )// لازملا تنسيق 
+        }
+
+        }catch(error){
+            console.error("error")
+            alert("خطأ فيالتعرف ")
+        }
+    })
+
     </script>
 </body>
 </html>

@@ -1,0 +1,19 @@
+@font-face {
+            font-family: 'Qomra';
+            src: url('./fonts/itfQomraArabic-Regular.woff2') format('woff2'),
+                 url('./fonts/itfQomraArabic-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+      
+        @font-face {
+            font-family: 'Qomra';
+            src: url('./fonts/itfQomraArabic-Bold.woff2') format('woff2'),
+                 url('./fonts/itfQomraArabic-Bold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+        body{
+            font-family: 'Qomra', sans-serif;
+        }

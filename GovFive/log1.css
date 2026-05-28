@@ -1,40 +1,253 @@
+/* ==================== 1. تعريف الخطوط المستضافة محلياً ومن جوجل ==================== */
+@font-face {
+    font-family: 'Qomra';
+    src: url('./fonts/itfQomraArabic-Regular.woff2') format('woff2'),
+         url('./fonts/itfQomraArabic-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Qomra';
+    src: url('./fonts/itfQomraArabic-Bold.woff2') format('woff2'),
+         url('./fonts/itfQomraArabic-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
 
+/* ==================== 2. الإعدادات العامة للموقع ==================== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Cairo', sans-serif;
 }
 
 body {
-    background-color: #002b26; /* اللون الزيتي الغامق */
+    font-family: 'Qomra', sans-serif;
+    background-color: #042522; /* اللون الأخضر الغامق الأساسي كأمان لو ما حملت الصورة */
+    background: url('/GovFive/image/background11.png') no-repeat center center / cover; /* الصورة ممتدة على كامل الواجهة */
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
     color: white;
+    height: 100vh;
+    overflow: hidden; /* لمنع ظهور شريط التمرير بسبب حركات الأيقونات */
 }
 
+/* ==================== 3. بطاقة تسجيل الدخول الزجاجية الفخمة ==================== */
 .login-container {
     width: 100%;
     max-width: 400px;
-    padding: 20px;
+    padding: 35px 25px;
     text-align: center;
+    
+    background: linear-gradient(135deg, #042522 0%, #0b3d38 100%);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    
+    
+    border-radius: 24px;
+    position: relative;
+    z-index: 10; 
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4); 
 }
 
+/* ==================== 4. أنيميشن وفلاتر الأيقونات الطائرة (3D & Glow) ==================== */
+@keyframes floatSmoothUp {
+    0% {
+        transform: translateY(0px) translateX(0px);
+    }
+    33% {
+        transform: translateY(-90px) translateX(40px);
+    }
+    66% {
+        transform: translateY(-50px) translateX(-40px);
+    }
+    100% {
+        transform: translateY(0px) translateX(0px);
+    }
+}
+
+@keyframes floatSmoothDepth {
+    0% {
+        transform: translateX(0px) translateY(0px) scale(1);
+    }
+    25% {
+        transform: translateX(-50px) translateY(-50px) scale(0.8);
+    }
+    75% {
+        transform: translateX(50px) translateY(50px) scale(1.2);
+    }
+    100% {
+        transform: translateX(0px) translateY(0px) scale(1);
+    }
+}
+
+@keyframes floatSubtleWave {
+    0% {
+        transform: translateX(0px) translateY(0px);
+    }
+    25% {
+        transform: translateX(80px) translateY(-30px);
+    }
+    50% {
+        transform: translateX(0px) translateY(-70px);
+    }
+    75% {
+        transform: translateX(-80px) translateY(-30px);
+    }
+    100% {
+        transform: translateX(0px) translateY(0px);
+    }
+}
+
+@keyframes floatSubtleWave2 {
+    0% {
+        transform: translateY(0px) translateX(0px);
+    }
+    30% {
+        transform: translateY(-40px) translateX(-60px);
+    }
+    70% {
+        transform: translateY(40px) translateX(60px);
+    }
+    100% {
+        transform: translateY(0px) translateX(0px);
+    }
+}
+
+@keyframes floatSubtle {
+    0% {
+        transform: translateX(0px) translateY(0px);
+    }
+    50% {
+        transform: translateX(-100px) translateY(-40px);
+    }
+    100% {
+        transform: translateX(0px) translateY(0px);
+    }
+}
+
+@keyframes floatSubtlescale {
+    0% {
+        transform: translateX(0px) translateY(0px) rotate(0deg);
+    }
+    33% {
+        transform: translateX(-50px) translateY(80px) rotate(-120deg);
+    }
+    66% {
+        transform: translateX(50px) translateY(80px) rotate(-240deg);
+    }
+    100% {
+        transform: translateX(0px) translateY(0px) rotate(-360deg);
+    }
+}
+.icon{
+    opacity: 0.1;
+    position: absolute;
+}
+.parent-icon-up {
+    animation: floatSmoothUp 9s ease-in-out infinite;
+}
+.parent-icon-down {
+    animation: floatSmoothDepth 11s ease-in-out infinite;
+}
+.parent-icon-Wave{
+    animation: floatSubtleWave 10s ease-in-out infinite;
+}
+.parent-icon-Wave2{
+    animation: floatSubtleWave2 10s ease-in-out infinite;
+}
+.parent-icon-float{
+    animation: floatSubtle 11s ease-in-out infinite;
+}
+.parent-icon-scale{
+    animation: floatSubtlescale 12s ease-in-out infinite;
+}
+/* أحجام ومواقع الأيقونات بالشاشة */
+.icon1 { top: 19%; left: 19%; }
+.icon1 img { width: 80px; }
+
+.icon2 { top: 33%; left: 26%; }
+.icon2 img { width: 94px; }
+
+.icon3 { top: 60%; left: 12%; }
+.icon3 img { width: 100px; }
+
+.icon4 { top: 60%; right:10%; }
+.icon4 img { width: 100px; }
+/*----------------------------------*/
+.point{
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background-color:rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+   opacity: 0.2;
+    z-index: 6;
+        box-shadow: 
+        0 0 15px 5px rgba(150, 131, 95, 0.9),   
+        0 0 40px 15px rgba(150, 131, 95, 0.6),  
+        0 0 70px 30px rgba(150, 131, 95, 0.8);  
+}
+.point1{
+     top: 50%;
+    right: 20%;
+}
+.point2{
+     top: 20%;
+    right: 30%;
+    box-shadow: 
+        0 0 15px 5px rgba(255, 255, 255, 0.9),   
+        0 0 40px 15px rgba(255, 255, 255, 0.6),  
+}
+.point3{
+    background-color: #96835F;
+    box-shadow: 
+        0 0 15px 5px rgba(150, 131, 95, 0.9),   
+        0 0 40px 15px rgba(150, 131, 95, 0.6),  
+        0 0 70px 30px rgba(150, 131, 95, 0.8);  
+     top: 40%;
+   left:19%;
+}
+.point4,.point5{
+    width: 5px;
+    height:  5px;
+    box-shadow: 
+          0 0 15px 5px rgba(255, 255, 255, 0.9),   
+          0 0 40px 15px rgba(255, 255, 255, 0.6),  ;
+    top: 60%;
+    right: 6%;
+}
+.point5{
+    top: 80%;
+    right: 17%;
+}
+.point6{
+      width: 5px;
+    height:  5px;
+    top: 20%;
+    left: 17%;
+     box-shadow: 
+        0 0 15px 5px rgba(150, 131, 95, 0.9),   
+        0 0 40px 15px rgba(150, 131, 95, 0.6),  
+        0 0 70px 30px rgba(150, 131, 95, 0.8);  
+}
+/* ==================== 5. عناصر واجهة تسجيل الدخول الداخلية ==================== */
 .header-nav {
     text-align: left;
-    color: #c5a367;
+    color: #96835F;
     font-size: 1.5rem;
     cursor: pointer;
 }
 
 .login-icon-wrapper {
     font-size: 90px;
-    color: #c5a367;
+    color: #96835F;
     margin-bottom: 15px;
-    transform: rotate(180deg); /* لجعل السهم يشير للداخل كالصورة */
+    transform: rotate(180deg); 
 }
 
 h1 {
@@ -48,31 +261,30 @@ p {
     margin-bottom: 40px;
 }
 
-/* تنسيق الحقول */
 .input-group {
     position: relative;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .input-group input {
     width: 100%;
     background: transparent;
-    border: 1px solid #c5a367; /* إطار ذهبي كما في الصورة */
+    border: 1px solid #96835F; 
     border-radius: 12px;
     padding: 15px 45px;
     color: white;
     outline: none;
+    font-family: 'Cairo', sans-serif; /* ليكون خط المدخلات مريح ومتناسق */
 }
 
-/* تأثير العنوان الصغير فوق الحقل (الرقم الوطني) */
 .floating-label {
     position: absolute;
     top: -10px;
     right: 20px;
-    background-color: #002b26;
+    background-color: #042522; /* نفس لون الخلفية لتغطية حدود المدخل خلف النص */
     padding: 0 10px;
     font-size: 0.8rem;
-    color: #c5a367;
+    color: #96835F;
 }
 
 .input-group i:not(.toggle-password) {
@@ -80,7 +292,7 @@ p {
     right: 15px;
     top: 50%;
     transform: translateY(-50%);
-    color: #c5a367;
+    color: #96835F;
 }
 
 .toggle-password {
@@ -92,7 +304,6 @@ p {
     cursor: pointer;
 }
 
-/* الروابط السفلية */
 .extra-links {
     margin: 15px 0;
     font-size: 0.9rem;
@@ -105,11 +316,10 @@ p {
     font-weight: bold;
 }
 
-/* زر تسجيل الدخول */
 .submit-btn {
     width: 180px;
-    background-color: #c5a367;
-    color: white;
+    background: linear-gradient(135deg, #96835F 0%, #b19b72 100%);
+    color: #042522;
     border: none;
     padding: 12px;
     border-radius: 15px;
@@ -117,4 +327,42 @@ p {
     font-weight: bold;
     cursor: pointer;
     margin-top: 10px;
+    position: relative;
+    overflow: hidden; 
+    
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.submit-btn:hover {
+    transform: translateY(-3px) scale(1.03); 
+    background: linear-gradient(135deg, #a38f69 0%, #c4ac7f 100%); 
+    box-shadow: 0 10px 20px rgba(150, 131, 95, 0.3), 
+                0 0 30px rgba(177, 155, 114, 0.2);
+}
+
+.submit-btn:active {
+    transform: translateY(-1px) scale(0.98); /* ينخفض قليلاً ويكش ليعطي شعور الضغط الزنبركي */
+    box-shadow: 0 5px 10px rgba(150, 131, 95, 0.4);
+}
+
+.submit-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg, 
+        transparent 0%, 
+        rgba(255, 255,255,0.6) 30%, 
+        transparent 100%
+    );
+    transition: all 0.6s ease;
+}
+.submit-btn:hover::after {
+    left: 100%; 
+}
+.submit-btn:hover::after {
+    left: 100%; 
 }

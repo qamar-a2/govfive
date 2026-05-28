@@ -4,45 +4,151 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>نموذج الخدمة</title>
+  <link rel="stylesheet" href="global.css">
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background-color: #ede9de; font-family: 'Segoe UI', Tahoma, sans-serif; color: #000; min-height: 100vh; padding: 40px 20px; }
+
+    body {
+      background-color: #EFEBE3; 
+      color: #042522; 
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
     .container { max-width: 900px; margin: 0 auto; }
-    .service-card { background: #fff; border-radius: 16px; padding: 32px; box-shadow: 0 2px 16px rgba(0,0,0,0.07); margin-bottom: 32px; }
-    .service-title { font-size: 24px; font-weight: bold; color: #B9A779; margin-bottom: 8px; }
-    .service-desc { font-size: 15px; color: #555; margin-bottom: 12px; }
+
+    .service-card,
+    .form-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+      margin-bottom: 32px;
+    }
+.form-card{
+  background-image: url(/GovFive/image/شعارwhite.png);
+  background-size: cover;
+  background-position: center;
+}
+    .service-title {
+      font-size: 30px;
+      font-weight: bold;
+      color: #96835F;
+      margin-bottom: 8px;
+    }
+
+    .service-desc {
+      font-size: 15px;
+      color: #042522;
+      /* opacity: 0.8; */
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .service-meta span {
+      font-size: 14px;
+      color: #96835F;
+      font-weight: 600;
+    }
+
     .service-meta { display: flex; gap: 24px; flex-wrap: wrap; }
-    .service-meta span { font-size: 14px; color: #B9A779; font-weight: 600; }
-    .form-card { background: #fff; border-radius: 16px; padding: 32px; box-shadow: 0 2px 16px rgba(0,0,0,0.07); }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .field-wrapper { display: flex; flex-direction: column; gap: 6px; }
-        .hero-gradient { background: #B5A374; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .field-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
     .field-wrapper.full-width { grid-column: span 2; }
-    label { font-size: 14px; font-weight: 600; color: #000; }
-    input, select, textarea { width: 100%; padding: 12px 14px; border: 1.2px solid #ccc; border-radius: 10px; font-size: 14px; font-family: inherit; background: #fff; color: #000; outline: none; transition: border-color 0.2s; }
-    input:focus, select:focus, textarea:focus { border-color: #B9A779; border-width: 1.8px; }
-    input.error, select.error, textarea.error { border-color: red; }
-    textarea { resize: vertical; min-height: 100px; }
-    .help-text { font-size: 12px; color: #888888; }
+
+    label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #042522;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.2px solid #ccc;
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      background: #fff;
+      color: #042522;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    /* فوكس أخضر */
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #2e6b4f;
+       box-shadow:
+                0 0 0 4px rgba(150, 129, 96, 0.09);
+    }
+
+    .submit-btn {
+      margin-top: 28px;
+      width: 100%;
+      padding: 14px;
+      background:#042522;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .submit-btn:hover { opacity: 0.9; }
+
+    .file-picker {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1.2px solid #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .file-picker:hover {
+      border-color: #2e6b4f;
+    }
+
+    .file-picker.selected {
+      border-color: #2e6b4f;
+    }
+
+    .file-picker-icon { color: #042522; font-size: 20px; }
+
+    .help-text { font-size: 12px; color: #555; }
+
     .error-text { font-size: 12px; color: red; display: none; }
     .error-text.visible { display: block; }
-    .file-picker { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1.2px solid #ccc; border-radius: 10px; cursor: pointer; transition: border-color 0.2s; }
-    .file-picker:hover { border-color: #B9A779; }
-    .file-picker.selected { border-color: #B9A779; }
-    .file-picker input[type="file"] { display: none; }
-    .file-picker-icon { color: #B9A779; font-size: 20px; }
-    .file-picker-label { color: #888; font-size: 14px; flex: 1; }
-    .file-picker-label.selected { color: #000; }
-    .check-icon { color: #B9A779; display: none; }
-    .check-icon.visible { display: block; }
-    .submit-btn { margin-top: 28px; width: 100%; padding: 14px; background: #B9A779; color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
-    .submit-btn:hover { opacity: 0.88; }
-    @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .field-wrapper.full-width { grid-column: span 1; } }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .field-wrapper.full-width { grid-column: span 1; }
+    }
   </style>
 </head>
+
 <body>
 <div class="container">
   <div class="service-card" id="service-info"></div>
+
   <div class="form-card">
     <form id="dynamic-form" novalidate>
       <div class="form-grid" id="form-fields"></div>
@@ -50,206 +156,80 @@
     </form>
   </div>
 </div>
+
 <script>
-    var serviceData = {
-      serviceId: "22222222-2222-2222-2222-222222222222",
-      serviceName: "تجديد جواز السفر",
-      description: "خدمة تجديد جواز السفر منتهي الصلاحية",
-      requirements: "صورة شخصية + جواز السفر القديم + إثبات السكن",
-      serviceFee: 150,
-      fields: [
-        { name: "fullName", label: "الاسم الكامل", type: "text", required: true },
-        { name: "nationalNumber", label: "رقم الهوية الوطنية", type: "text", required: true },
-        { name: "phoneNumber", label: "رقم الجوال", type: "tel", required: true },
-        { name: "email", label: "البريد الإلكتروني", type: "email", required: true },
-        { name: "currentAddress", label: "العنوان الحالي", type: "textarea", required: true },
-        { name: "personalPhoto", label: "صورة شخصية حديثة", type: "file", required: true, metadata: { maxSizeMb: 5 } },
-        { name: "preferredPickupDate", label: "تاريخ الاستلام المفضل", type: "date", required: true },
-        { name: "maritalStatus", label: "الحالة الاجتماعية", type: "select", required: true,
-          options: [
-            { value: "single", label: "أعزب/عزباء" },
-            { value: "married", label: "متزوج/متزوجة" },
-            { value: "divorced", label: "مطلق/مطلقة" },
-            { value: "widowed", label: "أرمل/أرملة" }
-          ]
-        }
-      ]
-    };
-  
-    //fakeData 2 - شهادة عدم المحكومية (علق الأول وشغل هاد)
-       /*var serviceData = {
-      serviceId: "e0a736ff-44ef-4eba-a1f2-1c04f7870829",
-      serviceName: "شهادة عدم المحكومية",
-      description: "وثيقة رسمية تثبت خلو السجل الجنائي للمواطن",
-      requirements: "الهوية الوطنية",
-      serviceFee: 50,
-      fields: [
-        { name: "purposeOfRequest", label: "الغرض من الطلب", type: "text", required: true, order: 1,
-          placeholder: "مثال: تقديم طلب عمل، استخراج تأشيرة...",
-          validation: { minLength: 5, maxLength: 200 } }
-      ]
-    };*/
-    
-    function buildServiceInfo(data) {
+  var serviceData = {
+    serviceId: "22222222-2222-2222-2222-222222222222",
+    serviceName: "تجديد جواز السفر",
+    description: "خدمة تجديد جواز السفر منتهي الصلاحية",
+    requirements: "صورة شخصية + جواز السفر القديم + إثبات السكن",
+    serviceFee: 150,
+    fields: [
+      { name: "fullName", label: "الاسم الكامل", type: "text", required: true },
+      { name: "nationalNumber", label: "رقم الهوية الوطنية", type: "text", required: true },
+      { name: "phoneNumber", label: "رقم الجوال", type: "tel", required: true },
+      { name: "email", label: "البريد الإلكتروني", type: "email", required: true },
+      { name: "currentAddress", label: "العنوان الحالي", type: "textarea", required: true },
+      { name: "personalPhoto", label: "صورة شخصية حديثة", type: "file", required: true, metadata: { maxSizeMb: 5 } },
+      { name: "preferredPickupDate", label: "تاريخ الاستلام المفضل", type: "date", required: true },
+      { name: "maritalStatus", label: "الحالة الاجتماعية", type: "select", required: true,
+        options: [
+          { value: "single", label: "أعزب/عزباء" },
+          { value: "married", label: "متزوج/متزوجة" },
+          { value: "divorced", label: "مطلق/مطلقة" },
+          { value: "widowed", label: "أرمل/أرملة" }
+        ]
+      }
+    ]
+  };
+
+  function buildServiceInfo(data) {
     var el = document.getElementById('service-info');
-    var title = document.createElement('div');
-    title.className = 'service-title';
-    title.textContent = data.serviceName;
-    var desc = document.createElement('div');
-    desc.className = 'service-desc';
-    desc.textContent = data.description;
-    var meta = document.createElement('div');
-    meta.className = 'service-meta';
-    var req = document.createElement('span');
-    req.textContent = 'المتطلبات: ' + data.requirements;
-    var fee = document.createElement('span');
-    fee.textContent = 'رسوم الخدمة: ' + data.serviceFee + ' ل.س';
-    meta.appendChild(req);
-    meta.appendChild(fee);
-    el.appendChild(title);
-    el.appendChild(desc);
-    el.appendChild(meta);
-  }
 
-  function isFullWidth(type) {
-    return type === 'textarea'  || type === 'file';
-  }
-
-  function buildField(field) {
-    var wrapper = document.createElement('div');
-    wrapper.className = 'field-wrapper' + (isFullWidth(field.type) ? ' full-width' : '');
-    var lbl = document.createElement('label');
-    lbl.setAttribute('for', field.name);
-    lbl.textContent = field.label + (field.required ? ' *' : '');
-    wrapper.appendChild(lbl);
-    if (field.type === 'textarea') {
-      var ta = document.createElement('textarea');
-      ta.id = field.name;
-      ta.name = field.name;
-      ta.placeholder = field.placeholder || '';
-      wrapper.appendChild(ta);
-    } else if (field.type === 'select') {
-      var sel = document.createElement('select');
-      sel.id = field.name;
-      sel.name = field.name;
-      var defOpt = document.createElement('option');
-      defOpt.value = '';
-      defOpt.textContent = '-- اختر --';
-      sel.appendChild(defOpt);
-      field.options.forEach(function(o) {
-        var opt = document.createElement('option');
-        opt.value = o.value;
-        opt.textContent = o.label;
-        sel.appendChild(opt);
-      });
-      wrapper.appendChild(sel);
-    } else if (field.type === 'file') {
-      var picker = document.createElement('div');
-      picker.className = 'file-picker';
-      picker.id = 'picker-' + field.name;
-      var icon = document.createElement('span');
-      icon.className = 'file-picker-icon';
-      icon.textContent = '📎';
-      var pickerLabel = document.createElement('span');
-      pickerLabel.className = 'file-picker-label';
-      pickerLabel.id = 'label-' + field.name;
-      pickerLabel.textContent = field.label;
-      var checkIcon = document.createElement('span');
-      checkIcon.className = 'check-icon';
-      checkIcon.id = 'check-' + field.name;
-      checkIcon.textContent = '✔️';
-      var fileInput = document.createElement('input');
-      fileInput.type = 'file';
-      fileInput.id = 'file-' + field.name;
-      fileInput.name = field.name;
-      var maxSizeMb = (field.metadata && field.metadata.maxSizeMb) ? field.metadata.maxSizeMb : 0;
-      fileInput.addEventListener('change', function() {
-        onFileChange(field.name, fileInput, maxSizeMb);
-      });
-      picker.addEventListener('click', function() {
-        fileInput.click();
-      });
-      picker.appendChild(icon);
-      picker.appendChild(pickerLabel);
-      picker.appendChild(checkIcon);
-      picker.appendChild(fileInput);
-      wrapper.appendChild(picker);
-    } else {
-      var inp = document.createElement('input');
-      inp.type = field.type;
-      inp.id = field.name;
-      inp.name = field.name;
-      inp.placeholder = field.placeholder || '';
-      wrapper.appendChild(inp);
-    }
-    if (field.helpText) {
-      var help = document.createElement('span');
-      help.className = 'help-text';
-      help.textContent = field.helpText;
-      wrapper.appendChild(help);
-    }
-    var errSpan = document.createElement('span');
-    errSpan.className = 'error-text';
-    errSpan.id = 'error-' + field.name;
-    errSpan.textContent = 'هذا الحقل مطلوب';
-    wrapper.appendChild(errSpan);
-    return wrapper;
-  }
-
-  function onFileChange(name, input, maxSizeMb) {
-    var file = input.files[0];
-    if (!file) return;
-    if (maxSizeMb > 0 && file.size / (1024 * 1024) > maxSizeMb) {
-      alert('حجم الملف يتجاوز الحد المسموح ' + maxSizeMb + ' MB');
-      input.value = '';
-      return;
-    }
-    document.getElementById('label-' + name).textContent = file.name;
-    document.getElementById('label-' + name).classList.add('selected');
-    document.getElementById('check-' + name).classList.add('visible');
-    document.getElementById('picker-' + name).classList.add('selected');
+    el.innerHTML =
+      `<div class="service-title">${data.serviceName}</div>
+       <div class="service-desc">${data.description}</div>
+       <div class="service-meta">
+         <span>المتطلبات: ${data.requirements}</span>
+         <span>رسوم الخدمة: ${data.serviceFee} ل.س</span>
+       </div>`;
   }
 
   function buildForm(data) {
     var container = document.getElementById('form-fields');
-    var sorted = data.fields.slice().sort(function(a, b) { return (a.order || 0) - (b.order || 0); });
-    sorted.forEach(function(field) { container.appendChild(buildField(field)); });
-  }
 
-  function validateForm(fields) {
-    var valid = true;
-    fields.forEach(function(field) {
-      var errEl = document.getElementById('error-' + field.name);
-      if (!errEl) return;
-      var val = '';
-      if (field.type === 'file') {
-        var fi = document.getElementById('file-' + field.name);
-        val = (fi && fi.files && fi.files.length > 0) ? 'ok' : '';
+    data.fields.forEach(function(field) {
+      var wrapper = document.createElement('div');
+      wrapper.className = 'field-wrapper' + (field.type === 'textarea' || field.type === 'file' ? ' full-width' : '');
+
+      var label = document.createElement('label');
+      label.textContent = field.label;
+      wrapper.appendChild(label);
+
+      var input;
+
+      if (field.type === 'textarea') {
+        input = document.createElement('textarea');
+      } else if (field.type === 'select') {
+        input = document.createElement('select');
+        field.options.forEach(function(opt) {
+          var o = document.createElement('option');
+          o.value = opt.value;
+          o.textContent = opt.label;
+          input.appendChild(o);
+        });
       } else {
-        var el = document.getElementById(field.name);
-        val = el ? el.value.trim() : '';
+        input = document.createElement('input');
+        input.type = field.type;
       }
-      var targetEl = field.type === 'file'
-        ? document.getElementById('picker-' + field.name)
-        : document.getElementById(field.name);
-      if (field.required && !val) {
-        errEl.classList.add('visible');
-        if (targetEl) targetEl.classList.add('error');
-        valid = false;
-      } else {
-        errEl.classList.remove('visible');
-        if (targetEl) targetEl.classList.remove('error');
-      }
+
+      input.name = field.name;
+      input.id = field.name;
+
+      wrapper.appendChild(input);
+      container.appendChild(wrapper);
     });
-    return valid;
   }
-
-  document.getElementById('dynamic-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    if (validateForm(serviceData.fields)) {
-      alert('تم إرسال الطلب بنجاح!');
-    }
-  });
 
   buildServiceInfo(serviceData);
   buildForm(serviceData);
