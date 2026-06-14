@@ -719,9 +719,9 @@
           </svg>
         </div>
 
-        <div class="sidebar-name">محمد حسن</div>
+        <div class="sidebar-name" id="siderName">جاري التحميل.....</div>
 
-        <div class="sidebar-sub">mohamad@gmail.com</div>
+        <div class="sidebar-sub" id="siderEmail">....</div>
 
       </div>
 
@@ -791,7 +791,7 @@
 
           <div class="ic-body">
             <div class="ic-label">الرقم الوطني</div>
-            <div class="ic-value">012575254845512</div>
+            <div class="ic-value" id="nationalNumber">...</div>
           </div>
 
         </div>
@@ -809,7 +809,7 @@
 
           <div class="ic-body">
             <div class="ic-label">البريد الإلكتروني</div>
-            <div class="ic-value">mohamad@gmail.com</div>
+            <div class="ic-value" id="user-email">...</div>
           </div>
 
         </div>
@@ -827,7 +827,7 @@
 
           <div class="ic-body">
             <div class="ic-label">الاسم</div>
-            <div class="ic-value arabic">محمد</div>
+            <div class="ic-value arabic" id="nameUser">...</div>
           </div>
 
         </div>
@@ -845,7 +845,7 @@
 
           <div class="ic-body">
             <div class="ic-label">الكنية</div>
-            <div class="ic-value arabic">حسن</div>
+            <div class="ic-value arabic" id="lastName">...</div>
           </div>
 
         </div>
@@ -863,7 +863,7 @@
 
           <div class="ic-body">
             <div class="ic-label">اسم الأب</div>
-            <div class="ic-value arabic">أحمد</div>
+            <div class="ic-value arabic" id="fatherName">...</div>
           </div>
 
         </div>
@@ -881,7 +881,7 @@
 
           <div class="ic-body">
             <div class="ic-label">اسم الأم</div>
-            <div class="ic-value arabic">مها</div>
+            <div class="ic-value arabic" id="motherName">...</div>
           </div>
 
         </div>
@@ -901,7 +901,7 @@
 
           <div class="ic-body">
             <div class="ic-label">تاريخ الميلاد</div>
-            <div class="ic-value">5 / 7 / 2002</div>
+            <div class="ic-value" id="dateUser">...</div>
           </div>
 
         </div>
@@ -921,7 +921,7 @@
 
         <div class="ic-body">
           <div class="ic-label">رقم الجوال</div>
-          <div class="ic-value" id="phoneDisplay">0965843331</div>
+          <div class="ic-value" id="phoneDisplay">...</div>
         </div>
 
         <button class="edit-btn" onclick="openModal()">
@@ -978,10 +978,67 @@
 
   </div>
 
-  <!-- SCRIPT -->
+
 
   <script>
 
+  
+    // ----------------------------الربط-----------------------//
+    let nationalNumber = document.getElementById("nationalNumber")
+    let siderName = document.getElementById("siderName")
+    let siderEmail = document.getElementById("siderEmail")
+    let useremail = document.getElementById("user-email")
+    let nameUser = document.getElementById("nameUser")
+   let lastName = document.getElementById("lastName")
+    let fatherName = document.getElementById("fatherName")
+   let motherName = document.getElementById("motherName")
+   let dateUser = document.getElementById("dateUser")
+   let phoneDisplay = document.getElementById("phoneDisplay")
+   
+   const token=localStorage.getItem("userToken")
+
+   if(!token){
+    window.location.href="log.html"
+   }
+
+   async function getdata() {
+    try{
+      const response= await fetch("http://egovservices.runasp.net/api/Auth/me",{
+          method : "GET",
+          headers :{
+             "Authorization" : `Bearer ${token}` ,
+            "content-type" : "application/json"
+          },
+        
+          
+      })
+      if(response.ok){
+        const data=await response.json()
+        console.log("بيانات السيرفر", data);
+        siderName.textContent=`${data.data.firstName} ${data.data.lastName}`
+        siderEmail.textContent=data.data.email
+
+        nationalNumber.textContent=data.data.nationalNumber
+        useremail.textContent=data.data.email
+        nameUser.textContent=data.data.firstName
+        lastName.textContent=data.data.lastName
+        fatherName.textContent=data.data.fatherName
+        motherName.textContent=data.data.motherName
+         dateUser.textContent=data.data.birthDate
+         phoneDisplay.textContent=data.data.phoneNumber   
+      }
+    else {
+          console.log("السيرفر رفض الطلب، الرمز:", response.status);
+        }
+    }catch (error) {
+        console.error("Error updating phone:", error);
+        alert("حدث خطأ في الاتصال بالسيرفر");
+    }
+    
+   }
+   getdata()
+
+  //  *****************************ربط تعديل الرقم ***************************//
     function openModal() {
       document.getElementById('overlay').classList.add('show');
 
@@ -1002,12 +1059,13 @@
       }
     }
 
-    function savePhone() {
 
-      const val =
-        document.getElementById('newPhone').value.trim();
+  async function savePhone(){
+    const val=document.getElementById("newPhone").value.trim()
 
-      if (!val || val.length < 7) {
+    const token=localStorage.getItem("userToken")
+
+   if (!val || val.length < 7) {
 
         const inp =
           document.getElementById('newPhone');
@@ -1027,11 +1085,43 @@
 
         return;
       }
+      try{
+        const response=await fetch("http://egovservices.runasp.net/api/Auth/profile/phone",
+        {
+          method : "PATCH",
+          headers : {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body : JSON.stringify(
+            {
+               newPhone: val    
+            })
+               
+        })
+        if(response.ok){
+          document.getElementById("phoneDisplay").textContent=val
+          closeModal();
+          alert("تم حفظ الرقم بنجاح ")
+        }
+      else {
+          const errorData = await response.json().catch(() => ({}));
+          alert(`فشل التعديل: ${errorData.message || "الرقم غير صالح"}`);
+        }
+      }
+      catch(error){
+        console.error("خطأ في الاتصال بالسيرفر:", error);
+        alert("حدث خطأ في الشبكة، يرجى المحاولة لاحقاً");
+      }
+  }
 
-      document.getElementById('phoneDisplay').textContent = val;
 
-      closeModal();
-    }
+
+
+
+
+
+
 
   </script>
 

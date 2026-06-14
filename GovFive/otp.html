@@ -123,45 +123,37 @@
         <p class="text-[var(--text-light)] text-sm mb-1 leading-relaxed">
             لقد أرسلنا رمز تأكيد مكون من 6 أرقام إلى بريدك الإلكتروني
         </p>
-        <p class="text-[#042522] font-bold mb-8 tracking-wide">
-            qamar@gmail.com
+        <p class="text-[#042522] font-bold mb-8 tracking-wide" id="user-email">
+            
         </p>
         <!-- OTP INPUTS -->
 
-        <div class="flex justify-between gap-2 mb-10" dir="ltr">
-            <input type="text" maxlength="1"
-                class="otp-input w-12 h-14 text-center text-xl font-bold rounded-2xl">
-            <input type="text" maxlength="1"
-                class="otp-input w-12 h-14 text-center text-xl font-bold rounded-2xl">
-            <input type="text" maxlength="1"
-                class="otp-input w-12 h-14 text-center text-xl font-bold rounded-2xl">
-            <input type="text" maxlength="1"
-                class="otp-input w-12 h-14 text-center text-xl font-bold rounded-2xl">
-            <input type="text" maxlength="1"
-                class="otp-input w-12 h-14 text-center text-xl font-bold rounded-2xl">
-            <input type="text" maxlength="1"
-                class="otp-input w-12 h-14 text-center text-xl font-bold rounded-2xl">
-        </div>
-        <!-- BUTTON -->
+      <form id="otp-form">
+    <div class="flex justify-between gap-2 mb-10" dir="ltr">
+        <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl font-bold rounded-2xl">
+        <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl font-bold rounded-2xl">
+        <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl font-bold rounded-2xl">
+        <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl font-bold rounded-2xl">
+        <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl font-bold rounded-2xl">
+        <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl font-bold rounded-2xl">
+    </div>
 
-        <button
-            class="verify-btn w-full text-white font-bold py-4 rounded-2xl active:scale-[0.98]">
-            تأكيد الرمز
-        </button>
-        <!-- RESEND -->
+    <button type="submit" class="verify-btn w-full text-white font-bold py-4 rounded-2xl active:scale-[0.98]">
+        تأكيد الرمز
+    </button>
+</form>
 
-        <div class="mt-8">
-            <p class="text-gray-400 text-sm mb-1">
-
-                لم يصلك الرمز؟
-            </p>
-            <button class="resend-btn font-bold text-sm transition-all">
-                إعادة إرسال الرمز
-                <span class="text-gray-400 font-normal mr-1">
-                    (00:59)
-                </span>
-            </button>
-        </div>
+<div class="mt-8">
+    <p class="text-gray-400 text-sm mb-1">
+        لم يصلك الرمز؟
+    </p>
+    <button class="resend-btn font-bold text-sm transition-all">
+        إعادة إرسال الرمز
+        <span class="text-gray-400 font-normal mr-1">
+            (00:59)
+        </span>
+    </button>
+</div>
     </div>
 
     <script>
@@ -184,6 +176,98 @@
                 }
             });
         });
+
+        ////////////////////////////////////////الربط 
+        //جلب البريد لمحفوظ من صفحة الانشاء الحساب واستبداله ب يلي مكتوب بالموجود 
+        document.addEventListener("DOMContentLoaded" , function(){
+            const savemial=localStorage.getItem('tempemail')
+            const emailDisplay=document.getElementById('user-email')
+
+            if (savemial && emailDisplay){
+                emailDisplay.innerHTML=savemial
+            }
+            else{
+                alert("لم نجد بريدا الكترونيا مفعلا ")
+                window.location.href="register.html"
+            }
+
+
+            //حركة التنققل بين المربعات 
+            const inputs=document.querySelectorAll(".otp-input")
+            
+            inputs.forEach((input ,index )=>{
+                //للانتقال للرمز يلي بعدو
+
+                input.addEventListener('input' , function (){
+                       if(this.value.length==1 && index < inputs.length-1 ){
+                    inputs[index+1].focus()
+                }
+                })
+                //لحتى ارجع لورا 
+
+                input.addEventListener('keydown' , function (e){
+                       if(e.key==='Backspace' &&  this.value.length==0 && index >0  ){
+                    inputs[index - 1].focus()
+                }
+                })            
+            })
+        })
+
+        // الربط 
+        const otpform=document.getElementById("otp-form")
+
+      otpform.addEventListener("submit" ,async function(e){
+        
+        e.preventDefault()
+        const savedpNationalNumber=localStorage.getItem('tempNationalNumber')
+        //تجميع المربعات الستة 
+        let otpcode = ""
+        inputs.forEach(input =>{
+            otpcode +=input.value;
+        })
+        //تاكد انو دخل ستة ارقام 
+        if(otpcode.length<6){
+        alert("يرجى ادخال ستة ارقام ")
+          return;
+           }
+
+  
+        /////ارسال طلب للسييرفر 
+        try{
+            const response = await fetch('http://egovservices.runasp.net/api/Auth/verify-otp',{
+                method :'POST',
+                headers : {
+                    'content-type' : 'application/json'
+                },
+                body :JSON.stringify({
+                    nationalNumber : savedpNationalNumber,
+                    otpCode : otpcode
+                })
+            })
+
+            if(response.ok){
+                alert("تم تفعيل حسابك بنجاح! يمكنك الآن تسجيل الدخول.")
+                localStorage.removeItem("tempemail")
+                localStorage.removeItem("tempNationalNumber")
+
+                window.location.href="choise.html"
+            }
+              else {
+             const errorresult=await response.json().catch(()=>({}))
+             alert(errorresult.title || "خطاااا في رمز التحقق")
+        }
+        }
+        catch(error){
+            console.error("Error during OTP verification:", error)
+           alert("حدث خطأ في الاتصال بالسيرفر، يرجى المحاولة لاحقاً.");
+        }
+})
+       
+    
+
+        
+
+
     </script>
 
 </body>

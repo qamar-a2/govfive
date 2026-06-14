@@ -16,8 +16,7 @@ body {
     justify-content: center;
     align-items: center;
     color: white;
-    height: 100vh;
-    overflow: hidden; 
+    
 }
 @keyframes floatSmoothUp {
     0% {
@@ -123,6 +122,8 @@ body {
 .icon{
     opacity: 0.1;
     position: absolute;
+    pointer-events: none; 
+    z-index: 1;
 }
 .parent-icon-up {
     animation: floatSmoothUp 9s ease-in-out infinite;
@@ -163,7 +164,7 @@ body {
     background-color:rgba(255, 255, 255, 0.5);
     border-radius: 50%;
    opacity: 0.2;
-    z-index: 6;
+    z-index: 1;
         box-shadow: 
         0 0 15px 5px rgba(150, 131, 95, 0.9),   
         0 0 40px 15px rgba(150, 131, 95, 0.6),  
@@ -213,9 +214,14 @@ body {
         0 0 70px 30px rgba(150, 131, 95, 0.8);  
 }
 
+
+/* -------------------------------------------------------------------------------- */
+
+
 .registration-container {
-    width: 100%;
-    max-width: 450px;
+    position: relative;
+    z-index: 10;
+
     text-align: center;
       background: linear-gradient(135deg, #042522 0%, #0b3d38 100%);
     backdrop-filter: blur(15px);
@@ -231,9 +237,7 @@ body {
     cursor: pointer;
 }
 
-.logo-section {
-    /* margin-bottom: 10px; */
-}
+
 
 .user-icon-wrapper {
     font-size: 80px;
@@ -256,7 +260,9 @@ body {
 
 .input-group {
     position: relative;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    /* margin-bottom: 5px;    */
+    /* height: 60px; */
 }
 
 .input-group input {
@@ -264,7 +270,7 @@ body {
     background-color: transparent;
     border: 1px solid #96835F;
     border-radius: 12px;
-    padding: 15px 50px 15px 45px;
+    padding: 10px 50px 10px 45px;
     color: white;
     font-size: 1rem;
     outline: none;
@@ -278,7 +284,7 @@ body {
 .input-group i:not(.show-pass) {
     position: absolute;
     right: 10%;
-    top: 50%;
+    top: 23px;
     transform: translateY(-50%);
     color:#96835F;
     font-size: 1.2rem;
@@ -288,7 +294,7 @@ body {
 .show-pass {
     position: absolute;
     left: 10%;
-    top: 50%;
+    top: 23px;
     transform: translateY(-50%);
     color: #888;
     cursor: pointer;
@@ -347,9 +353,3 @@ body {
     left: 100%; 
 }
 
-/* جعل التصميم متجاوب للهواتف */
-@media (max-width: 480px) {
-    .registration-container {
-        padding: 10px;
-    }
-}
