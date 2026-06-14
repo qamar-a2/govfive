@@ -8,9 +8,12 @@
       <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="min-h-screen p-4 sm:p-6 overflow-x-hidden">
+<body class="h-screen w-screen overflow-hidden flex justify-center items-center m-0 p-0">
 
-     <div class="icon1 parent-icon-up icon">
+    <!-- هاد مشان ينحط بقلبو الخطا  تبع السيرفر -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2"></div>
+<div class=" fixed inset-0 overflow-hidden pointer-events-none z-0">
+       <div class="icon1 parent-icon-up icon ">
             <img src="image/icons/5.svg" alt="">
         </div>
      <div class="icon2 parent-icon-down icon">
@@ -29,6 +32,8 @@
          <div class="point point4 "></div>
          <div class="point point5 parent-icon-Wave2"></div>
          <div class="point point6 parent-icon-float"></div>
+</div>
+  
 
     
     <div class="registration-container w-full max-w-[360px] sm:max-w-md">
@@ -40,40 +45,40 @@
             <div class="user-icon-wrapper">
                 <i class="fas fa-user-plus"></i>
             </div>
-            <h1 class="pt-4">انشاء حساب</h1>
+            <h1 class="   pt-4">انشاء حساب</h1>
             <a href="log.html"></a> 
-            <p>أهلاً بك! ابدأ الآن واجعل إنجاز معاملاتك أسهل من أي وقت.</p>
+            <p class="text-xs sm:text-sm pt-2 text-center px-4">أهلاً بك! ابدأ الآن واجعل إنجاز معاملاتك أسهل من أي وقت.</p>
         </div>
 
         <form class="signup-form" id="signup">
             <div class="input-group">
-                <input type="text" placeholder="الرقم الوطني" id="nationalNumber" autocomplete="off" class="w-full">
-                <span id="nationalNumber-error"></span>
+                <input type="text" placeholder="الرقم الوطني" id="nationalNumber" autocomplete="off" class="w-full autofill:shadow-[inset_0_0_0_1000px_#062C28] autofill:text-white autofill:[-webkit-text-fill-color:white]" required>
+                <span id="nationalNumber-error" class="block w-full  text-[10px]  text-[#888] pt-1"></span>
                 <i class="fas fa-id-card"></i>
             </div>
 
             <div class="input-group">
-                <input type="email" placeholder="البريد الالكتروني" id="email" class=" w-full autofill:shadow-[inset_0_0_0_1000px_#062C28] autofill:text-white autofill:[-webkit-text-fill-color:white]">
-                    <span id="email-error"></span>
+                <input type="email" placeholder="البريد الالكتروني" id="email" class=" w-full autofill:shadow-[inset_0_0_0_1000px_#062C28] autofill:text-white autofill:[-webkit-text-fill-color:white]" required>
+                    <span id="email-error" class="block w-full  text-[10px]  text-[#888] pt-1"></span>
                 <i class="fas fa-envelope"></i>
             </div>
 
             <div class="input-group">
-                <input type="text" placeholder="رقم الجوال" id="phoneNumber" autocomplete="off" class="w-full">
-                    <span id="phoneNumber-error" ></span>
+                <input type="text" placeholder="رقم الجوال" id="phoneNumber" autocomplete="off" class="w-full autofill:shadow-[inset_0_0_0_1000px_#062C28] autofill:text-white autofill:[-webkit-text-fill-color:white]" required>
+                    <span id="phoneNumber-error" class="block w-full  text-[10px]  text-[#888] pt-1"></span>
                 <i class="fas fa-phone"></i>
             </div>
 
             <div class="input-group">
                 <i class="fas fa-eye-slash show-pass toggle-password" data-target="password"></i>
-                <input type="password" placeholder="كلمة المرور" id="password" autocomplete="off" class="w-full">
-                    <span id="password-error"></span>
+                <input type="password" placeholder="كلمة المرور" id="password" autocomplete="off" class="w-full autofill:shadow-[inset_0_0_0_1000px_#062C28] autofill:text-white autofill:[-webkit-text-fill-color:white]" required>
+                    <span id="password-error" class="block w-full  text-[10px]  text-[#888] pt-1"></span>
                 <i class="fas fa-lock"></i>
             </div>
 
             <div class="input-group">
                 <i class="fas fa-eye-slash show-pass toggle-password" data-target="confirmPassword"></i>
-                <input type="password" placeholder="تأكيد كلمة المرور" id="confirmPassword" autocomplete="off" class="w-full">
+                <input type="password" placeholder="تأكيد كلمة المرور" id="confirmPassword" autocomplete="off" class="w-full autofill:shadow-[inset_0_0_0_1000px_#062C28] autofill:text-white autofill:[-webkit-text-fill-color:white]" required>
                 <span id="confirmPassword-error" class="block w-full  text-[10px]  text-[#888] pt-1"></span>
                 <i class="fas fa-lock"></i>
             </div>
@@ -92,7 +97,7 @@
             const targetId = this.getAttribute('data-target');
             const passwordInput = document.getElementById(targetId);
             
-            if (passwordInput) { // التأكد من أن العنصر موجود لمنع الأخطاء
+            if (passwordInput) { //منتاكد من أنو العنصر موجود لمنع الأخطاء
                 if (passwordInput.type === 'password') {
                     passwordInput.type = 'text';
                     this.classList.replace('fa-eye-slash', 'fa-eye');
@@ -103,6 +108,20 @@
             }
         });
     });
+    //  لاظهار الخطا بطريقة جميلة 
+    function showToast(message, type = 'error') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `p-4 rounded-lg shadow-xl text-white transition-opacity duration-500 ${type === 'error' ? 'bg-red-600' : 'bg-green-600'}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 1000);
+    }, 1000);
+}
+// اذا وصل الطلب بس رفضو السيرفر بيطلع الخطا 
         
 
 
@@ -138,11 +157,51 @@
         password_error.textContent=""
         confirmPassword_error.textContent=""
 
+        // مناقشات الاخطاء
+
+        let haserror=false
+        if(nationalNumber.length !== 11){
+              e.preventDefault()//مابخلي الصفحة تعمل اعادة تحديث
+              national_error.textContent="رقم الهوية يجب أن يكون 11 رقم"
+              haserror=true
+        }
+        else{
+            console.log("الرقم صحيح جاري الارسال...")
+        }
+        // phooone
+        if(phoneNumber.length !== 10){
+             e.preventDefault()//مابخلي الصفحة تعمل اعادة تحديث
+              phoneNumber_error.textContent="رقم الجوال  يجب أن يكون 10 ارقام"  
+               haserror=true   
+                  
+        }
+        else if(!phoneNumber.startsWith('09')){
+              e.preventDefault()//مابخلي الصفحة تعمل اعادة تحديث
+              phoneNumber_error.textContent="رقم الجوال  يجب أن ييدا ب 09"    
+              haserror=true
+        }
+        else if(isNaN(phoneNumber)){
+            e.preventDefault()//مابخلي الصفحة تعمل اعادة تحديث
+              phoneNumber_error.textContent="يجب الحقل أن يكون رقم "    
+              haserror=true
+        }  
+          if(password.length <8){
+              e.preventDefault()//مابخلي الصفحة تعمل اعادة تحديث
+             password_error.textContent="يجب أن تكون كلمة السر على الأقل 8 "    
+              haserror=true
+          }
+
         if(password !== confirmPassword){
+               e.preventDefault()//مابخلي الصفحة تعمل اعادة تحديث
             confirmPassword_error.textContent="كلمتا المرور غير متطابقتين!"
-            return;
+            haserror=true
+    
         }
 
+        if(haserror)return;//هي ما بتخلي يبعت طلب للسيرفر لحتى يتاكد من كلشي قبل 
+
+
+    
 
 
         //3.ارسال طلب الى الاستضافة 
@@ -160,6 +219,8 @@
                 })               
         })
         //4. قراءة رد السيرفر
+
+        const data = await response.json();
         if(response.ok){
             localStorage.setItem('tempemail',email)
             localStorage.setItem('tempNationalNumber', nationalNumber);
@@ -167,20 +228,16 @@
         }
         //لو استقبل  الطلب بس رفضو 
         else {
-             const errorresult=await response.json().catch(()=>({}))
-             alert(errorresult.message || "خطاااا")
-             console.log("كائن الرد الكامل من الباك إند:", errorresult);
-
-            //  لاتحقق من وجود خطا 
-            // if(errorresult && errorresult.errors.nationalNumber){
-            //     national_error.textContent=errorresult.errors.nationalNumber[0]
-            // }
+          showToast(data.message || "حدث خطأ غير متوقع", "error");
+            // alert(data.message || "حدث خطأ غير متوقع من السيرفر");
+           
         }
     }
     //5. لو صار خطا بالتراي بنزل عالكاتش 
         catch(error){
-            console.error("Error during registration:", error);//خطا بيطهر بالكونسرل مشان انا كمهندس اعرف اش نوع الخطا
-            alert("حدث خطأ في الاتصال بالسيرفر، يرجى المحاولة لاحقاً")
+            // console.error("Error during registration:", error);//خطا بيطهر بالكونسرل مشان انا كمهندس اعرف اش نوع الخطا
+            // alert("حدث خطأ في الاتصال بالسيرفر، يرجى المحاولة لاحقاً")
+          showToast("حدث خطأ في الاتصال بالسيرفر", error);
         }
         })
         

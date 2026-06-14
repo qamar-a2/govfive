@@ -9,13 +9,20 @@
 }
 
 body {
-    font-family: 'Qomra', sans-serif;
+font-family: 'Qomra', sans-serif;
     background-color: #042522; 
     background: url('image/background11.webp') no-repeat center center / cover; 
     display: flex;
     justify-content: center;
     align-items: center;
     color: white;
+    
+    /* التعديلات الضرورية لمنع الـ Scroll */
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    overflow: hidden; /* يمنع ظهور أي شريط تمرير مهما كان حجم المحتوى */
+    position: relative;
     
 }
 @keyframes floatSmoothUp {
