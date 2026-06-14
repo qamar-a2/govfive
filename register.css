@@ -237,7 +237,7 @@ font-family: 'Qomra', sans-serif;
   box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 15px; /* مسافة موحدة بين الحقول */
+    gap: 15px; 
 }
 
 .header-nav {
@@ -252,25 +252,26 @@ font-family: 'Qomra', sans-serif;
 .user-icon-wrapper {
     font-size: 50px;
     color:#96835F;
-    padding-top:10px;
-    margin-bottom: -25px;
+    /* padding-top:10px; */
+    /* margin-bottom: -25px; */
 }
 
 .logo-section h1 {
-    font-size: 2rem;
-    margin-bottom: 10px;
-    margin-top: -10px;
+    /* font-size: 2rem; */
+    /* margin-bottom: 10px;
+    margin-top: -10px; */
 }
 
 .logo-section p {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     opacity: 0.9;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
 }
 
 .input-group {
     position: relative;
-    margin-bottom: 20px;
+   
+    
    
 }
 
