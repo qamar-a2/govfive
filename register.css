@@ -11,7 +11,7 @@
 body {
     font-family: 'Qomra', sans-serif;
     background-color: #042522; 
-    background: url('/GovFive/image/background11.png') no-repeat center center / cover; 
+    background: url('image/background11.webp') no-repeat center center / cover; 
     display: flex;
     justify-content: center;
     align-items: center;
