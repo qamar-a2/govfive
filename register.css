@@ -240,10 +240,10 @@ body {
 
 
 .user-icon-wrapper {
-    font-size: 80px;
+    font-size: 50px;
     color:#96835F;
+    padding-top:10px;
     margin-bottom: -25px;
-    margin-top: -15px;
 }
 
 .logo-section h1 {
@@ -261,8 +261,7 @@ body {
 .input-group {
     position: relative;
     margin-bottom: 20px;
-    /* margin-bottom: 5px;    */
-    /* height: 60px; */
+   
 }
 
 .input-group input {
@@ -307,12 +306,13 @@ body {
     color: #042522;
     border: none;
     padding: 6px;
+    
     border-radius: 15px;
     font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
     margin-top: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
     position: relative;
     overflow: hidden; 
     
