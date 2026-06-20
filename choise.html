@@ -85,7 +85,6 @@
             <h2 class="text-2xl font-bold border-r-4 border-[#96835F] pr-4">الجهات الحكومية:</h2>
             <a href="#" class="text-[#96835F] font-bold hover:underline">عرض الكل</a>
         </div>
-
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div class="group bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 text-center cursor-pointer border border-transparent hover:border-[#042522]">
                 <div class="bg-[#f8f6f2] w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-[#042522] group-hover:text-white transition">
@@ -121,7 +120,47 @@
         <div class="max-w-6xl mx-auto px-4 text-center text-gray-500 text-sm">
             &copy; 2026  جميع الحقوق محفوظة - تطوير قمر المهندسة تنسيق فني رونه
         </div>
-    </footer>
-   
+ </footer>
+<script>  
+
+
+          //------------- الربط بس جربيه--------------//
+        const defaultIcon = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
+          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+        </svg>`;
+      
+        async function loadMinistries() {
+          const grid = document.getElementById("ministries-grid");
+          const token = localStorage.getItem("userToken");
+      
+          try {
+            const res = await fetch("http://egovservices.runasp.net/api/Ministries", {
+              method: "GET",
+              headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+              }
+            });
+            const data = await res.json();
+      
+            grid.innerHTML = "";
+            data.forEach(ministry => {
+              grid.innerHTML += `
+                <div class="group bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 text-center cursor-pointer border border-transparent hover:border-[#042522]">
+                  <div class="bg-[#f8f6f2] w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-[#042522] group-hover:text-white transition">
+                    ${defaultIcon}
+                  </div>
+                  <h3 class="font-bold text-lg group-hover:text-[#96835F]">${ministry.name}</h3>
+                </div>`;
+            });
+          } catch (err) {
+            grid.innerHTML = `<p class="text-red-500 col-span-4 text-center">فشل تحميل الجهات الحكومية</p>`;
+            console.error(err);
+          }
+        }
+      
+        loadMinistries();
+      </script>
 </body>
 </html>
