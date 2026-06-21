@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إنشاء حساب جديد</title>
+        <link rel="stylesheet" href="global.css">
     <link rel="stylesheet" href="register.css">
+
       <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -12,6 +14,14 @@
 
     <!-- هاد مشان ينحط بقلبو الخطا  تبع السيرفر -->
     <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2"></div>
+    <!-- هاد للودينغ -->
+     <div id="loader" class="fixed inset-0 z-[9999] hidden flex items-center justify-center bg-[#062C28]/90">
+         <div class="text-white text-center">
+            <div class="w-12 h-12 border-4 border-t-transparent border-white rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="font-[Qomra] text-lg">جاري المعالجة...</p>
+         </div>
+    </div>
+<!-- ----------------------------- -->
 <div class=" fixed inset-0 overflow-hidden pointer-events-none z-0">
        <div class="icon1 parent-icon-up icon ">
             <img src="image/icons/5.svg" alt="">
@@ -45,7 +55,7 @@
             <div class="user-icon-wrapper -mt-4 -mb-4 pb-0 sm:-mt-0 sm:-mb-2 ">
                 <i class="fas fa-user-plus"></i>
             </div>
-            <h1 class="pt-2 sm:pt-4 sm:pb-2 text-xl sm:text-[2rem]">انشاء حساب</h1>
+            <h1 class="pt-2 sm:pt-4 sm:pb-2 text-xl sm:text-[2rem] font-[Qomra] font-bold ">انشاء حساب</h1>
             <a href="log.html"></a> 
             <p class="text-xs sm:text-sm pt-1 sm:pt-2 text-center px-4">أهلاً بك! ابدأ الآن واجعل إنجاز معاملاتك أسهل من أي وقت.</p>
         </div>
@@ -84,6 +94,10 @@
             </div>
 
             <button type="submit" class="submit-btn">انشاء حساب</button>
+            <div class="extra-links pb-4">
+                <span>هل لديك حساب؟</span>
+                <a href="log.html" class="mr-2 ">سجل دخولك الآن</a>
+            </div>
         </form>
     </div>
 
@@ -134,112 +148,79 @@
 
 
         //1.منع تحديث الصفحة
-        document.getElementById("signup").addEventListener("submit",async function(e){
-            e.preventDefault()//مابخلي الصفحة تعمل اعادة تحديث
-        
-        //2. بجيب العناصر الاساسية 
-        const nationalNumber=document.getElementById("nationalNumber").value
-        const email=document.getElementById("email").value
-        const phoneNumber=document.getElementById("phoneNumber").value
-        const password=document.getElementById("password").value
-        const confirmPassword=document.getElementById("confirmPassword").value
+       document.getElementById("signup").addEventListener("submit", async function(e) {
+    e.preventDefault(); 
 
+    // 1. جلب العناصر
+    const nationalNumber = document.getElementById("nationalNumber").value;
+    const email = document.getElementById("email").value;
+    const phoneNumber = document.getElementById("phoneNumber").value;
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    const loader = document.getElementById("loader");
 
-        const national_error=document.getElementById("nationalNumber-error")
-        const email_error=document.getElementById("email-error")
-        const phoneNumber_error=document.getElementById("phoneNumber-error")
-        const password_error=document.getElementById("password-error")
-        const confirmPassword_error=document.getElementById("confirmPassword-error")
+    // عناصر الخطأ
+    const errors = {
+        national: document.getElementById("nationalNumber-error"),
+        email: document.getElementById("email-error"),
+        phone: document.getElementById("phoneNumber-error"),
+        pass: document.getElementById("password-error"),
+        confirm: document.getElementById("confirmPassword-error")
+    };
 
-        national_error.textContent=""
-        email_error.textContent=""
-       phoneNumber_error.textContent=""
-        password_error.textContent=""
-        confirmPassword_error.textContent=""
+    // مسح الأخطاء السابقة
+    Object.values(errors).forEach(el => el.textContent = "");
 
-        // مناقشات الاخطاء
+    // 2. منطق التحقق (Validation)
+    let hasError = false;
+    if (nationalNumber.length !== 11) {
+        errors.national.textContent = "رقم الهوية يجب أن يكون 11 رقم";
+        hasError = true;
+    }
+    if (phoneNumber.length !== 10 || !phoneNumber.startsWith('09') || isNaN(phoneNumber)) {
+        errors.phone.textContent = "رقم الجوال يجب أن يكون 10 أرقام ويبدأ بـ 09";
+        hasError = true;
+    }
+    if (password.length < 8) {
+        errors.pass.textContent = "يجب أن تكون كلمة السر 8 خانات على الأقل";
+        hasError = true;
+    }
+    if (password !== confirmPassword) {
+        errors.confirm.textContent = "كلمتا المرور غير متطابقتين!";
+        hasError = true;
+    }
 
-        let haserror=false
-        if(nationalNumber.length !== 11){
-              e.preventDefault()//مابخلي الصفحة تعمل اعادة تحديث
-              national_error.textContent="رقم الهوية يجب أن يكون 11 رقم"
-              haserror=true
-        }
-        else{
-            console.log("الرقم صحيح جاري الارسال...")
-        }
-        // phooone
-        if(phoneNumber.length !== 10){
-             e.preventDefault()//مابخلي الصفحة تعمل اعادة تحديث
-              phoneNumber_error.textContent="رقم الجوال  يجب أن يكون 10 ارقام"  
-               haserror=true   
-                  
-        }
-        else if(!phoneNumber.startsWith('09')){
-              e.preventDefault()//مابخلي الصفحة تعمل اعادة تحديث
-              phoneNumber_error.textContent="رقم الجوال  يجب أن ييدا ب 09"    
-              haserror=true
-        }
-        else if(isNaN(phoneNumber)){
-            e.preventDefault()//مابخلي الصفحة تعمل اعادة تحديث
-              phoneNumber_error.textContent="يجب الحقل أن يكون رقم "    
-              haserror=true
-        }  
-          if(password.length <8){
-              e.preventDefault()//مابخلي الصفحة تعمل اعادة تحديث
-             password_error.textContent="يجب أن تكون كلمة السر على الأقل 8 "    
-              haserror=true
-          }
+    if (hasError) return; 
 
-        if(password !== confirmPassword){
-               e.preventDefault()//مابخلي الصفحة تعمل اعادة تحديث
-            confirmPassword_error.textContent="كلمتا المرور غير متطابقتين!"
-            haserror=true
-    
-        }
+    // 3. إظهار الـ Loader فقط بعد التأكد من سلامة البيانات
+    loader.classList.remove("hidden");
+    loader.classList.add("flex");
 
-        if(haserror)return;//هي ما بتخلي يبعت طلب للسيرفر لحتى يتاكد من كلشي قبل 
-
-
-    
-
-
-        //3.ارسال طلب الى الاستضافة 
-        try{
-            const response=await fetch('http://egovservices.runasp.net/api/Auth/register',{
-                method :'POST',
-                headers:{
-                  'Content-Type' : 'application/json'
-                },
-                body:JSON.stringify({
-                    nationalNumber :nationalNumber,
-                    email : email,
-                    phoneNumber :phoneNumber ,
-                    password : password
-                })               
-        })
-        //4. قراءة رد السيرفر
+    // 4. إرسال الطلب
+    try {
+        const response = await fetch('http://egovservices.runasp.net/api/Auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nationalNumber, email, phoneNumber, password })
+        });
 
         const data = await response.json();
-        if(response.ok){
-            localStorage.setItem('tempemail',email)
+
+        if (response.ok) {
+            localStorage.setItem('tempemail', email);
             localStorage.setItem('tempNationalNumber', nationalNumber);
-            window.location.href="otp.html"
+            window.location.href = "otp.html";
+        } else {
+            showToast(data.message || "حدث خطأ في التسجيل", "error");
         }
-        //لو استقبل  الطلب بس رفضو 
-        else {
-          showToast(data.message || "حدث خطأ غير متوقع", "error");
-            // alert(data.message || "حدث خطأ غير متوقع من السيرفر");
-           
-        }
+    } catch (error) {
+        showToast("حدث خطأ في الاتصال بالسيرفر", "error");
+    } finally {
+      
+        loader.classList.add("hidden");
+        loader.classList.remove("flex");
     }
-    //5. لو صار خطا بالتراي بنزل عالكاتش 
-        catch(error){
-            // console.error("Error during registration:", error);//خطا بيطهر بالكونسرل مشان انا كمهندس اعرف اش نوع الخطا
-            // alert("حدث خطأ في الاتصال بالسيرفر، يرجى المحاولة لاحقاً")
-          showToast("حدث خطأ في الاتصال بالسيرفر", error);
-        }
-        })
+});
         
 
     </script>

@@ -15,5 +15,8 @@
             font-style: normal;
         }
         body{
-            font-family: 'Qomra', sans-serif;
+          font-family: 'Qomra', sans-serif !important;
         }
+        #loader.flex {
+      display: flex !important; 
+}
