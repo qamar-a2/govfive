@@ -27,7 +27,7 @@
 body {
     font-family: 'Qomra', sans-serif;
     background-color: #042522; /* اللون الأخضر الغامق الأساسي كأمان لو ما حملت الصورة */
-    background: url('/GovFive/image/background11.png') no-repeat center center / cover; /* الصورة ممتدة على كامل الواجهة */
+    background: url('image/background11.webp') no-repeat center center / cover; /* الصورة ممتدة على كامل الواجهة */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -244,14 +244,13 @@ body {
 }
 
 .login-icon-wrapper {
-    font-size: 90px;
+    font-size: 60px;
     color: #96835F;
     margin-bottom: 15px;
     transform: rotate(180deg); 
 }
 
 h1 {
-    font-size: 1.8rem;
     margin-bottom: 10px;
 }
 
@@ -267,14 +266,15 @@ p {
 }
 
 .input-group input {
-    width: 100%;
-    background: transparent;
-    border: 1px solid #96835F; 
+    width: 90%;
+    background-color: transparent;
+    border: 1px solid #96835F;
     border-radius: 12px;
-    padding: 15px 45px;
+    padding: 10px 50px 10px 45px;
     color: white;
+    font-size: 1rem;
     outline: none;
-    font-family: 'Cairo', sans-serif; /* ليكون خط المدخلات مريح ومتناسق */
+    transition: 0.3s;
 }
 
 .floating-label {
@@ -289,31 +289,32 @@ p {
 
 .input-group i:not(.toggle-password) {
     position: absolute;
-    right: 15px;
-    top: 50%;
+    right: 10%;
+    top: 23px;
     transform: translateY(-50%);
-    color: #96835F;
+    color:#96835F;
+    font-size: 1.2rem;
 }
 
 .toggle-password {
     position: absolute;
-    left: 15px;
-    top: 50%;
+    left: 10%;
+    top: 23px;
     transform: translateY(-50%);
     color: #888;
     cursor: pointer;
 }
 
-.extra-links {
+.desc {
     margin: 15px 0;
     font-size: 0.9rem;
 }
 
-.extra-links a {
+.desc a {
     color: white;
     text-decoration: underline;
     margin-right: 5px;
-    font-weight: bold;
+    /* font-weight: bold; */
 }
 
 .submit-btn {
@@ -321,7 +322,7 @@ p {
     background: linear-gradient(135deg, #96835F 0%, #b19b72 100%);
     color: #042522;
     border: none;
-    padding: 12px;
+    padding: 6px;
     border-radius: 15px;
     font-size: 1.1rem;
     font-weight: bold;
@@ -365,4 +366,8 @@ p {
 }
 .submit-btn:hover::after {
     left: 100%; 
+}
+
+#loader {
+    display: none !important; /* فرض الاختفاء التام */
 }

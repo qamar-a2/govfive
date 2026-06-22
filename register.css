@@ -1,5 +1,5 @@
 /* إعدادات الخط والألوان الأساسية */
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');;
 
 * {
     margin: 0;
@@ -322,8 +322,8 @@ font-family: 'Qomra', sans-serif;
     font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
-    margin-top: 10px;
-    margin-bottom: 30px;
+    margin: 10px 0;
+    
     position: relative;
     overflow: hidden; 
     
@@ -363,4 +363,18 @@ font-family: 'Qomra', sans-serif;
 .submit-btn:hover::after {
     left: 100%; 
 }
+.extra-links {
+    margin: 15px 0;
+    font-size: 0.9rem;
+}
 
+.extra-links a {
+    color: white;
+    text-decoration: underline;
+    margin-right: 5px;
+    /* font-weight: bold; */
+}
+        input {
+    outline: none; /* لإزالة الإطار الأزرق عند النقر */
+    box-sizing: border-box; /* لضمان أن الـ padding لا يزيد عرض العنصر */
+}
