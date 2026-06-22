@@ -15,7 +15,7 @@
     <!-- هاد مشان ينحط بقلبو الخطا  تبع السيرفر -->
     <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2"></div>
     <!-- هاد للودينغ -->
-     <div id="loader" class="fixed inset-0 z-[9999] hidden flex items-center justify-center bg-[#062C28]/90">
+     <div id="loader" class="fixed inset-0 z-[9999] hidden  items-center justify-center bg-[#062C28]/90">
          <div class="text-white text-center">
             <div class="w-12 h-12 border-4 border-t-transparent border-white rounded-full animate-spin mx-auto mb-4"></div>
             <p class="font-[Qomra] text-lg">جاري المعالجة...</p>
@@ -192,9 +192,8 @@
 
     if (hasError) return; 
 
-    // 3. إظهار الـ Loader فقط بعد التأكد من سلامة البيانات
-    loader.classList.remove("hidden");
-    loader.classList.add("flex");
+    // 3.
+    loader.classList.replace("hidden", "flex");
 
     // 4. إرسال الطلب
     try {
@@ -214,11 +213,9 @@
             showToast(data.message || "حدث خطأ في التسجيل", "error");
         }
     } catch (error) {
-        showToast("حدث خطأ في الاتصال بالسيرفر", "error");
+        showToast("حدث خطأ في الاتصال بالسيرفر", error);
     } finally {
-      
-        loader.classList.add("hidden");
-        loader.classList.remove("flex");
+    loader.classList.replace("flex", "hidden");
     }
 });
         
