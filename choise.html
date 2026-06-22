@@ -37,12 +37,12 @@
         }
 
         .hero-gradient {
-            background: url(../GovFive/image/Untitled-2.png);
+            background: url(image/Untitled-2.png);
             background-size: cover;
         }
 
         .main-back {
-            background-image: url(../GovFive/image/9999999999.png);
+            background-image: url(image/9999999999.png);
             background-size: cover;
 
         }
@@ -60,13 +60,13 @@
                     <a href="prof.html" class="hover:text-[#96835F] transition">الملف الشخصي</a>
                 </div>
                 <div class="flex items-center gap-3">
-                    <a href="log.html"
+                    <a href="index.html"
                         class="bg-[#042522] text-white pl-5 pr-10 py-2 rounded-2xl hover:bg-opacity-90 transition relative">
                         <i class="fa-regular fa-user absolute right-3 top-1/2 -translate-y-1/2 text-sm"></i>
                         <span>دخول</span>
                     </a>
 
-                    <a href="index.html"
+                    <a href="register.html"
                         class="bg-[#042522] text-white pl-5 pr-10 py-2 rounded-2xl hover:bg-opacity-90 transition relative">
                         <i class="fa-regular fa-id-card absolute right-3 top-1/2 -translate-y-1/2 text-sm"></i>
                         <span>إنشاء حساب</span>
@@ -103,7 +103,7 @@
             <div id="searchResults" class="mt-4"></div>
         </section>
 
-        <main class="max-w-6xl mx-auto px-4 pt-16 ">
+        <main class="max-w-6xl mx-auto px-4 py-16 ">
             <div class="flex justify-between items-end mb-10">
                 <h2 class="text-2xl font-bold border-r-4 border-[#96835F] pr-4">الجهات الحكومية:</h2>
             </div>
@@ -113,7 +113,7 @@
     </div>
     </main>
     </div>
-    <footer class="bg-[#042522] py-8 mt-12 border-t border-gray-200">
+    <footer class="bg-[#042522] py-8  border-t border-gray-200">
         <div class="max-w-6xl mx-auto px-4 text-center text-gray-500 text-sm">
             &copy; 2026 جميع الحقوق محفوظة - تطوير قمر المهندسة تنسيق فني رونه
         </div>
@@ -167,6 +167,8 @@
         const searchBtn = document.getElementById("searchBtn");
         const searchResults = document.getElementById("searchResults");
 
+     
+
         async function searchServices() {
             const query = searchInput.value.trim();
             if (!query) return;
@@ -184,7 +186,7 @@
                 });
                 const result = await res.json();
                 const data = result.data || result; // احتياط لو الشكل مختلف
-
+                console.log("هذه هي البضاعة التي وصلتني:", result);
                 searchResults.innerHTML = "";
                 if (!data || data.length === 0) {
                     searchResults.innerHTML = "<p class='text-center text-gray-500'>لا توجد نتائج</p>";
@@ -223,6 +225,20 @@
         }
 
         searchBtn.addEventListener("click", searchServices);
+
+        // تفعيل enter
+           searchInput.addEventListener("keypress" , (event)=>{
+            if(event.key === "Enter"){
+                searchServices();
+            }
+        })
+
+        // مسح محتوى 
+        searchInput.addEventListener("input" , (event)=>{
+            if(searchInput.value.trim()===""){
+                searchResults.innerHTML=""
+            }
+        })
     </script>
 
 </body>

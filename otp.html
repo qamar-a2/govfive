@@ -309,9 +309,16 @@ const btn = document.getElementById("resend-btn");
 
  const resend_otp=document.getElementById("resend-btn")
   const loader = document.getElementById("loader");
+
+
+
  resend_otp.addEventListener("click" ,async function(){
     loader.classList.replace("hidden", "flex");
-    const nationalNumber=localStorage.getItem('tempNationalNumber')
+ const  nationalNumber=localStorage.getItem('tempNationalNumber')
+const email = localStorage.getItem('tempemail'); 
+const phoneNumber = localStorage.getItem('tempPhone'); 
+const password = localStorage.getItem('tempPassword');
+
     try{
         const response2=await fetch('http://egovservices.runasp.net/api/Auth/resend-otp',{
             method : "POST",
@@ -319,14 +326,19 @@ const btn = document.getElementById("resend-btn");
                 "content-type":'application/json'
             },
             body: JSON.stringify({
-                nationalNumber:nationalNumber
+                nationalNumber:nationalNumber,
+                phoneNumber: phoneNumber, 
+                email: email,       
+                password: password
             })
         })
+        const result = await response2.json().catch(() => ({}));
         if(response2.ok){
             showToast("تم ارسال الرمز بنجاح");
             handleTimer()
         }
         else{
+            console.log("تفاصيل خطأ السيرفر:", result);
               showToast( " حدث خطأ، يرجى المحاولة مرة أخرى");
         }
     }
@@ -337,8 +349,13 @@ const btn = document.getElementById("resend-btn");
         loader.classList.replace("flex", "hidden");
     }
  })
-//  -------------------------------العداد 
 
+console.log({
+    nationalNumber: localStorage.getItem('tempNationalNumber'),
+    phoneNumber: localStorage.getItem('tempPhone'),
+    email: localStorage.getItem('tempemail'),
+    password: localStorage.getItem('tempPassword')
+});
          
 
     </script>
