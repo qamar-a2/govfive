@@ -318,6 +318,8 @@
   document.getElementById('tab-branches').setAttribute('aria-selected', !isServices);
   document.getElementById('services-content').style.display = isServices ? 'grid' : 'none';
   document.getElementById('branches-content').style.display = isServices ? 'none' : 'block';
+  const params = new URLSearchParams(window.location.search);
+  const ministryId = params.get("id");
 }
 </script>
 </body>
