@@ -41,69 +41,27 @@
 
     <div class="max-w-4xl mx-auto px-4 mt-6">
         <div class="flex bg-white/50 p-1 rounded-2xl gap-2 backdrop-blur-sm">
-            <button class="flex-1 py-3 px-4 rounded-xl font-bold text-white bg-[#042522] shadow-md transition-all">
-                قيد التنفيذ (5)
-            </button>
-            <button class="flex-1 py-3 px-4 rounded-xl font-medium text-gray-500 hover:bg-white hover:text-[#96835F] transition-all">
-                المكتملة
-            </button>
-            <button class="flex-1 py-3 px-4 rounded-xl font-medium text-gray-500 hover:bg-white hover:text-[#96835F] transition-all">
-                الملغاة
-            </button>
+          
+          <button id="btn-pending" onclick="filterAndRender('قيد الانتظار', this)" 
+                  class="tab-btn flex-1 py-3 px-4 rounded-xl font-bold text-white bg-[#042522] transition-all duration-300">
+                    قيد التنفيذ
+          </button>
+          
+          <button id="btn-completed" onclick="filterAndRender('مكتمل', this)" 
+                  class="tab-btn flex-1 py-3 px-4 rounded-xl font-medium text-gray-500 hover:text-gray-700 transition-all duration-300">
+             المكتملة
+          </button>
+          
+          <button id="btn-cancelled" onclick="filterAndRender('ملغى', this)" 
+                  class="tab-btn flex-1 py-3 px-4 rounded-xl font-medium text-gray-500 hover:text-gray-700 transition-all duration-300">
+             الملغاة
+          </button>
+      
         </div>
-    </div>
+      </div>
 
-    <main class="max-w-4xl mx-auto px-4 mt-8 space-y-4">
-        
-        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex items-center justify-between group hover:shadow-md transition-all duration-300">
-            <div class="flex items-center space-x-reverse space-x-5">
-                <div class="bg-[#96835F]/10 p-4 rounded-2xl group-hover:bg-[#042522] group-hover:text-white transition">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                </div>
-                <div>
-                    <h3 class="font-bold text-lg text-gray-800">تصديق شهادة جامعية</h3>
-                    <p class="text-sm text-gray-500 mt-1">وزارة التعليم العالي والبحث العلمي</p>
-                    <div class="flex items-center mt-3 text-xs text-gray-400">
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        12 تشرين الأول 2023
-                    </div>
-                </div>
-            </div>
-            
-            <div class="flex flex-col items-end gap-3">
-                <span class="bg-[#96835F]/20 text-[#8B7D54] px-4 py-1.5 rounded-full text-xs font-bold border border-[#96835F]/30">
-                    بانتظار الموافقة
-                </span>
-                <button class="text-gray-400 hover:text-[#96835F] transition">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </button>
-            </div>
-        </div>
-        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex items-center justify-between group">
-            <div class="flex items-center space-x-reverse space-x-5">
-                <div class="bg-[#96835F]/10 p-4 rounded-2xl group-hover:bg-[#042522] group-hover:text-white transition">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                </div>
-                <div>
-                    <h3 class="font-bold text-lg text-gray-800">تجديد جواز سفر</h3>
-                    <p class="text-sm text-gray-500 mt-1">وزارة الداخلية - الهجرة والجوازات</p>
-                    <div class="flex items-center mt-3 text-xs text-gray-400">
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        05 تشرين الأول 2023
-                    </div>
-                </div>
-            </div>
-            <div class="flex flex-col items-end gap-3">
-                <span class="bg-[#6A1D2A] text-[#ECE6DB] px-4 py-1.5 rounded-full text-xs font-bold border border-[#ECE6DB]">
-                    قيد التدقيق
-                </span>
-                <button class="text-gray-400 hover:text-[#96835F] transition">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </button>
-            </div>
-        </div>
-
-    </main>
+        <main class="max-w-4xl mx-auto px-4 mt-8 space-y-4" id="requests-list">
+        </main>
 
     <div class="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] bg-white/90 backdrop-blur-lg shadow-2xl rounded-3xl p-3 flex justify-around items-center border border-gray-100">
         <button class="p-3 text-gray-400"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg></button>
@@ -116,4 +74,82 @@
     </div>
     <a href="choise.html"></a>
 </body>
+
+<script>
+    const token = localStorage.getItem("userToken");
+    const BASE = "http://egovservices.runasp.net";
+    
+    let allRequests = []; 
+  
+    async function loadRequests() {
+      try {
+        const res = await fetch(BASE + "/api/requests/mine", {
+          headers: { "Authorization": "Bearer " + token }
+        });
+        const result = await res.json();
+        allRequests = result.data || result;
+  
+        // العرض الافتراضي عند تحميل الصفحة
+        const initialBtn = document.getElementById("btn-pending");
+        filterAndRender('قيد الانتظار', initialBtn);
+  
+      } catch (err) {
+        console.error("حدث خطأ أثناء جلب البيانات:", err);
+      }
+    }
+  
+    function filterAndRender(status, clickedButton) {
+      // 1. تحديث ستايل الأزرار ونقل اللون النشط
+      if (clickedButton) {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+          btn.classList.remove('bg-[#042522]', 'text-white', 'font-bold');
+          btn.classList.add('text-gray-500', 'font-medium');
+        });
+        
+        clickedButton.classList.remove('text-gray-500', 'font-medium');
+        clickedButton.classList.add('bg-[#042522]', 'text-white', 'font-bold');
+      }
+  
+      // 2. فلترة وعرض البيانات
+      const list = document.getElementById("requests-list");
+      list.innerHTML = "";
+  
+      if (!Array.isArray(allRequests)) return;
+  
+      const filteredData = allRequests.filter(req => {
+         const reqStatus = req.statusLabel || req.status || "";
+         return reqStatus.includes(status); 
+      });
+  
+      if (filteredData.length === 0) {
+        list.innerHTML = `<div class="text-center p-12 text-gray-400 font-medium bg-white/30 rounded-3xl border border-dashed border-gray-200">لا توجد طلبات في هذا القسم حالياً</div>`;
+        return;
+      }
+  
+      filteredData.forEach(function(req) {
+        list.innerHTML +=`
+          <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex items-center justify-between group hover:shadow-md transition-all duration-300">
+            <div class="flex items-center space-x-reverse space-x-5">
+              <div class="bg-[#96835F]/10 p-4 rounded-2xl">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-bold text-lg text-gray-800">${req.serviceName || req.name || ""}</h3>
+                <p class="text-sm text-gray-500 mt-1">${req.ministryName || ""}</p>
+                <div class="flex items-center mt-3 text-xs text-gray-400">${req.submissionDate || ""}</div>
+              </div>
+            </div>
+            <div class="flex flex-col items-end gap-3">
+              <span class="bg-[#96835F]/20 text-[#8B7D54] px-4 py-1.5 rounded-full text-xs font-bold border border-[#96835F]/30">${req.statusLabel || req.status || ""}</span>
+            </div>
+          </div>
+        ;`
+      });
+    }
+  
+    loadRequests();
+  </script>
+
 </html>
