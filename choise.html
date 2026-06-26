@@ -148,7 +148,9 @@
                  <div class="group bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 text-center cursor-pointer border border-transparent hover:border-[#042522]">
                 <div class="group bg-white p-8 rounded-3xl shadow-sm cursor-pointer" onclick="window.location.href='main.html?id=${ministry.id}'">
                   <div class="bg-[#f8f6f2] w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-[#042522] group-hover:text-white transition">
-                    ${defaultIcon}
+                    ${ministry.logoUrl
+                            ? `<img src="http://egovservices.runasp.net${ministry.logoUrl}" class="w-full h-full object-contain" onerror="this.style.display='none'">`
+                            : defaultIcon}
                   </div>
                   <h3 class="font-bold text-lg group-hover:text-[#96835F]">${ministry.name}</h3>
                 </div>`;
@@ -167,7 +169,7 @@
         const searchBtn = document.getElementById("searchBtn");
         const searchResults = document.getElementById("searchResults");
 
-     
+
 
         async function searchServices() {
             const query = searchInput.value.trim();
@@ -227,16 +229,16 @@
         searchBtn.addEventListener("click", searchServices);
 
         // تفعيل enter
-           searchInput.addEventListener("keypress" , (event)=>{
-            if(event.key === "Enter"){
+        searchInput.addEventListener("keypress", (event) => {
+            if (event.key === "Enter") {
                 searchServices();
             }
         })
 
         // مسح محتوى 
-        searchInput.addEventListener("input" , (event)=>{
-            if(searchInput.value.trim()===""){
-                searchResults.innerHTML=""
+        searchInput.addEventListener("input", (event) => {
+            if (searchInput.value.trim() === "") {
+                searchResults.innerHTML = ""
             }
         })
     </script>
