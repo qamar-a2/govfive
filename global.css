@@ -20,3 +20,37 @@
         #loader.flex {
       display: flex !important; 
 }
+:root{
+     
+    /* الألوان الأساسية */
+    --color-primary: #042522;    
+    --color-light:#0b3d38;     
+    --color-bage:#96835F;     
+    --color-bage2:#B7A577;   
+    --color-border:#2e6b4f;  
+     --green-dark: #0a342d;
+  --green-mid: #1f5a50; 
+    
+    /* ألوان ثانوية إضافية */
+    --color-text: #888;       
+
+}
+.text-gov-primary { 
+     color: #042522 !important;
+ }
+
+.text-gov-gray {
+      color:#888 !important;
+      }
+
+.hover-gov-bage:hover { 
+    color: #96835F !important; 
+}
+
+.bg-gov-primary{
+      background: #042522 !important;
+}
+.bg-gov-primary2{
+      background: #96835F !important;
+}
+.hover-gov-bage:hover { color: #96835F !important; }

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بوابة الخدمات الرقمية</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="global.css">
     <!-- <script src="HTTPS://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.00/css/all.main.css">
      -->
@@ -55,9 +56,9 @@
             <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
                 <div class="photo "><img src="image/١الجمهورية-العربية-السورية-(1).png" alt="" class="w-[250px] "></div>
                 <div class="hidden md:flex space-x-reverse space-x-8 font-bold">
-                    <a href="#" class="text-[#96835F] border-b-2 border-[#96835F] pb-1 ">الرئيسية</a>
-                    <a href="treatment.html" class="hover:text-[#96835F] transition">المعاملات</a>
-                    <a href="prof.html" class="hover:text-[#96835F] transition">الملف الشخصي</a>
+                    <a href="#" class=" text-gov-primary hover-gov-bage  border-b-2 border-[#96835F] pb-1 " >الرئيسية</a>
+                    <a href="treatment.html" class="hover-gov-bage text-gov-primary transition" >المعاملات</a>
+                    <a href="prof.html" class="hover-gov-bage text-gov-primary transition"  >الملف الشخصي</a>
                 </div>
                 <div class="flex items-center gap-3">
                     <a href="index.html"
@@ -105,20 +106,28 @@
 
         <main class="max-w-6xl mx-auto px-4 py-16 ">
             <div class="flex justify-between items-end mb-10">
-                <h2 class="text-2xl font-bold border-r-4 border-[#96835F] pr-4">الجهات الحكومية:</h2>
+                <h2 class="text-2xl text-gov-primary font-bold border-r-4 border-[#96835F] pr-4">الجهات الحكومية:</h2>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6" id="ministries-grid">
             </div>
-
+            
+             <div class="AI absolute size-14 bg-[#042522] left-16 bottom-16 rounded-full border-2 border-[#B7A577] flex items-center justify-center cursor-pointer shadow-lg hover:scale-110 transition-all group" onclick="openChat()"> 
+                <img src="image/AI.jpg" alt="AI" class="size-8 object-cover rounded-full">
+                <div class="absolute left-full ml-4 w-48 bg-white text-[#042522] text-sm font-bold py-2 px-4 rounded-xl shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none ">
+                  اضغط هنا للتحدث مع الذكاء
+                </div>
+            </div>
     </div>
     </main>
     </div>
+    
     <footer class="bg-[#042522] py-8  border-t border-gray-200">
         <div class="max-w-6xl mx-auto px-4 text-center text-gray-500 text-sm">
             &copy; 2026 جميع الحقوق محفوظة - تطوير قمر المهندسة تنسيق فني رونه
         </div>
     </footer>
     <script>
+    
 
 
         //------------- الربط بس جربيه--------------//
@@ -213,7 +222,7 @@
 
 <div class="flex justify-end mt-3">
     <button type="submit" class="submit-btn bg-[#042522] text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-[#063531] transition-all duration-300">
-   إرسال الطلب
+  بدء الخدمة
 </button>
 </div>
   </div>`;
@@ -240,6 +249,9 @@
                 searchResults.innerHTML = ""
             }
         })
+
+
+        // ربط الذكاء مع واجهتو 
     </script>
 
 </body>
