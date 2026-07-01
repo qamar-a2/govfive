@@ -308,7 +308,7 @@
     }
 
     .info-card,
-    .phone-card {
+    .phone-card { 
 
       background: rgba(255, 255, 255, 0.84);
 
@@ -749,16 +749,13 @@
 
         </div>
 
-        <div class="sidebar-link">
-
+        <div class="sidebar-link" id="logout-btn" style="cursor: pointer;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="3" />
             <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
             <path d="M4.93 4.93a10 10 0 0 0 0 14.14" />
           </svg>
-
           تسجيل الخروج
-
         </div>
 
       </div>
@@ -1114,8 +1111,21 @@
         alert("حدث خطأ في الشبكة، يرجى المحاولة لاحقاً");
       }
   }
+//تاكدمن تسجيل خروج 
+// 1. تحديد زر تسجيل الخروج من خلال الـ ID 
+const logoutBtn = document.getElementById('logout-btn');
 
+// 2. الاستماع لحدث الضغط على الزر
+logoutBtn.addEventListener('click', function() {
+    
+    // 3. مسح كل البيانات المخزنة في المتصفح تماماً
+    localStorage.clear();   // يمسح الـ Local Storage
+    sessionStorage.clear(); // يمسح الـ Session Storage (احتياطاً)
 
+    // 4. توجيه المستخدم فوراً إلى صفحة تسجيل الدخول
+    // استبدل 'login.html' بمسار صفحة اللوجن الحقيقي عندك
+    window.location.href = 'index.html'; 
+});
 
 
 

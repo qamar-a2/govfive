@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GovFive - داشبورد الموظف</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #f0ede8; min-height: 100vh; }
+  .tab-active { background: #042522; color: white; }
+  .tab-inactive { background: white; color: #6b7280; }
+  .badge-pending { background: #FEF3C7; color: #92400E; }
+  .badge-review { background: #EDE9FE; color: #5B21B6; }
+  .badge-done { background: #D1FAE5; color: #065F46; }
+  .badge-cancelled { background: #FEE2E2; color: #991B1B; }
+  .card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="bg-[#042522] sticky top-0 z-50 shadow-lg">
+  <div class="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-full bg-[#96835F] flex items-center justify-center text-white font-bold">.</div>
+      <div>
+        <div class="text-white font-bold text-sm" id="user-name">...</div>
+        <div class="text-white/50 text-xs" id="user-role">...</div>
+      </div>
+    </div>
+    <div class="text-[#96835F] font-bold text-lg">GovFive</div>
+  </div>
+</header>
+
+<!-- Stats -->
+<div class="max-w-4xl mx-auto px-4 mt-6 grid grid-cols-3 gap-4 mb-6">
+  <div class="card text-center border-b-4 border-[#042522]">
+    <div class="text-3xl font-bold text-[#042522]" id="stat-total">--</div>
+    <div class="text-gray-500 text-sm mt-1">إجمالي الطلبات</div>
+  </div>
+  <div class="card text-center border-b-4 border-yellow-400">
+    <div class="text-3xl font-bold text-yellow-600" id="stat-pending">--</div>
+    <div class="text-gray-500 text-sm mt-1">قيد التنفيذ</div>
+  </div>
+  <div class="card text-center border-b-4 border-green-400">
+    <div class="text-3xl font-bold text-green-600" id="stat-done">--</div>
+    <div class="text-gray-500 text-sm mt-1">مكتملة</div>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="max-w-4xl mx-auto px-4 mb-4">
+  <div class="flex bg-white p-1 rounded-2xl gap-2 shadow-sm">
+    <button onclick="showTab('requests')" id="btn-requests"
+      class="flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all tab-active">
+      الطلبات
+    </button>
+    <button onclick="showTab('appointments')" id="btn-appointments"
+      class="flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all tab-inactive">
+      المواعيد
+    </button>
+  </div>
+</div>
+
+<!-- Requests Tab -->
+<div id="tab-requests" class="max-w-4xl mx-auto px-4 space-y-3">
+  <div id="requests-list">
+    <div class="text-center text-gray-400 py-10">جاري تحميل الطلبات...</div>
+  </div>
+</div>
+
+<!-- Appointments Tab -->
+<div id="tab-appointments" class="max-w-4xl mx-auto px-4 hidden">
+
+  <!-- Add Slot -->
+  <div class="card mb-4">
+    <h2 class="font-bold text-[#042522] mb-4">إضافة موعد متاح</h2>
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <label class="text-sm text-gray-500 mb-1 block">الخدمة</label>
+        <select id="slot-service" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#042522]">
+          <option value="">اختر الخدمة...</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-sm text-gray-500 mb-1 block">التاريخ والوقت</label>
+        <input type="datetime-local" id="slot-datetime"
+          class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#042522]">
+      </div>
+      <div>
+        <label class="text-sm text-gray-500 mb-1 block">الطاقة الاستيعابية</label>
+        <input type="number" id="slot-capacity" placeholder="عدد المراجعين" min="1"
+          class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#042522]">
+        </div>
+        <div class="flex items-end">
+          <button onclick="addSlot()"
+            class="w-full bg-[#042522] text-white py-2 rounded-xl text-sm font-bold hover:bg-[#042522]/90 transition">
+            إضافة الموعد
+          </button>
+        </div>
+      </div>
+      <div id="slot-msg" class="mt-3 text-sm hidden"></div>
+    </div>
+  
+    <!-- Pending Appointment Reviews -->
+    <div class="card">
+      <h2 class="font-bold text-[#042522] mb-4">طلبات المواعيد - بانتظار المراجعة</h2>
+      <div id="appointments-list">
+        <div class="text-center text-gray-400 py-6">لا توجد طلبات مواعيد حالياً</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal for Request Details -->
+  <div id="modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-md">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-bold text-[#042522] text-lg">تفاصيل الطلب</h3>
+        <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">✕</button>
+      </div>
+      <div id="modal-content"></div>
+      <div class="mt-4 space-y-3">
+        <textarea id="note-input" placeholder="أضف ملاحظة على الطلب..."
+          class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#042522] resize-none" rows="3"></textarea>
+        <div class="grid grid-cols-3 gap-2">
+          <button onclick="updateStatus('approved')"
+            class="bg-green-500 text-white py-2 rounded-xl text-sm font-bold hover:bg-green-600 transition">
+            قبول
+          </button>
+          <button onclick="updateStatus('rejected')"
+            class="bg-red-500 text-white py-2 rounded-xl text-sm font-bold hover:bg-red-600 transition">
+            رفض
+          </button>
+          <button onclick="addNote()"
+            class="bg-[#96835F] text-white py-2 rounded-xl text-sm font-bold hover:bg-[#96835F]/90 transition">
+            إضافة ملاحظة
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const BASE = "http://egovservices.runasp.net";
+    const token = localStorage.getItem("userToken");
+    let currentRequestId = null;
+    let allRequests = [];
+  
+    //user name 
+    async function loadUserInfo() {
+  const res = await fetch(BASE + "/api/Auth/me", {
+    headers: { "Authorization": "Bearer " + token }
+  });
+  const result = await res.json();
+  const user = result.data || result;
+  
+  document.getElementById("user-name").textContent = user.fullName || user.name || "";
+  document.getElementById("user-role").textContent = user.role || "موظف";
+}
+    // Load requests
+    async function loadRequests() {
+      try {
+        const res = await fetch(BASE + "/api/Employee/requests", {
+          headers: { "Authorization": "Bearer " + token }
+        });
+        const result = await res.json();
+        allRequests = result.data || result;
+  
+        // Stats
+        document.getElementById("stat-total").textContent = allRequests.length;
+        document.getElementById("stat-pending").textContent = allRequests.filter(function(r) {
+          return r.status === 0 || r.status === 1;
+        }).length;
+        document.getElementById("stat-done").textContent = allRequests.filter(function(r) {
+          return r.status === 2;
+        }).length;
+  
+        renderRequests(allRequests);
+      } catch (err) {
+        console.error(err);
+        document.getElementById("requests-list").innerHTML =
+          "<div class='text-center text-red-400 py-10'>حدث خطأ في تحميل الطلبات</div>";
+      }
+    }
+  
+    function renderRequests(requests) {
+      const list = document.getElementById("requests-list");
+      if (!requests || requests.length === 0) {
+        list.innerHTML = "<div class='text-center text-gray-400 py-10'>لا توجد طلبات</div>";
+        return;
+      }
+  
+      list.innerHTML = "";
+      requests.forEach(function(req) {
+        const badgeClass = req.status === 0 ? "badge-pending" :
+                           req.status === 1 ? "badge-review" :
+                           req.status === 2 ? "badge-done" : "badge-cancelled";
+        const statusLabel = req.statusLabel || (
+          req.status === 0 ? "بانتظار الموافقة" :
+          req.status === 1 ? "قيد التدقيق" :
+          req.status === 2 ? "مكتملة" : "ملغاة"
+        );
+  
+        list.innerHTML += "<div class='card mb-3 flex items-center justify-between cursor-pointer hover:shadow-md transition' onclick='openModal(\"" + req.id + "\")'>" +"<div class='flex items-center gap-4'>" +
+        "<div class='bg-[#96835F]/10 p-3 rounded-xl'>" +
+        "<svg class='w-7 h-7 text-[#96835F]' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'></path></svg>" +
+        "</div>" +
+        "<div>" +
+        "<h3 class='font-bold text-gray-800'>" + (req.serviceName || req.name || "طلب") + "</h3>" +
+        "<p class='text-sm text-gray-500'>" + (req.userName || req.userFullName || "") + "</p>" +
+        "<p class='text-xs text-gray-400 mt-1'>" + (req.createdAt ? req.createdAt.slice(0,10) : "") + "</p>" +
+        "</div></div>" +
+        "<div class='flex flex-col items-end gap-2'>" +
+        "<span class='" + badgeClass + " px-3 py-1 rounded-full text-xs font-bold'>" + statusLabel + "</span>" +
+        "<svg class='w-5 h-5 text-gray-300' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 5l7 7-7 7'></path></svg>" +
+        "</div></div>";
+    });
+  }
+
+  function openModal(id) {
+    currentRequestId = id;
+    const req = allRequests.find(function(r) { return r.id === id; });
+    if (!req) return;
+
+    document.getElementById("modal-content").innerHTML =
+      "<div class='space-y-2 text-sm'>" +
+      "<div class='flex justify-between'><span class='text-gray-500'>الخدمة:</span><span class='font-bold'>" + (req.serviceName || "") + "</span></div>" +
+      "<div class='flex justify-between'><span class='text-gray-500'>المستخدم:</span><span class='font-bold'>" + (req.userName || req.userFullName || "") + "</span></div>" +
+      "<div class='flex justify-between'><span class='text-gray-500'>التاريخ:</span><span>" + (req.createdAt ? req.createdAt.slice(0,10) : "") + "</span></div>" +
+      "<div class='flex justify-between'><span class='text-gray-500'>الرقم المرجعي:</span><span class='text-xs text-gray-400'>" + req.id + "</span></div>" +
+      "</div>";
+
+    document.getElementById("modal").classList.remove("hidden");
+  }
+
+  function closeModal() {
+    document.getElementById("modal").classList.add("hidden");
+    document.getElementById("note-input").value = "";
+    currentRequestId = null;
+  }
+
+  async function updateStatus(status) {
+    if (!currentRequestId) return;
+    try {
+      const res = await fetch(BASE + "/api/Employee/requests/" + currentRequestId + "/status", {
+        method: "PATCH",
+        headers: {
+          "Authorization": "Bearer " + token,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ status: status })
+      });
+      if (res.ok) {
+        closeModal();
+        loadRequests();
+      }
+    } catch (err) { console.error(err); }
+  }
+
+  async function addNote() {
+    if (!currentRequestId) return;
+    const note = document.getElementById("note-input").value.trim();
+    if (!note) return;
+    try {
+      await fetch(BASE + "/api/Employee/requests/" + currentRequestId + "/note", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + token,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ note: note })
+      });
+      document.getElementById("note-input").value = "";
+      alert("تمت إضافة الملاحظة");
+    } catch (err) { console.error(err); }
+  }
+
+  async function addSlot() {
+    const serviceId = document.getElementById("slot-service").value;
+    const datetime = document.getElementById("slot-datetime").value;
+    const capacity = document.getElementById("slot-capacity").value;
+    const msg = document.getElementById("slot-msg");
+
+    if (!datetime || !capacity) {
+      msg.textContent = "يرجى تعبئة جميع الحقول";
+      msg.className = "mt-3 text-sm text-red-500";
+      msg.classList.remove("hidden");
+      return;
+    }
+    try {
+      const res = await fetch(BASE + "/api/Appointments/slots", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + token,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          serviceId: serviceId,
+          slotTime: datetime,
+          capacity: parseInt(capacity)
+        })
+      });
+      if (res.ok) {
+        msg.textContent = "تمت إضافة الموعد بنجاح";
+        msg.className = "mt-3 text-sm text-green-500";
+        msg.classList.remove("hidden");
+        document.getElementById("slot-datetime").value = "";
+        document.getElementById("slot-capacity").value = "";
+      }
+    } catch (err) { console.error(err); }
+  }
+
+  function showTab(tab) {
+    document.getElementById("tab-requests").classList.add("hidden");
+    document.getElementById("tab-appointments").classList.add("hidden");
+    document.getElementById("btn-requests").className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all tab-inactive";
+    document.getElementById("btn-appointments").className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all tab-inactive";
+
+    document.getElementById("tab-" + tab).classList.remove("hidden");
+    document.getElementById("btn-" + tab).className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all tab-active";
+  }
+
+  loadRequests();
+</script>
+</body>
+</html>
