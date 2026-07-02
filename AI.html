@@ -39,14 +39,22 @@
 
         <div class="relative flex items-center">
             <div class="w-7 h-7 bg-black absolute items-center justify-center rounded-full left-2 ">
-                 <i class="fa-solid fa-paper-plane absolute  top-[20%]  left-[50%] -translate-x-1/2 text-gov-gray text-xs "></i>
+                 <i class="fa-solid fa-paper-plane absolute  top-[20%]  left-[50%] -translate-x-1/2 text-gov-bage text-xs "></i>
             </div>
     
             <input type="text" placeholder="اكتب سؤالك هنا" class="w-full bg-gray-50 rounded-xl p-3 pl-10 outline-none text-sm text-right">
-        </div>
-        
-        
+        </div>              
     </div>
 </div>
+<script>
+    // function closeChat(){
+    //     window.parent.document.getElementById("div-Ai").classList.add("hidden")
+    // }
+    function closeChat(){
+   const div_Ai= window.parent.document.getElementById("div-Ai")
+     div_Ai.classList.remove("flex")
+    div_Ai.classList.add("hidden")
+}
+</script>
 </body>
 </html>
