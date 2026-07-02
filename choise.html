@@ -59,7 +59,7 @@
                     <a href="treatment.html" class="hover:text-[#96835F] transition">المعاملات</a>
                     <a href="prof.html" class="hover:text-[#96835F] transition">الملف الشخصي</a>
                 </div>
-                <div class="flex items-center gap-3">
+                <div class=" items-center gap-4 " id="btnMenu1">
                     <a href="index.html"
                         class="bg-[#042522] text-white pl-5 pr-10 py-2 rounded-2xl hover:bg-opacity-90 transition relative">
                         <i class="fa-regular fa-user absolute right-3 top-1/2 -translate-y-1/2 text-sm"></i>
@@ -72,7 +72,22 @@
                         <span>إنشاء حساب</span>
                     </a>
                 </div>
+
+                   <div class=" items-center gap-3 hidden" id="btnMenu2">
+                    <a href="index.html"
+                        class="bg-[#042522] text-white pl-5 pr-10 py-2 rounded-2xl hover:bg-opacity-90 transition relative" onclick="logout()">
+                        <i class="fa-solid fa-right-from-bracket absolute right-3 top-1/2 -translate-y-1/2 text-sm"></i>
+                        <span>تسجيل خروج</span>
+                    </a>
+
+                    <a href="prof.html" target="_blank" 
+                        class="bg-[#042522] text-white w-10 h-10 rounded-full hover:bg-opacity-90 transition relative flex items-center justify-center">
+                        <span id="span-prof bold" > </span>
+                    </a>
+                </div>
             </div>
+
+            
         </nav>
 
         <header class="max-w-6xl mx-auto px-4 mt-8">
@@ -109,15 +124,25 @@
             </div>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6" id="ministries-grid">
             </div>
-
+            
+            
     </div>
     </main>
     </div>
     <footer class="bg-[#042522] py-8  border-t border-gray-200">
+        <!-- ايقونة الذكاء -->
+            <div id="icon-ai" class="AI absolute size-14 bg-[#042522] left-16 bottom-2 rounded-full border-2 border-[#B7A577] flex items-center justify-center cursor-pointer shadow-lg hover:scale-110 transition-all group" onclick="openChat()"> 
+                <img src="image/AI.jpg" alt="AI" class="size-8 object-cover rounded-full">
+                <div class="absolute left-full ml-4 w-48 bg-white text-[#042522] text-sm font-bold py-2 px-4 rounded-xl shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none ">
+                  اضغط هنا للتحدث مع الذكاء
+                </div>
+            </div>
+            <!-- footer -->
         <div class="max-w-6xl mx-auto px-4 text-center text-gray-500 text-sm">
             &copy; 2026 جميع الحقوق محفوظة - تطوير قمر المهندسة تنسيق فني رونه
         </div>
     </footer>
+  
     <script>
 
 
@@ -241,7 +266,53 @@
                 searchResults.innerHTML = ""
             }
         })
+// ربط الذكاء مع واجهتو 
+function openChat(){
+    const div_Ai=document.getElementById("div-Ai")
+     div_Ai.classList.remove("hidden")
+    div_Ai.classList.add("flex")
+}
+
+  const ai=document.getElementById("icon-ai")
+  ai.addEventListener("click" ,openChat)          
+  
+//   ربط زر الايقونة مع اول حرف
+const span_prof = document.getElementById("span-prof");
+const savedEmail = localStorage.getItem("userEmail");
+if (savedEmail) {
+    const first_char = savedEmail.charAt(0).toUpperCase();
+    span_prof.innerHTML = first_char;
+}
+// تزبيط الازرار وظهورها
+document.addEventListener('DOMContentLoaded' ,function(){
+    const btnMenu1=document.getElementById("btnMenu1")
+    const btnMenu2=document.getElementById("btnMenu2")
+    const token = localStorage.getItem("userToken");
+    if(token){
+       btnMenu1.classList.add("hidden");
+        btnMenu2.classList.remove("hidden");
+        btnMenu2.classList.add("flex");
+    }
+    else{
+       btnMenu1.classList.remove("hidden");
+        btnMenu1.classList.add("flex"); 
+        btnMenu2.classList.add("hidden");
+    }
+})
+function logout(){
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("userEmail");
+    window.location.href = "index.html"; // العودة للصفحة الرئيسية
+
+}
+               
     </script>
+    <!-- ديف يلي رح يكون حاوي لواجهة الذكاء -->
+     <div class="fixed inset-0 z-50  items-center justify-center  hidden" id="div-Ai">
+        <iframe src="AI.html" frameborder="0" class="w-full h-full rounded-lg"></iframe>
+     </div>
+     
+    
 
 </body>
 

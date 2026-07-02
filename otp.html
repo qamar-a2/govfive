@@ -270,9 +270,13 @@ const otpform=document.getElementById("otp-form")
 
             if(response.ok){
                 showToast("تم تفعيل حسابك بنجاح! يمكنك الآن تسجيل الدخول.");
-                localStorage.removeItem("tempemail")
-                localStorage.removeItem("tempNationalNumber")
-
+       
+                 const finalEmail = localStorage.getItem('tempemail');     
+                localStorage.setItem('userEmail', finalEmail);
+         
+               localStorage.removeItem("tempNationalNumber");
+                 localStorage.removeItem("tempPhone");
+              localStorage.removeItem("tempPassword");
                 window.location.href="choise.html"
             }
               else {
