@@ -37,9 +37,11 @@
 
     .form-card {
       background-image: url(image/شعار.png);
-      background-size: cover;
+      background-size: contain;
       background-position: center;
+      background-repeat: no-repeat;
     }
+
 
     .service-title {
       font-size: 30px;
@@ -188,45 +190,47 @@
     <div class="form-card">
       <form id="dynamic-form" novalidate>
         <div class="form-grid" id="form-fields"></div>
-        <button type="submit" class="submit-btn">إرسال الطلب</button>
+        <button class="submit-btn" onclick="submitServiceRequest(event)">إرسال الطلب</button>
       </form>
     </div>
   </div>
-  
+
   <script>
     //--------------هون الربط---------------/
     const params = new URLSearchParams(window.location.search);
     const serviceId = params.get("id");
     const token = localStorage.getItem("userToken");
     const BASE = "http://egovservices.runasp.net";
-  
+
     async function loadServiceSchema() {
       if (!serviceId) return;
-  
+
       try {
         const res = await fetch(BASE + "/api/Services/" + serviceId + "/schema", {
           headers: { "Authorization": "Bearer " + token }
         });
         const result = await res.json();
         const schema = result.data || result;
-  
+
         document.getElementById("service-info").innerHTML =
           "<h2>" + schema.serviceName + "</h2>" +
           "<p>" + schema.description + "</p>" +
           "<p>المتطلبات: " + schema.requirements + "</p>" +
           "<p>الرسوم: " + schema.serviceFee + " ل.س</p>" +
           "<span>" + schema.serviceTypeLabel + "</span>";
-  
+
         const formFields = document.getElementById("form-fields");
         formFields.innerHTML = "";
-  
-        schema.fields.forEach(function(field) {
+        if (schema.branches && schema.branches.length > 0) {
+          formFields.innerHTML += `<div class="field-wrapper"><label>اختر الفرع</label><select id="branch-select" name="branchId" required><option value="">اختر الفرع...</option>${schema.branches.map(b => `<option value="${b.id}">${b.name}</option>`).join("")}</select></div>`;
+        }
+        schema.fields.forEach(function (field) {
           let inputHTML = "";
-  
+
           if (field.type === "select" && field.options) {
             inputHTML = "<select name='" + field.name + "' " + (field.required ? "required" : "") + ">";
             inputHTML += "<option value=''>اختر...</option>";
-            field.options.forEach(function(o) {
+            field.options.forEach(function (o) {
               inputHTML += "<option value='" + o.value + "'>" + o.label + "</option>";
             });
             inputHTML += "</select>";
@@ -235,15 +239,74 @@
           } else {
             inputHTML = "<input type='" + field.type + "' name='" + field.name + "' placeholder='" + field.label + "' " + (field.required ? "required" : "") + ">";
           }
-  
+
           formFields.innerHTML += "<div class='field-wrapper'><label>" + field.label + "</label>" + inputHTML + "</div>";
         });
-  
+
       } catch (err) {
         console.error(err);
       }
-  
+
     }
+    //ربط ارسال الطلب ويعطي اشعا---------------------ر------------------------------------/ 
+    async function submitServiceRequest(event) {
+      if (event) event.preventDefault();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const currentServiceId = urlParams.get('id');
+
+
+      const dynamicFields = {};
+      const inputs = document.querySelectorAll("#form-fields input, #form-fields select, #form-fields textarea");
+
+      inputs.forEach(input => {
+        if (input.name) {
+          dynamicFields[input.name] = input.value;
+        }
+      });
+
+      const branchSelect = document.getElementById("branch-select");
+      if (branchSelect && branchSelect.value) {
+        dynamicFields["branchId"] = branchSelect.value;
+      }
+
+      const payload = {
+        serviceId: currentServiceId,
+        formData: dynamicFields
+      };
+
+      try {
+        const res = await fetch(BASE + "/api/Services/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          alert("تم إرسال الطلب بنجاح! 🎉");
+          return;
+        }
+
+        const result = await res.json();
+        alert("فشل إرسال الطلب: " + (result.message || "تأكد من الحقول المطلوبة"));
+
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        alert("حدث خطأ أثناء الاتصال بالسيرفر.");
+      }
+    }
+
+    // الربط التلقائي لحماية الزر الكحلي الأصلي مشان مايخرب الشكل
+    document.addEventListener("DOMContentLoaded", function () {
+      const myButton = document.querySelector(".submit-btn") || document.querySelector(".start-btn");
+      if (myButton) {
+        myButton.type = "button";
+        myButton.addEventListener("click", submitServiceRequest);
+      }
+    });
     loadServiceSchema();
   </script>
 
