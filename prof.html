@@ -734,16 +734,13 @@
 
         </div>
 
-        <div class="sidebar-link">
-
+        <a href="Treatment.html" class="sidebar-link" style="text-decoration: none;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="4" width="18" height="16" rx="2" />
-            <path d="M3 10h18" />
+              <rect x="3" y="4" width="18" height="16" rx="2" />
+              <path d="M3 10h18" />
           </svg>
-
           طلباتي
-
-        </div>
+      </a>
 
         <div class="sidebar-link" id="logout-btn" style="cursor: pointer;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1119,7 +1116,6 @@ logoutBtn.addEventListener('click', function() {
     sessionStorage.clear(); // يمسح الـ Session Storage (احتياطاً)
 
     // 4. توجيه المستخدم فوراً إلى صفحة تسجيل الدخول
-    // استبدل 'login.html' بمسار صفحة اللوجن الحقيقي عندك
     window.location.href = 'index.html'; 
 });
 

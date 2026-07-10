@@ -174,7 +174,7 @@
                 <div class="group bg-white p-8 rounded-3xl shadow-sm cursor-pointer" onclick="window.location.href='main.html?id=${ministry.id}'">
                   <div class="bg-[#f8f6f2] w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-[#042522] group-hover:text-white transition">
                     ${ministry.logoUrl
-                            ? `<img src="http://egovservices.runasp.net${ministry.logoUrl}" class="w-full h-full object-contain" onerror="this.style.display='none'">`
+                            ? `<img src="http://egovservices.runasp.net${ministry.logoUrl}" class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-125 group-hover:mix-blend-screen" onerror="this.style.display='none'">`
                             : defaultIcon}
                   </div>
                   <h3 class="font-bold text-lg group-hover:text-[#96835F]">${ministry.name}</h3>
@@ -237,8 +237,8 @@
     </div>
 
 <div class="flex justify-end mt-3">
-      <button class="bg-[#042522] text-white px-5 py-2 rounded-xl text-sm hover:scale-105 transition"
-              onclick="startService(${item.id})">
+    <button class="bg-[#042522] text-white px-5 py-2 rounded-xl text-sm hover:scale-105 transition"
+              onclick="startService('${item.id}')">
         بدء الخدمة
       </button>
     </div>
@@ -250,8 +250,14 @@
                 console.error(err);
             }
         }
-
+        //ربط زر البحث بواجهتوو  جواز او قيد 
+        function startService(id) {
+    window.location.href = "service.html?id=" + id;
+}
+     
         searchBtn.addEventListener("click", searchServices);
+
+        
 
         // تفعيل enter
         searchInput.addEventListener("keypress", (event) => {
