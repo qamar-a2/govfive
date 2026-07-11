@@ -155,7 +155,6 @@
 
         if (result.success === true) {
             localStorage.setItem('userToken', result.data.token);
-            localStorage.setItem('userEmail', userEmailFromInput);
             window.location.href = "choise.html";
         } else {
             showToast(result.message || "حدث خطأ غير متوقع", "error");

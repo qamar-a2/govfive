@@ -13,10 +13,10 @@
     :root {
       --bg: #042522;
       --bg-soft: #0a0c0b;
-      --surface: #13291e;
+      --surface: #042522;
       --surface-2: #1b3526;
       --border: #28473a;
-      --gold: #c8a05c;
+      --gold: #96835F;
       --gold-light: #ddc18b;
       --text: #f2efe6;
       --text-muted: #8fa89b;
@@ -126,7 +126,7 @@
       height: 84px;
       border-radius: 20px;
       flex-shrink: 0;
-      background: radial-gradient(circle at 35% 30%, #1e4230, var(--bg-soft));
+      background: radial-gradient(circle at 35% 30%, #042522, var(--bg-soft));
       display: flex;
       align-items: center;
       justify-content: center;
@@ -142,7 +142,7 @@
 
     .stat-card {
       width: 140px;
-      background: var(--surface);
+      background: var( --gold);
       border-radius: var(--radius-md);
       padding: 16px 10px;
       text-align: center;
@@ -154,11 +154,12 @@
       font-size: 24px;
       font-weight: 800;
       margin-bottom: 3px;
+      color: #042522;
     }
 
     .stat-card .label {
       font-size: 13px;
-      color: var(--text-muted);
+      color: var(--surface);
     }
 
     /* Tabs */
@@ -242,8 +243,8 @@
     }
 
     .badge {
-      background: var(--badge-bg);
-      color: var(--badge-text);
+      background: var(--gold);
+      color: var(--surface);
       font-size: 12px;
       font-weight: 700;
       padding: 7px 12px;
@@ -257,7 +258,7 @@
       width: 42px;
       height: 42px;
       border-radius: 12px;
-      background: var(--surface-2);
+      background: var(--gold);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -362,8 +363,8 @@
     }
 
     .city-tag {
-      background: var(--badge-bg);
-      color: var(--badge-text);
+      background: var(--gold);
+      color: var(--surface);
       font-size: 11px;
       padding: 4px 10px;
       border-radius: 8px;
@@ -411,7 +412,7 @@
     }
 
     .branch-phone {
-      background: var(--surface-2);
+      background: rgba(255,255,255,0.05);;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       padding: 12px 16px;
@@ -445,13 +446,14 @@
 <body>
   <div class="page">
     <header class="top-bar">
-      <button class="icon-btn" aria-label="إغلاق">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-          stroke-linecap="round">
-          <line x1="5" y1="5" x2="19" y2="19" />
-          <line x1="19" y1="5" x2="5" y2="19" />
-        </svg>
-      </button>
+      <a href="choise.html">
+        <button class="icon-btn" aria-label="إغلاق" id="iconclose">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">
+                <line x1="5" y1="5" x2="19" y2="19" />
+                <line x1="19" y1="5" x2="5" y2="19" />
+            </svg>
+        </button>
+    </a>
     </header>
 
     <div class="hero">
@@ -638,6 +640,11 @@
 
     loadMinistryData();
     showTab('services');
+
+ 
+      
+    
+
   </script>
 </body>
 

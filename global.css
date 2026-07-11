@@ -57,3 +57,24 @@
       background: #96835F !important;
 }
 .hover-gov-bage:hover { color: #96835F !important; }
+/*underline*/
+.hover-underline {
+  position: relative;
+}
+.hover-underline:after{
+  content: "";
+  position: absolute;
+  display: block;
+  height: 2px;
+  background-color: #96835F;
+  transition: width 0.3s ease-in;
+  margin: 0 auto;
+  left: 50%;
+  width: 0;
+  bottom: 0;
+  transform: translateX(-50%);
+  z-index: 20;
+}
+.hover-underline:hover::after{
+  width: 100%;
+}
