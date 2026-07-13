@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>نموذج الخدمة</title>
+  <link rel="stylesheet" href="global.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #EFEBE3;
+      color: #042522;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .service-card,
+    .form-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+      margin-bottom: 32px;
+    }
+
+    .form-card {
+      background-image: url(image/شعار.png);
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+
+    .service-title {
+      font-size: 30px;
+      font-weight: bold;
+      color: #96835F;
+      margin-bottom: 8px;
+    }
+
+    .service-desc {
+      font-size: 15px;
+      color: #042522;
+      /* opacity: 0.8; */
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .service-meta span {
+      font-size: 14px;
+      color: #96835F;
+      font-weight: 600;
+    }
+
+    .service-meta {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .field-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-wrapper.full-width {
+      grid-column: span 2;
+    }
+
+    .field-wrapper select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-size: 16px 16px;
+      background-position: left 12px center;
+      /* هاد الرقم زودو لتحرك السهم يمين */
+      padding-left: 32px;
+      /* خليه أكبر من background-position عشان النص ما يتراكب مع السهم */
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #042522;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.2px solid #ccc;
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      background: #fff;
+      color: #042522;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    /* فوكس أخضر */
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #2e6b4f;
+      box-shadow:
+        0 0 0 4px rgba(150, 129, 96, 0.09);
+    }
+
+    .submit-btn {
+      margin-top: 28px;
+      width: 100%;
+      padding: 14px;
+      background: #042522;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .submit-btn:hover {
+      opacity: 0.9;
+    }
+
+    .file-picker {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1.2px solid #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .file-picker:hover {
+      border-color: #2e6b4f;
+    }
+
+    .file-picker.selected {
+      border-color: #2e6b4f;
+    }
+
+    .file-picker-icon {
+      color: #042522;
+      font-size: 20px;
+    }
+
+    .help-text {
+      font-size: 12px;
+      color: #555;
+    }
+
+    .error-text {
+      font-size: 12px;
+      color: red;
+      display: none;
+    }
+
+    .error-text.visible {
+      display: block;
+    }
+
+    @media (max-width: 600px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field-wrapper.full-width {
+        grid-column: span 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="service-card" id="service-info"></div>
+
+    <div class="form-card">
+      <form id="dynamic-form" novalidate>
+        <div class="form-grid" id="form-fields"></div>
+        <button class="submit-btn" onclick="submitServiceRequest(event)">إرسال الطلب</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    //--------------هون الربط---------------/
+    const params = new URLSearchParams(window.location.search);
+    const serviceId = params.get("id");
+    const token = localStorage.getItem("userToken");
+    const BASE = "http://egovservices.runasp.net";
+
+    async function loadServiceSchema() {
+      if (!serviceId) return;
+
+      try {
+        const res = await fetch(BASE + "/api/Services/" + serviceId + "/schema", {
+          headers: { "Authorization": "Bearer " + token }
+        });
+        const result = await res.json();
+        const schema = result.data || result;
+
+        document.getElementById("service-info").innerHTML =
+          "<h2>" + schema.serviceName + "</h2>" +
+          "<p>" + schema.description + "</p>" +
+          "<p>المتطلبات: " + schema.requirements + "</p>" +
+          "<p>الرسوم: " + schema.serviceFee + " ل.س</p>" +
+          "<span>" + schema.serviceTypeLabel + "</span>";
+
+        const formFields = document.getElementById("form-fields");
+        formFields.innerHTML = "";
+        if (schema.branches && schema.branches.length > 0) {
+          formFields.innerHTML += `<div class="field-wrapper"><label>اختر الفرع</label><select id="branch-select" name="branchId" required><option value="">اختر الفرع...</option>${schema.branches.map(b => `<option value="${b.id}">${b.name}</option>`).join("")}</select></div>`;
+        }
+        schema.fields.forEach(function (field) {
+          let inputHTML = "";
+
+          if (field.type === "select" && field.options) {
+            inputHTML = "<select name='" + field.name + "' " + (field.required ? "required" : "") + ">";
+            inputHTML += "<option value=''>اختر...</option>";
+            field.options.forEach(function (o) {
+              inputHTML += "<option value='" + o.value + "'>" + o.label + "</option>";
+            });
+            inputHTML += "</select>";
+          } else if (field.type === "textarea") {
+            inputHTML = "<textarea name='" + field.name + "' placeholder='" + field.label + "' " + (field.required ? "required" : "") + "></textarea>";
+          } else {
+            inputHTML = "<input type='" + field.type + "' name='" + field.name + "' placeholder='" + field.label + "' " + (field.required ? "required" : "") + ">";
+          }
+
+          formFields.innerHTML += "<div class='field-wrapper'><label>" + field.label + "</label>" + inputHTML + "</div>";
+        });
+
+      } catch (err) {
+        console.error(err);
+      }
+
+    }
+    //ربط ارسال الطلب ويعطي اشعا---------------------ر------------------------------------/ 
+    async function submitServiceRequest(event) {
+      if (event) event.preventDefault();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const currentServiceId = urlParams.get('id');
+
+
+      const dynamicFields = {};
+      const inputs = document.querySelectorAll("#form-fields input, #form-fields select, #form-fields textarea");
+
+      inputs.forEach(input => {
+        if (input.name) {
+          dynamicFields[input.name] = input.value;
+        }
+      });
+
+      const branchSelect = document.getElementById("branch-select");
+      if (branchSelect && branchSelect.value) {
+        dynamicFields["branchId"] = branchSelect.value;
+      }
+
+      const payload = {
+        serviceId: currentServiceId,
+        formData: dynamicFields
+      };
+
+      try {
+        const res = await fetch(BASE + "/api/Services/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          alert("تم إرسال الطلب بنجاح! 🎉");
+          return;
+        }
+
+        const result = await res.json();
+        alert("فشل إرسال الطلب: " + (result.message || "تأكد من الحقول المطلوبة"));
+
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        alert("حدث خطأ أثناء الاتصال بالسيرفر.");
+      }
+    }
+
+    // الربط التلقائي لحماية الزر الكحلي الأصلي مشان مايخرب الشكل
+    document.addEventListener("DOMContentLoaded", function () {
+      const myButton = document.querySelector(".submit-btn") || document.querySelector(".start-btn");
+      if (myButton) {
+        myButton.type = "button";
+        myButton.addEventListener("click", submitServiceRequest);
+      }
+    });
+    loadServiceSchema();
+  </script>
+
+</body>
+
+</html>

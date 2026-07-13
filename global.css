@@ -1,0 +1,80 @@
+@font-face {
+            font-family: 'Qomra';
+            src: url('./fonts/itfQomraArabic-Regular.woff2') format('woff2'),
+                 url('./fonts/itfQomraArabic-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+      
+        @font-face {
+            font-family: 'Qomra';
+            src: url('./fonts/itfQomraArabic-Bold.woff2') format('woff2'),
+                 url('./fonts/itfQomraArabic-Bold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+        body{
+          font-family: 'Qomra', sans-serif !important;
+        }
+        #loader.flex {
+      display: flex !important; 
+}
+:root{
+     
+    /* الألوان الأساسية */
+    --color-primary: #042522;    
+    --color-light:#0b3d38;     
+    --color-bage:#96835F;     
+    --color-bage2:#B7A577;   
+    --color-border:#2e6b4f;  
+     --green-dark: #0a342d;
+  --green-mid: #1f5a50; 
+    
+    /* ألوان ثانوية إضافية */
+    --color-text: #888;       
+
+}
+.text-gov-primary { 
+     color: #042522 !important;
+ }
+ .text-gov-bage{
+    color: #96835F !important; 
+ }
+
+.text-gov-gray {
+      color:#888 !important;
+      }
+
+.hover-gov-bage:hover { 
+    color: #96835F !important; 
+}
+
+.bg-gov-primary{
+      background: #042522 !important;
+}
+.bg-gov-primary2{
+      background: #96835F !important;
+}
+.hover-gov-bage:hover { color: #96835F !important; }
+/*underline*/
+.hover-underline {
+  position: relative;
+}
+.hover-underline:after{
+  content: "";
+  position: absolute;
+  display: block;
+  height: 2px;
+  background-color: #96835F;
+  transition: width 0.3s ease-in;
+  margin: 0 auto;
+  left: 50%;
+  width: 0;
+  bottom: 0;
+  transform: translateX(-50%);
+  z-index: 20;
+}
+.hover-underline:hover::after{
+  width: 100%;
+}
