@@ -203,7 +203,7 @@
     <div class="form-card">
       <form id="dynamic-form" novalidate>
         <div class="form-grid" id="form-fields"></div>
-        <button class="submit-btn" onclick="submitServiceRequest(event)">إرسال الطلب</button>
+        <button class="submit-btn" >إرسال الطلب</button>
       </form>
     </div>
   </div>
@@ -213,6 +213,7 @@
     const params = new URLSearchParams(window.location.search);
     const serviceId = params.get("id");
     const token = localStorage.getItem("userToken");
+    let currentServiceType = null;//خزنا nullمشان نوع الخدمه وشرط الملف 
     const BASE = "http://egovservices.runasp.net";
 
     async function loadServiceSchema() {
@@ -224,7 +225,7 @@
         });
         const result = await res.json();
         const schema = result.data || result;
-
+        currentServiceType = schema.serviceType;//هون رجعت النوع للخدمة اذا بدا حضور مشان الملف
         document.getElementById("service-info").innerHTML =
           "<h2>" + schema.serviceName + "</h2>" +
           "<p>" + schema.description + "</p>" +
@@ -261,13 +262,12 @@
       }
 
     }
-    //ربط ارسال الطلب ويعطي اشعا---------------------ر------------------------------------/ 
+    //ربط ارسال الطلب ويعطي اشعار ويرجع ملف -------------ر-//
     async function submitServiceRequest(event) {
       if (event) event.preventDefault();
 
       const urlParams = new URLSearchParams(window.location.search);
       const currentServiceId = urlParams.get('id');
-
 
       const dynamicFields = {};
       const inputs = document.querySelectorAll("#form-fields input, #form-fields select, #form-fields textarea");
@@ -298,17 +298,67 @@
           body: JSON.stringify(payload)
         });
 
-        if (res.ok) {
-          alert("تم إرسال الطلب بنجاح! 🎉");
+        const result = await res.json();
+
+        if (!res.ok || !result.success) {
+          alert("فشل إرسال الطلب: " + (result.message || "تأكد من الحقول المطلوبة"));
           return;
         }
 
-        const result = await res.json();
-        alert("فشل إرسال الطلب: " + (result.message || "تأكد من الحقول المطلوبة"));
+        const requestId = result.data.requestId;
+        alert(result.data.message || "تم إرسال الطلب بنجاح! 🎉");
+
+        if (currentServiceType === 0) {
+          await processAndDownloadDocument(requestId);
+        }
 
       } catch (error) {
         console.error("Error submitting form:", error);
         alert("حدث خطأ أثناء الاتصال بالسيرفر.");
+      }
+    }
+////تجهيز تنزيل الملف هوون بلش ------------/
+    async function processAndDownloadDocument(requestId) {
+      try {
+        const processRes = await fetch(BASE + "/api/documents/process/" + requestId, {
+          method: "POST",
+          headers: {
+            "Authorization": "Bearer " + token
+          }
+        });
+
+        const processResult = await processRes.json();
+
+        if (!processRes.ok || !processResult.success || processResult.data.status !== "Completed") {
+          alert("تعذر تجهيز الوثيقة: " + (processResult.data ? processResult.data.resultMessage : "خطأ غير معروف"));
+          return;
+        }
+
+        const downloadRes = await fetch(BASE + "/api/documents/download/" + requestId, {
+          method: "GET",
+          headers: {
+            "Authorization": "Bearer " + token
+          }
+        });
+
+        if (!downloadRes.ok) {
+          alert("تعذر تحميل الملف.");
+          return;
+        }
+
+        const blob = await downloadRes.blob();//يروح يجيب الملف هو نوع بلوب 
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = downloadUrl;
+        link.download = "document.pdf";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(downloadUrl);
+
+      } catch (error) {
+        console.error("Error processing/downloading document:", error);
+        alert("حدث خطأ أثناء تجهيز أو تحميل الوثيقة.");
       }
     }
 
