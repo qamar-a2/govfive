@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محفظتك | GovFive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background: #F6F4EE;
+        }
+
+        .brand-green {
+            background-color: #0E3B2E;
+        }
+
+        .brand-green-2 {
+            background-color: #124A38;
+        }
+
+        .gold {
+            color: #C9A227;
+        }
+
+        .gold-bg {
+            background-color: #C9A227;
+        }
+
+        .gold-border {
+            border-color: #C9A227;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #0E3B2E 0%, #163F30 55%, #0A2E23 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle at 90% 10%, rgba(201, 162, 39, 0.18), transparent 55%);
+            pointer-events: none;
+        }
+
+        .chip {
+            transition: transform .12s ease, background-color .15s ease;
+        }
+
+        .chip:active {
+            transform: scale(0.96);
+        }
+
+        .charge-btn {
+            transition: transform .12s ease, box-shadow .15s ease;
+        }
+
+        .charge-btn:hover {
+            box-shadow: 0 8px 24px rgba(14, 59, 46, 0.28);
+        }
+
+        .charge-btn:active {
+            transform: scale(0.985);
+        }
+
+        .tx-row {
+            border-bottom: 1px solid #E7E2D5;
+        }
+
+        .tx-row:last-child {
+            border-bottom: none;
+        }
+
+        .skel {
+            background: linear-gradient(90deg, #EFEAE0 25%, #E4DECF 37%, #EFEAE0 63%);
+            background-size: 400% 100%;
+            animation: shimmer 1.4s ease infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0 50%;
+            }
+        }
+
+        #modalOverlay {
+            background: rgba(10, 25, 20, 0.55);
+            backdrop-filter: blur(2px);
+        }
+
+        #modalBox {
+            animation: pop .18s ease-out;
+        }
+
+        @keyframes pop {
+            from {
+                transform: scale(0.92);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <!-- Page title strip -->
+    <div class="border-b border-[#EDE7D9] bg-white">
+        <div class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between gap-6">
+
+
+            <div>
+                <p class="gold text-xs font-bold tracking-wide mb-1">إدارة الحساب</p>
+                <h1 class="text-xl md:text-2xl font-black text-[#0E3B2E]">محفظتك الالكترونية</h1>
+                <p class="text-gray-400 text-xs md:text-sm mt-1">تابع رصيدك, اشحن محفظتك، وراجع كل عملياتك بمكان واحد
+                </p>
+            </div>
+
+            <a href="choise.html"
+                class="bg-[#042522] hover:bg-[#063a35] text-white text-[11px] font-medium px-3 py-1.5 rounded-full transition-all duration-200 shadow-sm shrink-0">
+                العودة للرئيسية
+            </a>
+
+        </div>
+    </div>
+
+    <main class="max-w-6xl mx-auto px-6 py-8 pb-16 grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
+
+        <!-- Right column: balance + top up -->
+        <div class="lg:col-span-2 flex flex-col gap-6">
+
+            <!-- Balance card -->
+            <section class="balance-card rounded-2xl p-6 text-white shadow-lg">
+                <p class="text-white/70 text-sm mb-1">الرصيد الحالي</p>
+                <div id="balanceWrap" class="flex items-baseline gap-2 mb-4">
+                    <span id="balanceValue"
+                        class="text-4xl font-black skel rounded-lg inline-block w-28 h-9">&nbsp;</span>
+                    <span id="currencyLabel" class="gold text-lg font-bold"></span>
+                </div>
+                <div class="flex items-center justify-between text-xs text-white/60 border-t border-white/10 pt-3">
+                    <span>آخر تحديث</span>
+                    <span id="lastUpdated">—</span>
+                </div>
+            </section>
+
+            <!-- Top up -->
+            <section class="bg-white rounded-2xl p-6 shadow-sm border border-[#EDE7D9]">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="w-1 h-5 gold-bg rounded-full"></span>
+                    <h2 class="font-bold text-[#0E3B2E]">شحن الرصيد</h2>
+                </div>
+
+                <label for="amountInput" class="text-xs text-gray-500 mb-1 block">أدخل المبلغ المطلوب</label>
+                <div
+                    class="flex items-center bg-[#F6F4EE] rounded-xl px-4 py-3 mb-4 border border-transparent focus-within:border-[#C9A227] transition">
+                    <input id="amountInput" type="number" min="0" step="0.01" placeholder="0.00"
+                        class="bg-transparent w-full outline-none text-lg font-semibold text-[#0E3B2E]">
+                    <span class="text-gray-400 font-medium" id="inputCurrencyLabel">ل.س</span>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3 mb-5">
+                    <button type="button"
+                        class="chip amount-chip brand-green text-white rounded-xl py-3 font-bold hover:brand-green-2"
+                        data-amount="50">50</button>
+                    <button type="button"
+                        class="chip amount-chip brand-green text-white rounded-xl py-3 font-bold hover:brand-green-2"
+                        data-amount="100">100</button>
+                    <button type="button"
+                        class="chip amount-chip brand-green text-white rounded-xl py-3 font-bold hover:brand-green-2"
+                        data-amount="500">500</button>
+                </div>
+
+                <button id="chargeBtn"
+                    class="charge-btn w-full gold-bg text-[#0E3B2E] font-black py-3.5 rounded-xl flex items-center justify-center gap-2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M13 2L3 14h7l-1 8 11-14h-7l1-6z" />
+                    </svg>
+                    <span id="chargeBtnText">شحن الآن</span>
+                </button>
+            </section>
+        </div>
+
+        <!-- Left column: transactions -->
+        <section class="lg:col-span-3 bg-white rounded-2xl p-6 shadow-sm border border-[#EDE7D9]">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="w-1 h-5 gold-bg rounded-full"></span>
+                <h2 class="font-bold text-[#0E3B2E]">آخر العمليات</h2>
+            </div>
+            <div id="txList">
+                <div class="tx-row py-4 flex items-center gap-3">
+                    <div class="skel w-10 h-10 rounded-full"></div>
+                    <div class="flex-1 space-y-2">
+                        <div class="skel h-3 w-2/3 rounded"></div>
+                        <div class="skel h-2 w-1/3 rounded"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal (matches existing GovFive dark green/gold popup style) -->
+    <div id="modalOverlay" class="fixed inset-0 z-50 hidden items-center justify-center px-6">
+        <div id="modalBox"
+            class="bg-white rounded-2xl w-full max-w-sm p-6 text-center shadow-xl border-t-4 gold-border">
+            <div id="modalIconWrap"
+                class="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center brand-green">
+                <svg id="modalIcon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white"
+                    stroke-width="2.2">
+                    <path d="M20 6L9 17l-5-5" />
+                </svg>
+            </div>
+            <h3 id="modalTitle" class="font-bold text-[#0E3B2E] text-lg mb-1">تم بنجاح</h3>
+            <p id="modalMessage" class="text-gray-500 text-sm mb-5">تم تنفيذ العملية بنجاح</p>
+            <button id="modalCloseBtn" class="gold-bg text-[#0E3B2E] font-bold px-8 py-2.5 rounded-xl">تم</button>
+        </div>
+    </div>
+
+    <script>
+        var API_BASE = "http://egovservices.runasp.net";
+        var token = localStorage.getItem("userToken");
+
+        var balanceValueEl = document.getElementById("balanceValue");
+        var currencyLabelEl = document.getElementById("currencyLabel");
+        var inputCurrencyLabelEl = document.getElementById("inputCurrencyLabel");
+        var lastUpdatedEl = document.getElementById("lastUpdated");
+        var txListEl = document.getElementById("txList");
+        var amountInput = document.getElementById("amountInput");
+        var chargeBtn = document.getElementById("chargeBtn");
+        var chargeBtnText = document.getElementById("chargeBtnText");
+
+        function showModal(type, title, message) {
+            var overlay = document.getElementById("modalOverlay");
+            var iconWrap = document.getElementById("modalIconWrap");
+            var icon = document.getElementById("modalIcon");
+            document.getElementById("modalTitle").textContent = title;
+            document.getElementById("modalMessage").textContent = message;
+
+            if (type === "error") {
+                iconWrap.className = "w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center bg-red-600";
+                icon.innerHTML = '<path d="M18 6L6 18M6 6l12 12"/>';
+            } else {
+                iconWrap.className = "w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center brand-green";
+                icon.innerHTML = '<path d="M20 6L9 17l-5-5"/>';
+            }
+
+            overlay.classList.remove("hidden");
+            overlay.classList.add("flex");
+        }
+
+        document.getElementById("modalCloseBtn").addEventListener("click", function () {
+            var overlay = document.getElementById("modalOverlay");
+            overlay.classList.add("hidden");
+            overlay.classList.remove("flex");
+        });
+
+        function formatMoney(n) {
+            var num = Number(n);
+            if (isNaN(num)) { return n; }
+            return num.toLocaleString("en-US");
+        }
+
+        function currencyDisplay(code) {
+            if (code === "SAR") { return "ر.س"; }
+            if (code === "SYP") { return "ل.س"; }
+            return code;
+        }
+
+        function txIconSvg(type) {
+            if (type === "Deposit") {
+                return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E3B2E" stroke-width="2.2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+            }
+            return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="2.2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
+        }
+
+        function renderTransactions(transactions) {
+            if (!transactions || transactions.length === 0) {
+                txListEl.innerHTML = '<p class="text-center text-gray-400 text-sm py-6">لا توجد عمليات بعد</p>';
+                return;
+            }
+
+            var html = "";
+            for (var i = 0; i < transactions.length; i++) {
+                var tx = transactions[i];
+                var isDeposit = tx.transactionType === "Deposit";
+                var amountColor = isDeposit ? "text-[#0E3B2E]" : "text-[#C9A227]";
+                var sign = isDeposit ? "+" : "-";
+                var bg = isDeposit ? "bg-[#E9F2EC]" : "bg-[#FBF3DD]";
+
+                html += '<div class="tx-row py-4 flex items-center gap-3">';
+                html += '  <div class="w-10 h-10 rounded-full ' + bg + ' flex items-center justify-center shrink-0">' + txIconSvg(tx.transactionType) + '</div>';
+                html += '  <div class="flex-1 min-w-0">';
+                html += '    <p class="font-semibold text-[#0E3B2E] text-sm">' + tx.transactionTypeLabel + '</p>';
+                html += '    <p class="text-gray-400 text-xs truncate">' + tx.description + '</p>';
+                html += '    <p class="text-gray-300 text-[11px] mt-0.5">' + tx.createdAt + '</p>';
+                html += '  </div>';
+                html += '  <div class="' + amountColor + ' font-bold text-sm whitespace-nowrap">' + sign + formatMoney(tx.amount) + '</div>';
+                html += '</div>';
+            }
+            txListEl.innerHTML = html;
+        }
+
+        function loadWallet() {
+            if (!token) {
+                showModal("error", "لازم تسجل دخول", "ما في جلسة مستخدم فعالة، سجل دخول وجرب مرة تانية");
+                return;
+            }
+
+            fetch(API_BASE + "/api/wallet", {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Accept": "application/json"
+                }
+            })
+                .then(function (res) {
+                    if (!res.ok) { throw new Error("HTTP " + res.status); }
+                    return res.json();
+                })
+                .then(function (json) {
+                    if (!json.success) { throw new Error("API returned success:false"); }
+                    var data = json.data;
+
+                    balanceValueEl.textContent = formatMoney(data.balance);
+                    balanceValueEl.className = "text-4xl font-black";
+                    currencyLabelEl.textContent = currencyDisplay(data.currency);
+                    inputCurrencyLabelEl.textContent = currencyDisplay(data.currency);
+                    lastUpdatedEl.textContent = data.lastUpdated;
+
+                    renderTransactions(data.transactions);
+                })
+                .catch(function (err) {
+                    console.error(err);
+                    balanceValueEl.textContent = "—";
+                    balanceValueEl.className = "text-4xl font-black";
+                    txListEl.innerHTML = '<p class="text-center text-red-400 text-sm py-6">تعذّر تحميل بيانات المحفظة</p>';
+                    showModal("error", "صار خطأ", "تعذّر الاتصال بالسيرفر، تأكدي من الاتصال وجرّبي كمان مرة");
+                });
+        }
+
+        var chips = document.querySelectorAll(".amount-chip");
+        for (var i = 0; i < chips.length; i++) {
+            chips[i].addEventListener("click", function () {
+                amountInput.value = this.getAttribute("data-amount");
+            });
+        }
+
+        chargeBtn.addEventListener("click", function () {
+            var amount = Number(amountInput.value);
+
+            if (!amount || amount <= 0) {
+                showModal("error", "المبلغ غير صحيح", "لازم تدخل مبلغ أكبر من صفر");
+                return;
+            }
+
+            if (!token) {
+                showModal("error", "لازم تسجل دخول", "ما في جلسة مستخدم فعالة");
+                return;
+            }
+
+            chargeBtn.disabled = true;
+            chargeBtnText.textContent = "جاري الشحن...";
+
+            fetch(API_BASE + "/api/wallet/topup", {
+                method: "POST",
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({ amount: amount })
+            })
+                .then(function (res) {
+                    if (!res.ok) { throw new Error("HTTP " + res.status); }
+                    return res.json();
+                })
+                .then(function (json) {
+                    if (!json.success) { throw new Error("API returned success:false"); }
+                    amountInput.value = "";
+                    showModal("success", "تم الشحن", "تم شحن رصيدك بنجاح");
+                    loadWallet();
+                })
+                .catch(function (err) {
+                    console.error(err);
+                    showModal("error", "فشلت العملية", "تعذّر تنفيذ الشحن، جرّبي مرة تانية");
+                })
+                .finally(function () {
+                    chargeBtn.disabled = false;
+                    chargeBtnText.textContent = "شحن الآن";
+                });
+        });
+
+        loadWallet();
+    </script>
+</body>
+
+</html>
