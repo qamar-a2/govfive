@@ -23,26 +23,6 @@
       color: #6b7280;
     }
 
-    .badge-pending {
-      background: #FEF3C7;
-      color: #92400E;
-    }
-
-    .badge-review {
-      background: #EDE9FE;
-      color: #5B21B6;
-    }
-
-    .badge-done {
-      background: #D1FAE5;
-      color: #065F46;
-    }
-
-    .badge-cancelled {
-      background: #FEE2E2;
-      color: #991B1B;
-    }
-
     .card {
       background: white;
       border-radius: 20px;
@@ -58,10 +38,11 @@
   <header class="bg-[#042522] sticky top-0 z-50 shadow-lg">
     <div class="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-full bg-[#96835F] flex items-center justify-center text-white font-bold">e</div>
+        <div class="w-9 h-9 rounded-full bg-[#96835F] flex items-center justify-center text-white font-bold"
+          id="user-avatar">م</div>
         <div>
           <div class="text-white font-bold text-sm" id="user-name">...</div>
-          <div class="text-white/50 text-xs" id="user-role">...</div>
+          <div class="text-white/50 text-xs"></div>
         </div>
       </div>
       <div class="text-[#96835F] font-bold text-lg">Employee</div>
@@ -72,7 +53,7 @@
   <div class="max-w-4xl mx-auto px-4 mt-6 grid grid-cols-3 gap-4 mb-6">
     <div class="card text-center border-b-4 border-[#042522]">
       <div class="text-3xl font-bold text-[#042522]" id="stat-total">--</div>
-      <div class="text-gray-500 text-sm mt-1">إجمالي الطلبات</div>
+      <div class="text-gray-500 text-sm mt-1">اجمالي الطلبات</div>
     </div>
     <div class="card text-center border-b-4 border-yellow-400">
       <div class="text-3xl font-bold text-yellow-600" id="stat-pending">--</div>
@@ -107,236 +88,166 @@
 
   <!-- Appointments Tab -->
   <div id="tab-appointments" class="max-w-4xl mx-auto px-4 hidden">
-
-    <!-- Add Slot -->
     <div class="card mb-4">
-      <h2 class="font-bold text-[#042522] mb-4">إضافة موعد متاح</h2>
+      <h2 class="font-bold text-[#042522] mb-4">اضافة موعد متاح</h2>
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="text-sm text-gray-500 mb-1 block">الخدمة</label>
-          <select id="slot-service"
-            class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#042522]">
-            <option value="">اختر الخدمة...</option>
-          </select>
-        </div>
-        <div>
-          <label class="text-sm text-gray-500 mb-1 block">التاريخ والوقت</label>
-          <input type="datetime-local" id="slot-datetime"
+          <label class="text-sm text-gray-500 mb-1 block">رقم الخدمة (ID)</label>
+          <input type="text" id="slot-service" placeholder="governmentServiceId"
             class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#042522]">
         </div>
         <div>
-          <label class="text-sm text-gray-500 mb-1 block">الطاقة الاستيعابية</label>
-          <input type="number" id="slot-capacity" placeholder="عدد المراجعين" min="1"
+          <label class="text-sm text-gray-500 mb-1 block">التاريخ</label>
+          <input type="date" id="slot-date" placeholder="2026-7-22"
+            class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#042522]">
+        </div>
+        <div>
+          <label class="text-sm text-gray-500 mb-1 block">وقت البداية</label>
+          <input type="time" id="slot-start"
+            class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#042522]">
+        </div>
+        <div>
+          <label class="text-sm text-gray-500 mb-1 block">وقت النهاية</label>
+          <input type="time" id="slot-end"
+            class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#042522]">
+        </div>
+        <div>
+          <label class="text-sm text-gray-500 mb-1 block">عدد المقاعد</label>
+          <input type="number" id="slot-seats" placeholder="عدد المراجعين" min="1"
             class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#042522]">
         </div>
         <div class="flex items-end">
           <button onclick="addSlot()"
             class="w-full bg-[#042522] text-white py-2 rounded-xl text-sm font-bold hover:bg-[#042522]/90 transition">
-            إضافة الموعد
+            اضافة الموعد
           </button>
         </div>
       </div>
       <div id="slot-msg" class="mt-3 text-sm hidden"></div>
     </div>
-
-    <!-- Pending Appointment Reviews -->
-    <div class="card">
-      <h2 class="font-bold text-[#042522] mb-4">طلبات المواعيد - بانتظار المراجعة</h2>
-      <div id="appointments-list">
-        <div class="text-center text-gray-400 py-6">لا توجد طلبات مواعيد حالياً</div>
-      </div>
-    </div>
   </div>
 
-  <!-- Modal for Request Details -->
+  <!-- Modal -->
   <div id="modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl p-6 w-full max-w-md">
       <div class="flex justify-between items-center mb-4">
         <h3 class="font-bold text-[#042522] text-lg">تفاصيل الطلب</h3>
-        <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">✕</button>
+        <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-xl">x</button>
       </div>
-      <div id="modal-content"></div>
-      <div class="mt-4 space-y-3">
-        <textarea id="note-input" placeholder="أضف ملاحظة على الطلب..."
-          class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#042522] resize-none"
-          rows="3"></textarea>
-        <div class="grid grid-cols-3 gap-2">
+      <div id="modal-content" class="mb-4"></div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="text-sm text-gray-500 mb-1 block">ملاحظات المعالجة</label>
+          <textarea id="notes-input" placeholder="اكتب ملاحظاتك هنا..."
+            class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#042522] resize-none"
+            rows="2"></textarea>
+        </div>
+        <div id="reject-section" class="hidden">
+          <label class="text-sm text-gray-500 mb-1 block">سبب الرفض</label>
+          <input type="text" id="reject-reason" placeholder="سبب الرفض..."
+            class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#042522]">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
           <button onclick="updateStatus('Approved')"
             class="bg-green-500 text-white py-2 rounded-xl text-sm font-bold hover:bg-green-600 transition">
-            قبول
+            قبول الطلب
           </button>
-          <button onclick="updateStatus('Rejected')"
+          <button onclick="showReject()"
             class="bg-red-500 text-white py-2 rounded-xl text-sm font-bold hover:bg-red-600 transition">
-            رفض
-          </button>
-          <button onclick="addNote()"
-            class="bg-[#96835F] text-white py-2 rounded-xl text-sm font-bold hover:bg-[#96835F]/90 transition">
-            إضافة ملاحظة
+            رفض الطلب
           </button>
         </div>
+        <button id="confirm-reject" onclick="updateStatus('Rejected')"
+          class="hidden w-full bg-red-700 text-white py-2 rounded-xl text-sm font-bold">
+          تاكيد الرفض
+        </button>
+        <button onclick="addNote()"
+          class="w-full bg-[#96835F] text-white py-2 rounded-xl text-sm font-bold hover:bg-[#96835F]/90 transition">
+          اضافة ملاحظة
+        </button>
+        <div id="modal-msg" class="text-sm text-center hidden"></div>
       </div>
     </div>
   </div>
 
   <script>
-    const BASE = "http://egovservices.runasp.net";
-    const token = localStorage.getItem("userToken");
-    let currentRequestId = null;
-    let allRequests = [];
+    var BASE = "http://egovservices.runasp.net";
+    var token = localStorage.getItem("userToken");
+    var currentRequestId = null;
+    var allRequests = [];
 
-    // 🛠️ دالة تنظيف النصوص
-    function cleanText(text) {
-      if (text === null || text === undefined) return "";
-      const str = String(text);
-      return str.replace(/^["\s,]+|["\s,]+$/g, '').trim();
-    }
-
-    // 1️⃣ استخلاص الخدمات تلقائياً من الطلبات وتجهيز الـ IDs
-    function loadServicesFromRequests() {
-      const selectEl = document.getElementById("slot-service");
-      if (!selectEl) return;
-
-      const uniqueServices = [];
-      const serviceNames = new Set();
-
-      allRequests.forEach(function (req) {
-        const sName = cleanText(req.serviceName || req.name || "");
-
-        // محاولة جلب معرف الخدمة إن وجد، أو استخدام معرّف بديل مؤقتاً
-        //const sId = req.serviceId || req.id || ""; 
-        // استبدلي السطر القديم بهذا السطر تماماً لضمان جلب GUID الخدمة الفعلي:
-        const sId = (req.governmentService ? req.governmentService.id : null) || req.governmentServiceId || req.serviceId || "";
-
-        if (sName && !serviceNames.has(sName)) {
-          serviceNames.add(sName);
-          uniqueServices.push({
-            id: sId,
-            name: sName
-          });
-        }
-      });
-
-      selectEl.innerHTML = '<option value="" disabled selected>اختر الخدمة...</option>';
-      uniqueServices.forEach(function (service) {
-        const option = document.createElement("option");
-        option.value = service.id;
-        option.textContent = service.name;
-        selectEl.appendChild(option);
-      });
-    }
-
-    // 2️⃣ جلب معلومات الموظف الشخصية
+    // Load user info
     async function loadUserInfo() {
-      if (!token) return;
       try {
-        const res = await fetch(BASE + "/api/Auth/me", {
+        var res = await fetch(BASE + "/api/Auth/me", {
           headers: { "Authorization": "Bearer " + token }
         });
-        if (!res.ok) return;
-        const result = await res.json();
-        const user = result.data || result;
-
-        if (user) {
-          document.getElementById("user-name").textContent = cleanText(user.fullName || user.name || "");
-          document.getElementById("user-role").textContent = user.role || "موظف";
-        }
-      } catch (err) {
-        console.error("Error loading user info:", err);
-      }
+        var result = await res.json();
+        var user = result.data || result;
+        var name = user.fullName || user.name || "الموظف ";
+        document.getElementById("user-name").textContent = name;
+        document.getElementById("user-avatar").textContent = name.charAt(0);
+      } catch (err) { console.error(err); }
     }
 
-    // 3️⃣ جلب الطلبات من السيرفر
+    // Load requests
     async function loadRequests() {
-      if (!token) {
-        console.warn("Token is missing!");
-        return;
-      }
       try {
-        const res = await fetch(BASE + "/api/Employee/requests", {
+        var res = await fetch(BASE + "/api/Employee/requests", {
           headers: { "Authorization": "Bearer " + token }
         });
+        var result = await res.json();
+        var data = result.data || result;
+        allRequests = data.items || data;
 
-        if (!res.ok) {
-          throw new Error("HTTP error " + res.status);
-        }
-
-        const result = await res.json();
-
-        if (result && result.data && Array.isArray(result.data.items)) {
-          allRequests = result.data.items;
-        } else if (result && Array.isArray(result.data)) {
-          allRequests = result.data;
-        } else if (result && Array.isArray(result.items)) {
-          allRequests = result.items;
-        } else if (Array.isArray(result)) {
-          allRequests = result;
-        } else {
-          allRequests = [];
-        }
-
-        // تحديث بطاقات الإحصائيات في الأعلى
-        const totalRequests = allRequests.length;
-        const pendingRequests = allRequests.filter(function (r) {
-          return r.status === "PendingPayment" || r.status === 0 || r.status === 1;
+        var total = allRequests.length;
+        var pending = allRequests.filter(function (r) {
+          return r.status === "PendingPayment" || r.status === "UnderReview" || r.status === "Pending";
         }).length;
-        const doneRequests = allRequests.filter(function (r) {
-          return r.status === "Approved" || r.status === 2;
+        var done = allRequests.filter(function (r) {
+          return r.status === "Completed" || r.status === "Approved";
         }).length;
 
-        const statTotalEl = document.getElementById("stat-total");
-        const statPendingEl = document.getElementById("stat-pending");
-        const statDoneEl = document.getElementById("stat-done");
-
-        if (statTotalEl) statTotalEl.textContent = totalRequests;
-        if (statPendingEl) statPendingEl.textContent = pendingRequests;
-        if (statDoneEl) statDoneEl.textContent = doneRequests;
+        document.getElementById("stat-total").textContent = total;
+        document.getElementById("stat-pending").textContent = pending;
+        document.getElementById("stat-done").textContent = done;
 
         renderRequests(allRequests);
-
-        // استدعاء دالة بناء قائمة الخدمات المنسدلة تلقائياً
-        loadServicesFromRequests();
-
       } catch (err) {
-        console.error("Error loading requests:", err);
-        const listEl = document.getElementById("requests-list");
-        if (listEl) {
-          listEl.innerHTML = "<div class='text-center text-red-400 py-10'>حدث خطأ في تحميل الطلبات</div>";
-        }
+        console.error(err);
+        document.getElementById("requests-list").innerHTML =
+          "<div class='text-center text-red-400 py-10'>حدث خطا في تحميل الطلبات</div>";
       }
     }
 
-    // 4️⃣ عرض الطلبات في القائمة
-    function renderRequests(requests) {
-      const list = document.getElementById("requests-list");
-      if (!list) return;
+    function getStatusLabel(status) {
+      if (status === "PendingPayment") return "بانتظار الدفع";
+      if (status === "UnderReview") return "قيد المراجعة";
+      if (status === "Approved") return "مقبول";
+      if (status === "Rejected") return "مرفوض";
+      if (status === "Completed") return "مكتمل";
+      return status || "";
+    }
 
+    function getStatusClass(status) {
+      if (status === "Approved" || status === "Completed") return "bg-green-100 text-green-700";
+      if (status === "Rejected") return "bg-red-100 text-red-700";
+      if (status === "UnderReview") return "bg-purple-100 text-purple-700";
+      return "bg-yellow-100 text-yellow-700";
+    }
+
+    function renderRequests(requests) {
+      var list = document.getElementById("requests-list");
       if (!requests || requests.length === 0) {
         list.innerHTML = "<div class='text-center text-gray-400 py-10'>لا توجد طلبات</div>";
         return;
       }
-
       list.innerHTML = "";
       requests.forEach(function (req) {
-        let badgeClass = "badge-pending";
-        let statusLabel = "بانتظار الدفع";
-
-        if (req.status === "PendingPayment" || req.status === 0) {
-          badgeClass = "badge-pending";
-          statusLabel = "بانتظار الدفع";
-        } else if (req.status === 1) {
-          badgeClass = "badge-review";
-          statusLabel = "قيد التدقيق";
-        } else if (req.status === "Approved" || req.status === 2) {
-          badgeClass = "badge-done";
-          statusLabel = "مكتملة";
-        } else if (req.status === 3) {
-          badgeClass = "badge-cancelled";
-          statusLabel = "ملغاة";
-        }
-
-        const cleanServiceName = cleanText(req.serviceName || req.name || "طلب");
-        const cleanCitizenName = cleanText(req.citizenName || req.userName || req.userFullName || "");
-        const dateStr = req.submissionDate || req.createdAt || "";
+        var statusLabel = getStatusLabel(req.status);
+        var statusClass = getStatusClass(req.status);
+        var date = req.submissionDate ? req.submissionDate.slice(0, 10) : "";
 
         list.innerHTML += "<div class='card mb-3 flex items-center justify-between cursor-pointer hover:shadow-md transition' onclick='openModal(\"" + req.id + "\")'>" +
           "<div class='flex items-center gap-4'>" +
@@ -344,205 +255,182 @@
           "<svg class='w-7 h-7 text-[#96835F]' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'></path></svg>" +
           "</div>" +
           "<div>" +
-          "<h3 class='font-bold text-gray-800'>" + cleanServiceName + "</h3>" +
-          "<p class='text-sm text-gray-500'>" + cleanCitizenName + "</p>" +
-          "<p class='text-xs text-gray-400 mt-1'>" + (dateStr ? dateStr.slice(0, 10) : "") + "</p>" +
+          "<h3 class='font-bold text-gray-800'>" + (req.serviceName || "طلب") + "</h3>" +
+          "<p class='text-sm text-gray-500'>" + (req.citizenName || "") + "</p>" +
+          "<p class='text-xs text-gray-400 mt-1'>" + date + "</p>" +
           "</div></div>" +
           "<div class='flex flex-col items-end gap-2'>" +
-          "<span class='" + badgeClass + " px-3 py-1 rounded-full text-xs font-bold'>" + statusLabel + "</span>" +
-          "<svg class='w-5 h-5 text-gray-300' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 5l7 7-7 7'></path></svg>" +
+          "<span class='" + statusClass + " px-3 py-1 rounded-full text-xs font-bold'>" + statusLabel + "</span>" +
           "</div></div>";
       });
     }
 
-    // 5️⃣ فتح نافذة تفاصيل الطلب
     function openModal(id) {
       currentRequestId = id;
-      const req = allRequests.find(function (r) { return r.id === id; });
+      var req = allRequests.find(function (r) { return r.id === id; });
       if (!req) return;
 
-      const cleanServiceName = cleanText(req.serviceName || req.name || "");
-      const cleanCitizenName = cleanText(req.citizenName || req.userName || req.userFullName || "");
-      const dateStr = req.submissionDate || req.createdAt || "";
+      document.getElementById("modal-content").innerHTML =
+        "<div class='space-y-2 text-sm bg-gray-50 rounded-xl p-3'>" +
+        "<div class='flex justify-between'><span class='text-gray-500'>الخدمة:</span><span class='font-bold'>" + (req.serviceName || "") + "</span></div>" +
+        "<div class='flex justify-between'><span class='text-gray-500'>المواطن:</span><span class='font-bold'>" + (req.citizenName || "") + "</span></div>" +
+        "<div class='flex justify-between'><span class='text-gray-500'>الرقم الوطني:</span><span>" + (req.citizenNationalNumber || "") + "</span></div>" +
+        "<div class='flex justify-between'><span class='text-gray-500'>الرقم المرجعي:</span><span class='text-xs text-gray-400'>" + (req.referenceNumber || "") + "</span></div>" +
+        "<div class='flex justify-between'><span class='text-gray-500'>تاريخ التقديم:</span><span>" + (req.submissionDate ? req.submissionDate.slice(0, 10) : "") + "</span></div>" +
+        "<div class='flex justify-between'><span class='text-gray-500'>الحالة:</span><span>" + getStatusLabel(req.status) + "</span></div>" +
+        "</div>";
 
-      const modalContentEl = document.getElementById("modal-content");
-      if (modalContentEl) {
-        modalContentEl.innerHTML =
-          "<div class='space-y-2 text-sm'>" +
-          "<div class='flex justify-between'><span class='text-gray-500'>الخدمة:</span><span class='font-bold'>" + cleanServiceName + "</span></div>" +
-          "<div class='flex justify-between'><span class='text-gray-500'>المستخدم:</span><span class='font-bold'>" + cleanCitizenName + "</span></div>" +
-          "<div class='flex justify-between'><span class='text-gray-500'>الرقم الوطني:</span><span class='font-bold'>" + (req.citizenNationalNumber || "غير متوفر") + "</span></div>" +
-          "<div class='flex justify-between'><span class='text-gray-500'>التاريخ:</span><span>" + (dateStr ? dateStr.slice(0, 10) : "") + "</span></div>" +
-          "<div class='flex justify-between'><span class='text-gray-500'>الرقم المرجعي:</span><span class='text-xs text-gray-400'>" + req.id + "</span></div>" +
-          "</div>";
-      }
-
-      const modalEl = document.getElementById("modal");
-      if (modalEl) modalEl.classList.remove("hidden");
+      document.getElementById("reject-section").classList.add("hidden");
+      document.getElementById("confirm-reject").classList.add("hidden");
+      document.getElementById("notes-input").value = "";
+      document.getElementById("modal-msg").classList.add("hidden");
+      document.getElementById("modal").classList.remove("hidden");
     }
 
-    // 6️⃣ إغلاق النافذة المنبثقة
     function closeModal() {
-      const modalEl = document.getElementById("modal");
-      if (modalEl) modalEl.classList.add("hidden");
-
-      const noteInput = document.getElementById("note-input");
-      if (noteInput) noteInput.value = "";
-
+      document.getElementById("modal").classList.add("hidden");
       currentRequestId = null;
     }
 
-    // 7️⃣ تحديث حالة الطلب (معدلة لتطابق حقل الباك إند المطلوب)
-    async function updateStatus(status) {
+    function showReject() {
+      document.getElementById("reject-section").classList.remove("hidden");
+      document.getElementById("confirm-reject").classList.remove("hidden");
+    }
+
+    async function updateStatus(newStatus) {
       if (!currentRequestId) return;
+      var notes = document.getElementById("notes-input").value.trim();
+      var reason = document.getElementById("reject-reason").value.trim();
+      var msg = document.getElementById("modal-msg");
+
       try {
-        const res = await fetch(BASE + "/api/Employee/requests/" + currentRequestId + "/status", {
+        var body = { "newStatus": newStatus, "processingNotes": notes };
+        if (newStatus === "Rejected") body["rejectionReason"] = reason;
+
+        var res = await fetch(BASE + "/api/Employee/requests/" + currentRequestId + "/status", {
           method: "PATCH",
           headers: {
             "Authorization": "Bearer " + token,
             "Content-Type": "application/json"
           },
-          // هنا السر! أرسلنا الحقل باسم NewStatus بدلاً من status
-          body: JSON.stringify({ NewStatus: status })
+          body: JSON.stringify(body)
         });
 
         if (res.ok) {
-          closeModal();
-          loadRequests();
+          msg.textContent = newStatus === "Approved" ? "تم قبول الطلب" : "تم رفض الطلب";
+          msg.className = "text-sm text-center text-green-500";
+          msg.classList.remove("hidden");
+          setTimeout(function () { closeModal(); loadRequests(); }, 1500);
         } else {
-          const errData = await res.json();
-          console.error("فشل التحديث من السيرفر:", errData);
-          alert("لم يتم قبول الحالة من السيرفر. تحقق من الكونسول.");
+          msg.textContent = "حدث خطا، حاول مجددا";
+          msg.className = "text-sm text-center text-red-500";
+          msg.classList.remove("hidden");
         }
       } catch (err) {
-        console.error("Error updating status:", err);
+        console.error(err);
       }
     }
 
-    // 8️⃣ إضافة ملاحظة على الطلب
     async function addNote() {
       if (!currentRequestId) return;
-      const noteInput = document.getElementById("note-input");
-      if (!noteInput) return;
-
-      const note = noteInput.value.trim();
-      if (!note) return;
+      var note = document.getElementById("notes-input").value.trim();
+      var msg = document.getElementById("modal-msg");
+      if (!note) {
+        msg.textContent = "اكتبي ملاحظة اولا";
+        msg.className = "text-sm text-center text-red-500";
+        msg.classList.remove("hidden");
+        return;
+      }
       try {
-        await fetch(BASE + "/api/Employee/requests/" + currentRequestId + "/note", {
+        var res = await fetch(BASE + "/api/Employee/requests/" + currentRequestId + "/note", {
           method: "POST",
           headers: {
             "Authorization": "Bearer " + token,
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ note: note })
+
+          body: JSON.stringify({
+            "governmentServiceId": serviceId,
+            "slotDate": date,
+            "startTime": date + "T" + start + ":00",
+            "endTime": date + "T" + end + ":00",
+            "totalSeats": parseInt(seats)
+          })
         });
-        noteInput.value = "";
-        alert("تمت إضافة الملاحظة");
-      } catch (err) {
-        console.error("Error adding note:", err);
-      }
+        if (res.ok) {
+          msg.textContent = "تمت اضافة الملاحظة";
+          msg.className = "text-sm text-center text-green-500";
+          msg.classList.remove("hidden");
+          document.getElementById("notes-input").value = "";
+        }
+      } catch (err) { console.error(err); }
     }
 
     async function addSlot() {
-      const serviceIdEl = document.getElementById("slot-service");
-      const datetimeEl = document.getElementById("slot-datetime");
-      const capacityEl = document.getElementById("slot-capacity");
-      const msgEl = document.getElementById("slot-msg");
+      var serviceId = document.getElementById("slot-service").value.trim();
+      var date = document.getElementById("slot-date").value;
+      var start = document.getElementById("slot-start").value;
+      var end = document.getElementById("slot-end").value;
+      var seats = document.getElementById("slot-seats").value;
+      var msg = document.getElementById("slot-msg");
 
-      if (!serviceIdEl || !datetimeEl || !capacityEl || !msgEl) return;
-
-      // تنظيف الرسالة السابقة
-      msgEl.textContent = "";
-      msgEl.classList.add("hidden");
-
-      const serviceId = serviceIdEl.value;
-      const rawDatetime = datetimeEl.value; // القيمة تكون مثل: "2026-08-12T13:00"
-      const capacity = capacityEl.value;
-
-      if (!serviceId || !rawDatetime || !capacity) {
-        msgEl.textContent = "يرجى تعبئة جميع الحقول";
-        msgEl.className = "mt-3 text-sm text-red-500";
-        msgEl.classList.remove("hidden");
+      if (!serviceId || !date || !start || !end || !seats) {
+        msg.textContent = "يرجى تعبئة جميع الحقول";
+        msg.className = "mt-3 text-sm text-red-500";
+        msg.classList.remove("hidden");
         return;
       }
-
-      // معالجة التاريخ والوقت ليتوافق مع طلب السيرفر (slotDate, startTime, endTime)
-      const localDate = new Date(rawDatetime);
-      if (isNaN(localDate.getTime())) {
-        msgEl.textContent = "صيغة التاريخ غير صالحة";
-        msgEl.className = "mt-3 text-sm text-red-500";
-        msgEl.classList.remove("hidden");
-        return;
-      }
-
-      // 1️⃣ استخراج التاريخ بصيغة YYYY-MM-DD
-      const slotDate = rawDatetime.split('T')[0];
-
-      // 2️⃣ استخراج وقت البدء بصيغة HH:MM
-      const startTime = rawDatetime.split('T')[1] || "09:00";
-
-      // 3️⃣ حساب وقت النهاية تلقائياً (مثلاً بعد ساعة واحدة من وقت البدء)
-      const endHours = parseInt(startTime.split(':')[0]) + 1;
-      const endMinutes = startTime.split(':')[1];
-      const endTime = (endHours < 10 ? '0' + endHours : endHours) + ':' + endMinutes;
 
       try {
-        const res = await fetch(BASE + "/api/Appointments/slots", {
+        var res = await fetch(BASE + "/api/Appointments/slots", {
           method: "POST",
           headers: {
             "Authorization": "Bearer " + token,
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            governmentServiceId: serviceId, // تطابق تام مع Swagger!
-            slotDate: slotDate,             // تطابق تام مع Swagger!
-            startTime: startTime,           // تطابق تام مع Swagger!
-            endTime: endTime,               // تطابق تام مع Swagger!
-            totalSeats: parseInt(capacity)  // تطابق تام مع Swagger!
+            "governmentServiceId": serviceId,
+            "slotDate": date,
+            "startTime": start,
+            "endTime": end,
+            "totalSeats": parseInt(seats)
           })
         });
 
         if (res.ok) {
-          msgEl.textContent = "تمت إضافة الموعد بنجاح!";
-          msgEl.className = "mt-3 text-sm text-green-500 font-bold";
-          msgEl.classList.remove("hidden");
-          datetimeEl.value = "";
-          capacityEl.value = "";
+          msg.textContent = "تمت اضافة الموعد بنجاح";
+          msg.className = "mt-3 text-sm text-green-500";
+          msg.classList.remove("hidden");
+          document.getElementById("slot-service").value = "";
+          document.getElementById("slot-date").value = "";
+          document.getElementById("slot-start").value = "";
+          document.getElementById("slot-end").value = "";
+          document.getElementById("slot-seats").value = "";
         } else {
-          const errResult = await res.json();
-          msgEl.textContent = errResult.message || "فشل إضافة الموعد، تأكدي من توافق المدخلات";
-          msgEl.className = "mt-3 text-sm text-red-500";
-          msgEl.classList.remove("hidden");
+          msg.textContent = "حدث خطا في اضافة الموعد";
+          msg.className = "mt-3 text-sm text-red-500";
+          msg.classList.remove("hidden");
         }
-      } catch (err) {
-        console.error("Error adding slot:", err);
-        msgEl.textContent = "حدث خطأ أثناء الاتصال بالخادم";
-        msgEl.className = "mt-3 text-sm text-red-500";
-        msgEl.classList.remove("hidden");
-      }
+      } catch (err) { console.error(err); }
     }
 
     function showTab(tab) {
-      const tabRequests = document.getElementById("tab-requests");
-      const tabAppointments = document.getElementById("tab-appointments");
-      const btnRequests = document.getElementById("btn-requests");
-      const btnAppointments = document.getElementById("btn-appointments");
-
-      if (tabRequests) tabRequests.classList.add("hidden");
-      if (tabAppointments) tabAppointments.classList.add("hidden");
-      if (btnRequests) btnRequests.className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all tab-inactive";
-      if (btnAppointments) btnAppointments.className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all tab-inactive";
-
-      const activeTab = document.getElementById("tab-" + tab);
-      const activeBtn = document.getElementById("btn-" + tab);
-
-      if (activeTab) activeTab.classList.remove("hidden");
-      if (activeBtn) activeBtn.className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all tab-active";
+      document.getElementById("tab-requests").classList.add("hidden");
+      document.getElementById("tab-appointments").classList.add("hidden");
+      document.getElementById("btn-requests").className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all tab-inactive";
+      document.getElementById("btn-appointments").className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all tab-inactive";
+      document.getElementById("tab-" + tab).classList.remove("hidden");
+      document.getElementById("btn-" + tab).className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all tab-active";
     }
-
-    // تهيئة البيانات عند تحميل الصفحة
-    loadRequests();
+    //---مشان قصة الدحول بحساب موظف ----/
+    document.addEventListener("DOMContentLoaded", function() {
+    var role = (localStorage.getItem("userRole") || "").toLowerCase();
+    if (role === "admin") {
+        document.getElementById("adminBtn").classList.remove("hidden");
+    }
+});
     loadUserInfo();
+    loadRequests();
   </script>
 </body>
 

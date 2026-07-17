@@ -17,11 +17,11 @@
         }
 
         .brand-green {
-            background-color: #0E3B2E;
+            background-color: #042522;
         }
 
         .brand-green-2 {
-            background-color: #124A38;
+            background-color: #042522;
         }
 
         .gold {
@@ -37,7 +37,7 @@
         }
 
         .balance-card {
-            background: linear-gradient(135deg, #0E3B2E 0%, #163F30 55%, #0A2E23 100%);
+            background: linear-gradient(135deg, #042522 0%, #163F30 55%, #042522 100%);
             position: relative;
             overflow: hidden;
         }
@@ -282,7 +282,7 @@
         }
 
         function currencyDisplay(code) {
-            if (code === "SAR") { return "ر.س"; }
+            //if (code === "SAR") { return "ر.س"; }
             if (code === "SYP") { return "ل.س"; }
             return code;
         }
@@ -355,7 +355,7 @@
                     balanceValueEl.textContent = "—";
                     balanceValueEl.className = "text-4xl font-black";
                     txListEl.innerHTML = '<p class="text-center text-red-400 text-sm py-6">تعذّر تحميل بيانات المحفظة</p>';
-                    showModal("error", "صار خطأ", "تعذّر الاتصال بالسيرفر، تأكدي من الاتصال وجرّبي كمان مرة");
+                    showModal("error", "تعذّر الاتصال بالسيرفر، تأكد من الاتصال وجرّب  لاحقا ");
                 });
         }
 
@@ -370,7 +370,7 @@
             var amount = Number(amountInput.value);
 
             if (!amount || amount <= 0) {
-                showModal("error", "المبلغ غير صحيح", "لازم تدخل مبلغ أكبر من صفر");
+                showModal("error", "المبلغ غير صحيح", "يجب ادخال مبلغ أكبر من صفر");
                 return;
             }
 
@@ -403,7 +403,7 @@
                 })
                 .catch(function (err) {
                     console.error(err);
-                    showModal("error", "فشلت العملية", "تعذّر تنفيذ الشحن، جرّبي مرة تانية");
+                    showModal("error", "فشلت العملية", "تعذّر تنفيذ الشحن، جرّب مرة تانية");
                 })
                 .finally(function () {
                     chargeBtn.disabled = false;
