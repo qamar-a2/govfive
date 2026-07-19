@@ -33,7 +33,7 @@ const sidebarHTML =`<aside class="w-64 bg-[#042522] text-white p-6 flex flex-col
         }
         document.addEventListener('DOMContentLoaded' , loadsidebar)
 
-    const headerHTML=`<header class="flex items-center justify-between mb-8 bg-[#042522] p-4 text-white">
+    const headerHTML=`<header class="flex items-center justify-between bg-[#042522] p-4 text-white">
     
     <div class="relative w-1/2">
         <i class="fa-solid fa-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"></i>

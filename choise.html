@@ -49,18 +49,12 @@
         }
 
         /* 1. استهداف الصورة عند عمل هوفر على الكارد (العنصر الأب الذي يحمل كلاس group) */
-        .group:hover .ministry-logo {
-            /* التكبير */
-            transform: scale(1.25) !important;
-
-            /* إزالة الخلفية السوداء المدمجة داخل الصورة برمجياً */
-            mix-blend-mode: screen !important;
+        .ministry-logo {
+            transition: transform 0.25s ease;
         }
 
-        /* 2. إذا كانت الخلفية السوداء تأتي من عنصر الأب نفسه وليس من الصورة */
-        .group:hover {
-            background-color: transparent !important;
-            background: none !important;
+        .group:hover .ministry-logo {
+            transform: scale(1.25);
         }
     </style>
 </head>
@@ -74,6 +68,8 @@
                     <a href="#" class="hover-underline text-[#042522] hover:text-[#96835F] pb-1 ">الرئيسية</a>
                     <a href="treatment.html"
                         class="hover-underline text-[#042522] hover:text-[#96835F] transition">المعاملات</a>
+                    <a href="wallet.html"
+                        class="hover-underline text-[#042522] hover:text-[#96835F] transition">المحفظة</a>
                     <a href="prof.html" class="hover-underline text-[#042522] hover:text-[#96835F] transition">الملف
                         الشخصي</a>
                 </div>
@@ -196,7 +192,7 @@
                 <div class="group bg-white p-8 rounded-3xl shadow-sm cursor-pointer" onclick="window.location.href='main.html?id=${ministry.id}'">
                   <div class="bg-[#f8f6f2] w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-[#042522] group-hover:text-white transition">
                     ${ministry.logoUrl
-                            ? `<img src="http://egovservices.runasp.net${ministry.logoUrl}" class="ministry-logo w-full h-full object-contain transition-all duration-300 group-hover:scale-150 group-hover:mix-blend-screen" onerror="this.style.display='none'">`
+                            ? `<img src="http://egovservices.runasp.net${ministry.logoUrl}" class="ministry-logo w-full h-full object-contain transition-transform duration-300 group-hover:scale-125" onerror="this.style.display='none'">`
                             : defaultIcon}
                   </div>
                   <h3 class="font-bold text-lg group-hover:text-[#96835F]">${ministry.name}</h3>
@@ -333,7 +329,7 @@
             window.location.href = "index.html"; // العودة للصفحة الرئيسية
 
         }
-
+        
     </script>
     <!-- ديف يلي رح يكون حاوي لواجهة الذكاء -->
     <div class="fixed inset-0 z-50  items-center justify-center  hidden" id="div-Ai">
