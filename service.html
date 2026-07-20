@@ -198,15 +198,17 @@
 
 <body>
   <div class="container">
-    <div class="service-card" id="service-info"></div>
+    <div class="service-card" id="service-info">
+    </div>
 
     <div class="form-card">
       <form id="dynamic-form" novalidate>
         <div class="form-grid" id="form-fields"></div>
-        <button class="submit-btn" >إرسال الطلب</button>
+        <button class="submit-btn">إرسال الطلب</button>
       </form>
     </div>
   </div>
+  
 
   <script>
     //--------------هون الربط---------------/
@@ -215,6 +217,30 @@
     const token = localStorage.getItem("userToken");
     let currentServiceType = null;//خزنا nullمشان نوع الخدمه وشرط الملف 
     const BASE = "http://egovservices.runasp.net";
+
+    let slotsDataMap = {}; // خزّنا فيها بيانات كل سلوت (slotId -> slotDate) ان نستخدمها بحقل التاريخ المخفي
+
+    //---------- جلب المواعيد المتاحة للفرع/الخدمة----------//
+    async function loadAppointmentSlots() {
+      try {
+        const today = new Date().toISOString().split("T")[0];
+        const res = await fetch(BASE + "/api/Appointments/slots/" + serviceId + "?fromDate=" + today, {
+          headers: { "Authorization": "Bearer " + token }
+        });
+        const result = await res.json();
+        const slots = result.data || result;
+        var options = "<option value=''>اختر الموعد...</option>";
+        slots.forEach(function (s) {
+          slotsDataMap[s.slotId] = s.slotDate; // خزّنا التاريخ تبع كل سلوت
+          const label = s.slotDate + " | " + s.startTime + " - " + s.endTime + " (متاح: " + s.availableSeats + ")";
+          options += "<option value='" + s.slotId + "'>" + label + "</option>";
+        });
+        return options;
+      } catch (err) {
+        console.error(err);
+        return "<option value=''>تعذر تحميل المواعيد</option>";
+      }
+    }
 
     async function loadServiceSchema() {
       if (!serviceId) return;
@@ -235,10 +261,24 @@
 
         const formFields = document.getElementById("form-fields");
         formFields.innerHTML = "";
-        if (schema.branches && schema.branches.length > 0) {
+
+        const requiresAttendance = schema.branches && schema.branches.length > 0;
+
+        if (requiresAttendance) {
           formFields.innerHTML += `<div class="field-wrapper"><label>اختر الفرع</label><select id="branch-select" name="branchId" required><option value="">اختر الفرع...</option>${schema.branches.map(b => `<option value="${b.id}">${b.name}</option>`).join("")}</select></div>`;
+
+          const slotOptions = await loadAppointmentSlots();
+          formFields.innerHTML += "<div class='field-wrapper'><label>اختر الموعد المتاح</label><select id='slot-select' name='appointmentSlotId' required>" + slotOptions + "</select></div>";
         }
+
         schema.fields.forEach(function (field) {
+          // إذا الخدمة بتتطلب حضور، الحقل تبع "تاريخ الاستلام" ما بيتعرض للمستخدم يدوياً
+          // بس بنحطه كحقل مخفي وقيمته بتنعبى تلقائياً من تاريخ الموعد المختار
+          if (requiresAttendance && field.label && field.label.indexOf("تاريخ الاستلام") !== -1) {
+            formFields.innerHTML += "<input type='hidden' name='" + field.name + "' id='delivery-date-hidden' value=''>";
+            return;
+          }
+
           let inputHTML = "";
 
           if (field.type === "select" && field.options) {
@@ -257,6 +297,17 @@
           formFields.innerHTML += "<div class='field-wrapper'><label>" + field.label + "</label>" + inputHTML + "</div>";
         });
 
+        // بعد ما رسمنا كل شي، اربطي تغيير الموعد بتحديث حقل التاريخ المخفي تلقائياً
+        if (requiresAttendance) {
+          const slotSelect = document.getElementById("slot-select");
+          const hiddenDate = document.getElementById("delivery-date-hidden");
+          if (slotSelect && hiddenDate) {
+            slotSelect.addEventListener("change", function () {
+              hiddenDate.value = slotsDataMap[slotSelect.value] || "";
+            });
+          }
+        }
+
       } catch (err) {
         console.error(err);
       }
@@ -273,19 +324,19 @@
       const inputs = document.querySelectorAll("#form-fields input, #form-fields select, #form-fields textarea");
 
       inputs.forEach(input => {
-        if (input.name) {
+        if (input.name && input.id !== "branch-select" && input.id !== "slot-select") {
           dynamicFields[input.name] = input.value;
         }
       });
 
       const branchSelect = document.getElementById("branch-select");
-      if (branchSelect && branchSelect.value) {
-        dynamicFields["branchId"] = branchSelect.value;
-      }
+      const slotSelect = document.getElementById("slot-select");
 
       const payload = {
         serviceId: currentServiceId,
-        formData: dynamicFields
+        formData: dynamicFields,
+        branchId: (branchSelect && branchSelect.value) ? branchSelect.value : null,
+        appointmentSlotId: (slotSelect && slotSelect.value) ? slotSelect.value : null
       };
 
       try {
@@ -317,7 +368,7 @@
         alert("حدث خطأ أثناء الاتصال بالسيرفر.");
       }
     }
-////تجهيز تنزيل الملف هوون بلش ------------/
+    ////تجهيز تنزيل الملف هوون بلش ------------/
     async function processAndDownloadDocument(requestId) {
       try {
         const processRes = await fetch(BASE + "/api/documents/process/" + requestId, {
