@@ -12,6 +12,19 @@
 </head>
 
 <body>
+    <!-- ------------------------------------------------------- الصورة الترحيبية-->
+<div id="welcomeModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-[2px]">
+    <div class="relative  p-1 rounded-xl shadow-2xl max-w-5xl w-[95%] overflow-hidden">     
+        <button onclick="closeWelcomeModal()" class="absolute top-3 left-3 z-10 w-9 h-9 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition">
+            <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+        <div class="w-full h-auto">
+            <img src="image/واجهة.png" alt="واجهة ترحيبية" class="w-full h-auto rounded-lg object-contain">
+        </div>
+    </div>
+</div>
+
+     <!-- ------------------------------------------------------ -->
     <div id="loader" class="fixed inset-0 z-[9999] hidden items-center justify-center bg-[#062C28]/90">
         <div class="text-white text-center">
             <div class="w-12 h-12 border-4 border-t-transparent border-white rounded-full animate-spin mx-auto mb-4">
@@ -176,8 +189,14 @@
                 loader.classList.replace("flex", "hidden");
             }
         });
-
+   function closeWelcomeModal() {
+        const modal = document.getElementById('welcomeModal');
+        modal.classList.add('hidden');
+    }
     </script>
+    
+ 
+
 </body>
 
 </html>

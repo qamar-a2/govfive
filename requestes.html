@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الطلبات</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="global.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#EFEBE3] font-sans">
+    <!-- تم تعديل h-screen إلى min-h-screen لكي تتيح للصفحة التمدد والنزول -->
+    <div class="flex min-h-screen">
+        
+        <!-- القائمة الجانبية (تمت إضافة sticky و h-screen لتثبيتها طوال فترة التصفح) -->
+        <div id="sidebar-wrapper" class="sticky top-0 h-screen"></div>
+
+        <!-- المحتوى الرئيسي -->
+        <div class="flex-1 flex flex-col">
+            <!-- تثبيت الهيدر أيضاً في الأعلى -->
+            <div id="header" class="sticky top-0 z-10"></div>
+            
+            <!-- جدول الطلبات والتبويبات -->
+            <main class="p-6">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-xl font-bold mb-6">قائمة الطلبات</h2>
+                    
+                    <!-- أزرار التبويبات (Tabs) -->
+                    <div class="flex gap-2 mb-6 border-b pb-4">
+                        <button onclick="filterRequests('')" class="tab-btn px-4 py-2 rounded bg-[#042522] text-white font-bold transition">الكل</button>
+                        <button onclick="filterRequests('Pending')" class="tab-btn px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 transition">قيد المراجعة</button>
+                        <button onclick="filterRequests('Completed')" class="tab-btn px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 transition">المكتملة</button>
+                    </div>
+
+                    <!-- الجدول -->
+                    <table class="w-full text-right">
+                        <thead>
+                            <tr class="border-b text-gray-500">
+                                <th class="pb-3">رقم الطلب</th>
+                                <th class="pb-3">اسم المواطن</th>
+                                <th class="pb-3">الحالة</th>
+                                <th class="pb-3">إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <!-- سيتم تعبئة البيانات هنا تلقائياً -->
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- استدعاء ملف الـ Sidebar المشترك -->
+    <script src="sidebar.js"></script>
+    <script>
+        // دالة جلب وعرض الطلبات
+        async function fetchAndDisplayOrders(status = '') {
+            try {
+                let url = 'http://egovservices.runasp.net/api/Admin/requests';
+                if (status !== '') {
+                    url += `?status=${status}`;
+                }
+
+                const myHeaders = new Headers();
+                myHeaders.append("Authorization", `Bearer ${localStorage.getItem('userToken')}`);
+                myHeaders.append("Content-Type", "application/json");
+
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: myHeaders
+                });
+                
+                const result = await response.json();
+                const orders = result.data.items || result.data || [];
+                const tbody = document.getElementById('ordersTableBody');
+                
+                tbody.innerHTML = '';
+                
+                if (orders.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">لا توجد طلبات لعرضها</td></tr>`;
+                    return;
+                }
+
+                orders.forEach(order => {
+                    tbody.innerHTML += `
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-4 font-mono text-sm text-gray-700">${order.referenceNumber || '---'}</td>
+                            <td class="py-4">${order.citizenName || order.fullName || '---'}</td>
+                            <td class="py-4">
+                                <span class="px-2 py-1 rounded text-sm bg-gray-100 text-gray-800 font-bold">
+                                    ${order.status || 'قيد المعالجة'}
+                                </span>
+                            </td>
+                            <td class="py-4">
+                                <a href="details.html?id=${order.id}" class="bg-[#042522] text-white px-4 py-1 rounded hover:bg-opacity-90 inline-block">
+                                    التفاصيل
+                                </a>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                console.error("خطأ في جلب الطلبات:", error);
+            }
+        }
+
+        // دالة للتحكم بالتبويبات وتغيير الألوان عند الضغط
+        function filterRequests(status) {
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-[#042522]', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            
+            event.target.classList.remove('bg-gray-200', 'text-gray-700');
+            event.target.classList.add('bg-[#042522]', 'text-white');
+
+            fetchAndDisplayOrders(status);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadsidebar();
+            loadheader();
+            fetchAndDisplayOrders('');
+        });
+    </script>
+</body>
+</html>

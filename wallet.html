@@ -6,11 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>محفظتك | GovFive</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="global.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        * {
-            font-family: 'Tajawal', sans-serif;
-        }
+       
 
         body {
             background: #F6F4EE;
@@ -37,7 +36,7 @@
         }
 
         .balance-card {
-            background: linear-gradient(135deg, #042522 0%, #163F30 55%, #042522 100%);
+            background:#042522;
             position: relative;
             overflow: hidden;
         }
@@ -46,7 +45,7 @@
             content: "";
             position: absolute;
             inset: 0;
-            background-image: radial-gradient(circle at 90% 10%, rgba(201, 162, 39, 0.18), transparent 55%);
+            /* background-image: radial-gradient(circle at 90% 10%,, transparent 55%); */
             pointer-events: none;
         }
 
@@ -131,7 +130,7 @@
 
 
             <div>
-                <p class="gold text-xs font-bold tracking-wide mb-1">إدارة الحساب</p>
+                <p class="text-[#96835F] text-xs font-bold tracking-wide mb-1">إدارة الحساب</p>
                 <h1 class="text-xl md:text-2xl font-black text-[#0E3B2E]">محفظتك الالكترونية</h1>
                 <p class="text-gray-400 text-xs md:text-sm mt-1">تابع رصيدك, اشحن محفظتك، وراجع كل عملياتك بمكان واحد
                 </p>
@@ -156,7 +155,7 @@
                 <div id="balanceWrap" class="flex items-baseline gap-2 mb-4">
                     <span id="balanceValue"
                         class="text-4xl font-black skel rounded-lg inline-block w-28 h-9">&nbsp;</span>
-                    <span id="currencyLabel" class="gold text-lg font-bold"></span>
+                    <span id="currencyLabel" class="gold text-lg font-bold text-gov-bage"></span>
                 </div>
                 <div class="flex items-center justify-between text-xs text-white/60 border-t border-white/10 pt-3">
                     <span>آخر تحديث</span>
@@ -167,7 +166,7 @@
             <!-- Top up -->
             <section class="bg-white rounded-2xl p-6 shadow-sm border border-[#EDE7D9]">
                 <div class="flex items-center gap-2 mb-4">
-                    <span class="w-1 h-5 gold-bg rounded-full"></span>
+                    <span class="w-1 h-5 bg-gov-primary2 rounded-full"></span>
                     <h2 class="font-bold text-[#0E3B2E]">شحن الرصيد</h2>
                 </div>
 
@@ -192,7 +191,7 @@
                 </div>
 
                 <button id="chargeBtn"
-                    class="charge-btn w-full gold-bg text-[#0E3B2E] font-black py-3.5 rounded-xl flex items-center justify-center gap-2">
+                    class="charge-btn w-full bg-gov-primary2 text-white font-black py-3.5 rounded-xl flex items-center justify-center gap-2">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M13 2L3 14h7l-1 8 11-14h-7l1-6z" />
                     </svg>
@@ -204,7 +203,7 @@
         <!-- Left column: transactions -->
         <section class="lg:col-span-3 bg-white rounded-2xl p-6 shadow-sm border border-[#EDE7D9]">
             <div class="flex items-center gap-2 mb-4">
-                <span class="w-1 h-5 gold-bg rounded-full"></span>
+                <span class="w-1 h-5 bg-gov-primary2 rounded-full "></span>
                 <h2 class="font-bold text-[#0E3B2E]">آخر العمليات</h2>
             </div>
             <div id="txList">

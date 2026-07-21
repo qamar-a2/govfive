@@ -1,5 +1,9 @@
-const sidebarHTML =`<aside class="w-64 bg-[#042522] text-white p-6 flex flex-col border-[#888]  border-l-[1px] h-screen">
-            <nav class="flex flex-col gap-4 justify-between h-full">
+const sidebarHTML =`<aside class="w-64 bg-[#042522] text-white p-6 flex flex-col border-[#888] border-l-[1px] h-screen relative overflow-hidden">
+
+              <div class="absolute inset-0 z-0 opacity-15 pointer-events-none" 
+         style="background-image: url('image/battern.png'); background-size: cover; background-position: center;">
+    </div>
+            <nav class="flex flex-col gap-4 justify-between h-full relative z-10">
                 <div class="flex items-center gap-4 border-b-[1px] p-2 border-[#888]">
                     <div class="bg-white text-[#042522] w-10 h-10 rounded-full hover:bg-opacity-90 transition relative flex items-center justify-center">
                         <i class="fa-solid fa-user"></i>
@@ -7,9 +11,9 @@ const sidebarHTML =`<aside class="w-64 bg-[#042522] text-white p-6 flex flex-col
                     <span class="text-sm">Admin</span>
                 </div>
                 <div class="flex flex-col flex-grow gap-4">
-                         <a href="#" class="hover:bg-[#0b3d38] hover:border-l-2 hover:border-[#B7A577] hover:text-[#B7A577] p-3 rounded-lg">لوحة التحكم</a>
-                         <a href="#" class="hover:bg-[#0b3d38] hover:border-l-2 hover:border-[#B7A577] hover:text-[#B7A577] p-3 rounded-lg">الطلبات</a>
-                         <a href="#" class="hover:bg-[#0b3d38] hover:border-l-2 hover:border-[#B7A577] hover:text-[#B7A577] p-3 rounded-lg">المستخدمين</a>
+                         <a href="DashAdim.html" class="hover:bg-[#0b3d38] hover:border-l-2 hover:border-[#B7A577] hover:text-[#B7A577] p-3 rounded-lg">لوحة التحكم</a>
+                         <a href="requestes.html" class="hover:bg-[#0b3d38] hover:border-l-2 hover:border-[#B7A577] hover:text-[#B7A577] p-3 rounded-lg">الطلبات</a>
+                         <a href="user.html" class="hover:bg-[#0b3d38] hover:border-l-2 hover:border-[#B7A577] hover:text-[#B7A577] p-3 rounded-lg">المستخدمين</a>
                          <a href="#" class="hover:bg-[#0b3d38] hover:border-l-2 hover:border-[#B7A577] hover:text-[#B7A577] p-3 rounded-lg">المواعيد</a>
                 </div>
                     
@@ -20,9 +24,7 @@ const sidebarHTML =`<aside class="w-64 bg-[#042522] text-white p-6 flex flex-col
                         <i class="fa-solid fa-right-from-bracket absolute right-3 top-1/2 -translate-y-1/2 text-sm"></i>
                         <span >تسجيل خروج</span>
                     </a>
-                </div>
-               
-                
+                </div>                             
             </nav>
         </aside>`
         function loadsidebar(){

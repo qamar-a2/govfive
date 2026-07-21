@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل الطلب</title>
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#EFEBE3] p-8 body">
+
+    <div class="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+        <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-4">تفاصيل الطلب</h2>
+        
+        <div class="space-y-4">
+            <div class="flex justify-between border-b pb-2"><span class="text-gray-500">اسم المواطن:</span><span id="citizenName" class="font-semibold text-gray-800">-</span></div>
+            <div class="flex justify-between border-b pb-2"><span class="text-gray-500">اسم الخدمة:</span><span id="serviceName" class="font-semibold text-gray-800">-</span></div>
+            <div class="flex justify-between border-b pb-2"><span class="text-gray-500">الرقم الوطني:</span><span id="nationalNumber" class="font-semibold text-gray-800">-</span></div>
+            <div class="flex justify-between border-b pb-2"><span class="text-gray-500">الرقم المرجعي:</span><span id="refNumber" class="font-semibold text-gray-800 text-sm break-all">-</span></div>
+            <div class="flex justify-between border-b pb-2"><span class="text-gray-500">تاريخ التقديم:</span><span id="subDate" class="font-semibold text-gray-800">-</span></div>
+            <div class="flex justify-between border-b pb-2"><span class="text-gray-500">تاريخ الإنجاز:</span><span id="completedAt" class="font-semibold text-gray-800">-</span></div>
+            <div class="flex justify-between border-b pb-2"><span class="text-gray-500">الغرض من الطلب:</span><span id="purpose" class="font-semibold text-gray-800">-</span></div>
+            <div class="flex justify-between border-b pb-2"><span class="text-gray-500">الحالة:</span><span id="status" class="font-semibold text-orange-500">-</span></div>
+            <div class="flex justify-between border-b pb-2"><span class="text-gray-500">ملاحظات المعالجة:</span><span id="notes" class="font-semibold text-gray-800">-</span></div>
+        </div>
+
+      <button onclick="window.history.back()" 
+    class="mt-8 w-full py-3 rounded-xl text-white font-bold transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg active:scale-95 border border-[#042522]"
+    style="background: linear-gradient(to right, #042522, #0b3d38);">
+    <i class="fa-solid fa-arrow-right ml-2"></i> العودة للداشبورد
+</button>
+    </div>
+
+    <script>
+        
+       const urlParams = new URLSearchParams(window.location.search);
+const requestId = urlParams.get('id');
+const token = localStorage.getItem('userToken');
+
+        async function fetchRequestDetails() {
+            try {
+                const response = await fetch(`http://egovservices.runasp.net/api/Admin/requests/${requestId}`, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                });
+
+                const result = await response.json();
+                const d = result.data; 
+              
+                  document.getElementById('citizenName').textContent = d.citizenName || 'غير متوفر';
+                document.getElementById('serviceName').textContent = d.serviceName || 'غير متوفر';
+                  document.getElementById('nationalNumber').textContent = d.citizenNationalNumber || 'غير متوفر';
+                 document.getElementById('refNumber').textContent = d.referenceNumber || 'غير متوفر';
+                document.getElementById('subDate').textContent = d.submissionDate ? new Date(d.submissionDate).toLocaleDateString('ar-SY') : '-';
+                 document.getElementById('completedAt').textContent = d.completedAt ? new Date(d.completedAt).toLocaleString('ar-SY') : 'لم يكتمل';
+                document.getElementById('status').textContent = d.status || 'غير متوفر';
+                 document.getElementById('notes').textContent = d.processingNotes || 'لا توجد ملاحظات';
+                 
+                     try {
+                    const formData = JSON.parse(d.formData);
+                    document.getElementById('purpose').textContent = formData.purpose || 'غير محدد';
+                } catch(e) {
+                    document.getElementById('purpose').textContent = 'غير محدد';
+                }
+                
+            } catch (error) {
+                console.error("خطأ في جلب التفاصيل:", error);
+                alert("حدث خطأ أثناء تحميل البيانات.");
+            }
+        }
+
+        if (requestId) { fetchRequestDetails(); }
+    </script>
+</body>
+</html>
