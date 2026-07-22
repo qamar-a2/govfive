@@ -14,7 +14,7 @@ const sidebarHTML =`<aside class="w-64 bg-[#042522] text-white p-6 flex flex-col
                          <a href="DashAdim.html" class="hover:bg-[#0b3d38] hover:border-l-2 hover:border-[#B7A577] hover:text-[#B7A577] p-3 rounded-lg">لوحة التحكم</a>
                          <a href="requestes.html" class="hover:bg-[#0b3d38] hover:border-l-2 hover:border-[#B7A577] hover:text-[#B7A577] p-3 rounded-lg">الطلبات</a>
                          <a href="user.html" class="hover:bg-[#0b3d38] hover:border-l-2 hover:border-[#B7A577] hover:text-[#B7A577] p-3 rounded-lg">المستخدمين</a>
-                         <a href="#" class="hover:bg-[#0b3d38] hover:border-l-2 hover:border-[#B7A577] hover:text-[#B7A577] p-3 rounded-lg">المواعيد</a>
+                         <a href="slot.html" class="hover:bg-[#0b3d38] hover:border-l-2 hover:border-[#B7A577] hover:text-[#B7A577] p-3 rounded-lg">المواعيد</a>
                 </div>
                     
                 <div class=" hover:bg-[#0b3d38] p-3 rounded-lg">

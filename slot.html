@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المواعيد</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="global.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#EFEBE3] font-sans">
+    <div class="flex h-screen">
+
+        <div id="sidebar-wrapper"></div>
+
+        <div class="flex-1 flex flex-col">
+            <div id="header"></div>
+
+            <main class="p-6">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-xl font-bold mb-6">إضافة موعد جديد</h2>
+
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block mb-2 font-bold text-gray-700">الخدمة (Service Id)</label>
+                            <input type="text" id="slotServiceId" placeholder="governmentServiceId" class="w-full border border-gray-300 rounded-lg p-2">
+                        </div>
+                        <div>
+                            <label class="block mb-2 font-bold text-gray-700">التاريخ</label>
+                            <input type="date" id="slotDate" class="w-full border border-gray-300 rounded-lg p-2">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <label class="block mb-2 font-bold text-gray-700">وقت البداية</label>
+                            <input type="time" id="slotStartTime" class="w-full border border-gray-300 rounded-lg p-2">
+                        </div>
+                        <div>
+                            <label class="block mb-2 font-bold text-gray-700">وقت النهاية</label>
+                            <input type="time" id="slotEndTime" class="w-full border border-gray-300 rounded-lg p-2">
+                        </div>
+                        <div>
+                            <label class="block mb-2 font-bold text-gray-700">عدد المقاعد</label>
+                            <input type="number" id="slotTotalSeats" value="0" class="w-full border border-gray-300 rounded-lg p-2">
+                        </div>
+                    </div>
+
+                    <button onclick="addSlot()" class="bg-[#0E3B2E] text-white px-8 py-3 rounded-lg font-bold hover:bg-[#145c46]">إضافة الموعد</button>
+
+                    <p id="slotResultMsg" class="mt-4 font-bold"></p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="sidebar.js"></script>
+    <script>
+    function addSlot() {
+      var serviceId = document.getElementById("slotServiceId").value;
+      var slotDate = document.getElementById("slotDate").value;
+      var startTime = document.getElementById("slotStartTime").value;
+      var endTime = document.getElementById("slotEndTime").value;
+      var totalSeats = parseInt(document.getElementById("slotTotalSeats").value);
+      var resultMsg = document.getElementById("slotResultMsg");
+
+      if (!serviceId || !slotDate || !startTime || !endTime || !totalSeats) {
+        resultMsg.innerText = "لازم تعبي كل الحقول";
+        resultMsg.className = "mt-4 font-bold text-red-600";
+        return;
+      }
+
+      var startTimeFull = startTime + ":00";
+      var endTimeFull = endTime + ":00";
+
+      var payload = {
+        governmentServiceId: serviceId,
+        slotDate: slotDate,
+        startTime: startTimeFull,
+        endTime: endTimeFull,
+        totalSeats: totalSeats
+      };
+
+      var token = localStorage.getItem("userToken");
+
+      fetch("http://egovservices.runasp.net/api/Appointments/slots", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify(payload)
+      })
+        .then(function (res) {
+          return res.json().then(function (data) {
+            return { status: res.status, body: data };
+          });
+        })
+        .then(function (result) {
+          if (result.status === 200 || result.status === 201) {
+            resultMsg.innerText = "تمت إضافة الموعد بنجاح";
+            resultMsg.className = "mt-4 font-bold text-green-600";
+          } else {
+            resultMsg.innerText = "صار خطأ: " + JSON.stringify(result.body);
+            resultMsg.className = "mt-4 font-bold text-red-600";
+          }
+        })
+        .catch(function (error) {
+          resultMsg.innerText = "خطأ بالاتصال بالسيرفر";
+          resultMsg.className = "mt-4 font-bold text-red-600";
+          console.error(error);
+        });
+    }
+    </script>
+</body>
+</html>
