@@ -53,8 +53,41 @@
 
     <!-- استدعاء ملف الـ Sidebar المشترك -->
     <script src="sidebar.js"></script>
+   <script src="sidebar.js"></script>
     <script>
-        // دالة جلب وعرض الطلبات
+        let allOrders = [];
+
+        // 1. دالة رسم الجدول (مسؤولة عن عرض البيانات)
+        function displayOrders(ordersList) {
+            const tbody = document.getElementById('ordersTableBody');
+            tbody.innerHTML = '';
+            
+            if (!ordersList || ordersList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">لا توجد طلبات لعرضها</td></tr>`;
+                return;
+            }
+
+            ordersList.forEach(order => {
+                tbody.innerHTML += `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="py-4 font-mono text-sm text-gray-700">${order.referenceNumber || '---'}</td>
+                        <td class="py-4">${order.citizenName || order.fullName || '---'}</td>
+                        <td class="py-4">
+                            <span class="px-2 py-1 rounded text-sm bg-gray-100 text-gray-800 font-bold">
+                                ${order.status || 'قيد المعالجة'}
+                            </span>
+                        </td>
+                        <td class="py-4">
+                            <a href="details.html?id=${order.id}" class="bg-[#042522] text-white px-4 py-1 rounded hover:bg-opacity-90 inline-block">
+                                التفاصيل
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // 2. دالة جلب وعرض الطلبات من الـ API
         async function fetchAndDisplayOrders(status = '') {
             try {
                 let url = 'http://egovservices.runasp.net/api/Admin/requests';
@@ -73,39 +106,31 @@
                 
                 const result = await response.json();
                 const orders = result.data.items || result.data || [];
-                const tbody = document.getElementById('ordersTableBody');
+                allOrders = orders; // حفظ الطلبات للبحث
                 
-                tbody.innerHTML = '';
-                
-                if (orders.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">لا توجد طلبات لعرضها</td></tr>`;
-                    return;
-                }
-
-                orders.forEach(order => {
-                    tbody.innerHTML += `
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="py-4 font-mono text-sm text-gray-700">${order.referenceNumber || '---'}</td>
-                            <td class="py-4">${order.citizenName || order.fullName || '---'}</td>
-                            <td class="py-4">
-                                <span class="px-2 py-1 rounded text-sm bg-gray-100 text-gray-800 font-bold">
-                                    ${order.status || 'قيد المعالجة'}
-                                </span>
-                            </td>
-                            <td class="py-4">
-                                <a href="details.html?id=${order.id}" class="bg-[#042522] text-white px-4 py-1 rounded hover:bg-opacity-90 inline-block">
-                                    التفاصيل
-                                </a>
-                            </td>
-                        </tr>
-                    `;
-                });
+                displayOrders(orders); // استدعاء دالة الرسم
             } catch (error) {
                 console.error("خطأ في جلب الطلبات:", error);
             }
         }
 
-        // دالة للتحكم بالتبويبات وتغيير الألوان عند الضغط
+        // 3. دالة الفلترة والبحث الفوري
+        function filterTable() {
+            const searchInput = document.getElementById('searchInput');
+            if (!searchInput) return;
+
+            const searchText = searchInput.value.trim().toLowerCase();
+            
+            const filtered = allOrders.filter(order => {
+                const refNum = String(order.referenceNumber || '').toLowerCase();
+                const citizen = String(order.citizenName || order.fullName || '').toLowerCase();
+                return refNum.includes(searchText) || citizen.includes(searchText);
+            });
+            
+            displayOrders(filtered); 
+        }
+
+        // 4. التحكم بالتبويبات وربط البحث عند تحميل الصفحة
         function filterRequests(status) {
             const buttons = document.querySelectorAll('.tab-btn');
             buttons.forEach(btn => {
@@ -123,6 +148,14 @@
             loadsidebar();
             loadheader();
             fetchAndDisplayOrders('');
+
+            // ربط حقل البحث الموجود في الهيدر
+            setTimeout(() => {
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.addEventListener('input', filterTable);
+                }
+            }, 500);
         });
     </script>
 </body>
