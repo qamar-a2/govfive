@@ -13,16 +13,6 @@
       min-height: 100vh;
     }
 
-    .tab-active {
-      background: #042522;
-      color: white;
-    }
-
-    .tab-inactive {
-      background: white;
-      color: #6b7280;
-    }
-
     .card {
       background: white;
       border-radius: 20px;
@@ -65,65 +55,13 @@
     </div>
   </div>
 
-  <!-- Tabs -->
-  <div class="max-w-4xl mx-auto px-4 mb-4">
-    <div class="flex bg-white p-1 rounded-2xl gap-2 shadow-sm">
-      <button onclick="showTab('requests')" id="btn-requests"
-        class="flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all tab-active">
-        الطلبات
-      </button>
-      <button onclick="showTab('appointments')" id="btn-appointments"
-        class="flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all tab-inactive">
-        المواعيد
-      </button>
-    </div>
+  <!-- Requests -->
+  <div class="max-w-4xl mx-auto px-4 mb-3">
+    <h2 class="font-bold text-[#042522] text-lg mb-1">الطلبات</h2>
   </div>
-
-  <!-- Requests Tab -->
-  <div id="tab-requests" class="max-w-4xl mx-auto px-4 space-y-3">
+  <div class="max-w-4xl mx-auto px-4 space-y-3">
     <div id="requests-list">
       <div class="text-center text-gray-400 py-10">جاري تحميل الطلبات...</div>
-    </div>
-  </div>
-
-  <!-- Appointments Tab -->
-  <div id="tab-appointments" class="max-w-4xl mx-auto px-4 hidden">
-    <div class="card mb-4">
-      <h2 class="font-bold text-[#042522] mb-4">اضافة موعد متاح</h2>
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="text-sm text-gray-500 mb-1 block">رقم الخدمة (ID)</label>
-          <input type="text" id="slot-service" placeholder="governmentServiceId"
-            class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#042522]">
-        </div>
-        <div>
-          <label class="text-sm text-gray-500 mb-1 block">التاريخ</label>
-          <input type="date" id="slot-date" placeholder="2026-7-22"
-            class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#042522]">
-        </div>
-        <div>
-          <label class="text-sm text-gray-500 mb-1 block">وقت البداية</label>
-          <input type="time" id="slot-start"
-            class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#042522]">
-        </div>
-        <div>
-          <label class="text-sm text-gray-500 mb-1 block">وقت النهاية</label>
-          <input type="time" id="slot-end"
-            class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#042522]">
-        </div>
-        <div>
-          <label class="text-sm text-gray-500 mb-1 block">عدد المقاعد</label>
-          <input type="number" id="slot-seats" placeholder="عدد المراجعين" min="1"
-            class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#042522]">
-        </div>
-        <div class="flex items-end">
-          <button onclick="addSlot()"
-            class="w-full bg-[#042522] text-white py-2 rounded-xl text-sm font-bold hover:bg-[#042522]/90 transition">
-            اضافة الموعد
-          </button>
-        </div>
-      </div>
-      <div id="slot-msg" class="mt-3 text-sm hidden"></div>
     </div>
   </div>
 
@@ -336,7 +274,7 @@
       var note = document.getElementById("notes-input").value.trim();
       var msg = document.getElementById("modal-msg");
       if (!note) {
-        msg.textContent = "اكتبي ملاحظة اولا";
+        msg.textContent = "اكتب ملاحظة اولا";
         msg.className = "text-sm text-center text-red-500";
         msg.classList.remove("hidden");
         return;
@@ -348,14 +286,7 @@
             "Authorization": "Bearer " + token,
             "Content-Type": "application/json"
           },
-
-          body: JSON.stringify({
-            "governmentServiceId": serviceId,
-            "slotDate": date,
-            "startTime": date + "T" + start + ":00",
-            "endTime": date + "T" + end + ":00",
-            "totalSeats": parseInt(seats)
-          })
+          body: JSON.stringify({ "note": note })
         });
         if (res.ok) {
           msg.textContent = "تمت اضافة الملاحظة";
@@ -366,69 +297,13 @@
       } catch (err) { console.error(err); }
     }
 
-    async function addSlot() {
-      var serviceId = document.getElementById("slot-service").value.trim();
-      var date = document.getElementById("slot-date").value;
-      var start = document.getElementById("slot-start").value;
-      var end = document.getElementById("slot-end").value;
-      var seats = document.getElementById("slot-seats").value;
-      var msg = document.getElementById("slot-msg");
-
-      if (!serviceId || !date || !start || !end || !seats) {
-        msg.textContent = "يرجى تعبئة جميع الحقول";
-        msg.className = "mt-3 text-sm text-red-500";
-        msg.classList.remove("hidden");
-        return;
-      }
-
-      try {
-        var res = await fetch(BASE + "/api/Appointments/slots", {
-          method: "POST",
-          headers: {
-            "Authorization": "Bearer " + token,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            "governmentServiceId": serviceId,
-            "slotDate": date,
-            "startTime": start,
-            "endTime": end,
-            "totalSeats": parseInt(seats)
-          })
-        });
-
-        if (res.ok) {
-          msg.textContent = "تمت اضافة الموعد بنجاح";
-          msg.className = "mt-3 text-sm text-green-500";
-          msg.classList.remove("hidden");
-          document.getElementById("slot-service").value = "";
-          document.getElementById("slot-date").value = "";
-          document.getElementById("slot-start").value = "";
-          document.getElementById("slot-end").value = "";
-          document.getElementById("slot-seats").value = "";
-        } else {
-          msg.textContent = "حدث خطا في اضافة الموعد";
-          msg.className = "mt-3 text-sm text-red-500";
-          msg.classList.remove("hidden");
-        }
-      } catch (err) { console.error(err); }
-    }
-
-    function showTab(tab) {
-      document.getElementById("tab-requests").classList.add("hidden");
-      document.getElementById("tab-appointments").classList.add("hidden");
-      document.getElementById("btn-requests").className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all tab-inactive";
-      document.getElementById("btn-appointments").className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all tab-inactive";
-      document.getElementById("tab-" + tab).classList.remove("hidden");
-      document.getElementById("btn-" + tab).className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all tab-active";
-    }
     //---مشان قصة الدحول بحساب موظف ----/
-    document.addEventListener("DOMContentLoaded", function() {
-    var role = (localStorage.getItem("userRole") || "").toLowerCase();
-    if (role === "admin") {
+    document.addEventListener("DOMContentLoaded", function () {
+      var role = (localStorage.getItem("userRole") || "").toLowerCase();
+      if (role === "admin") {
         document.getElementById("adminBtn").classList.remove("hidden");
-    }
-});
+      }
+    });
     loadUserInfo();
     loadRequests();
   </script>
