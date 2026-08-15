@@ -65,7 +65,7 @@
             <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
                 <div class="photo "><img src="image/١الجمهورية-العربية-السورية-(1).png" alt="" class="w-[250px] "></div>
                 <div class="hidden md:flex space-x-reverse space-x-8 font-bold">
-                    <a href="#" class="underline underline-offset-8 decoration-2 text-[#042522] hover:text-[#96835F] transition">الرئيسية</a>
+                    <a href="#" class="hover-underline text-[#042522] hover:text-[#96835F] pb-1 ">الرئيسية</a>
                     <a href="treatment.html"
                         class="hover-underline text-[#042522] hover:text-[#96835F] transition">المعاملات</a>
                     <a href="wallet.html"
@@ -168,7 +168,7 @@
 
 
         //-----------الربط   ه--------------//
-        const defaultIcon = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        const defaultIcon = `<svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
           d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
         </svg>`;
@@ -191,14 +191,13 @@
                 grid.innerHTML = "";
                 data.forEach(ministry => {
                     grid.innerHTML += `
-                 <div class="group bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 text-center cursor-pointer border border-transparent hover:border-[#042522]">
-                <div class="group bg-white p-8 rounded-3xl shadow-sm cursor-pointer" onclick="window.location.href='main.html?id=${ministry.id}'">
-                  <div class="bg-[#f8f6f2] w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-[#042522] group-hover:text-white transition">
-                    ${ministry.logoUrl
-                            ? `<img src="http://egovservices.runasp.net${ministry.logoUrl}" class="ministry-logo w-full h-full object-contain transition-transform duration-300 group-hover:scale-125" onerror="this.style.display='none'">`
+                   <div class="group bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 text-center cursor-pointer border border-transparent hover:border-[#042522] flex flex-col items-center justify-center" onclick="window.location.href='main.html?id=${ministry.id}'">
+                    <div class="w-24 h-24 flex items-center justify-center mx-auto mb-4 transition">
+                        ${ministry.logoUrl
+                            ? ` <img src="http://egovservices.runasp.net${ministry.logoUrl}" class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110" onerror="this.style.display='none'">`
                             : defaultIcon}
-                  </div>
-                  <h3 class="font-bold text-lg group-hover:text-[#96835F]">${ministry.name}</h3>
+                    </div>
+                    <h3 class="font-bold text-lg group-hover:text-[#96835F] transition-colors">${ministry.name}</h3>
                 </div>`;
                 });
             } catch (err) {
