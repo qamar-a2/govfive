@@ -11,10 +11,13 @@
     <style>
         :root {
             --dark-green: #042522;
-            --dark-green-2: #042522;
             --gold: #96835F;
             --gold-bright: #C9A227;
-            --card-bg: #0a3833;
+            --bg-page: #f7f5f0;
+            --card-bg: #ffffff;
+            --card-border: #e6e1d6;
+            --text-main: #1c2b29;
+            --text-sub: #6b6357;
         }
 
         * {
@@ -22,24 +25,24 @@
         }
 
         body {
-            background-color: var(--dark-green);
+            background-color: var(--bg-page);
         }
 
         .bg-noise {
-            background-image: radial-gradient(circle at 20% 20%, rgba(201, 162, 39, 0.06) 0%, transparent 40%),
-                radial-gradient(circle at 80% 60%, rgba(201, 162, 39, 0.05) 0%, transparent 45%);
+            background-image: radial-gradient(circle at 20% 20%, rgba(201, 162, 39, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 60%, rgba(4, 37, 34, 0.04) 0%, transparent 45%);
         }
 
         .filter-pill {
             transition: all .25s ease;
             border: none;
-            color: #a89a7d;
+            color: var(--text-sub);
             background: transparent;
         }
 
         .filter-pill.active {
             background: linear-gradient(135deg, var(--gold-bright), var(--gold));
-            color: #042522;
+            color: #fff;
         }
 
         .filter-pill:not(.active):hover {
@@ -48,7 +51,8 @@
 
         .notif-card {
             background: var(--card-bg);
-            border: 1px solid rgba(150, 131, 95, 0.18);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 1px 3px rgba(4, 37, 34, 0.05);
             transition: all .25s ease;
             position: relative;
             overflow: hidden;
@@ -56,6 +60,7 @@
 
         .notif-card:hover {
             border-color: rgba(201, 162, 39, 0.5);
+            box-shadow: 0 4px 10px rgba(4, 37, 34, 0.08);
             transform: translateY(-1px);
         }
 
@@ -72,7 +77,7 @@
             height: 8px;
             border-radius: 50%;
             background: var(--gold-bright);
-            box-shadow: 0 0 8px rgba(201, 162, 39, 0.7);
+            box-shadow: 0 0 8px rgba(201, 162, 39, 0.5);
         }
 
         .icon-wrap {
@@ -86,17 +91,17 @@
         }
 
         .icon-success {
-            background: rgba(46, 143, 110, 0.15);
-            color: #4ade80;
+            background: rgba(4, 37, 34, 0.08);
+            color: var(--dark-green);
         }
 
         .icon-warning {
-            background: rgba(201, 140, 39, 0.15);
-            color: #f0a83d;
+            background: rgba(201, 162, 39, 0.12);
+            color: var(--gold-bright);
         }
 
         .skeleton {
-            background: linear-gradient(90deg, rgba(150, 131, 95, 0.08) 25%, rgba(150, 131, 95, 0.18) 37%, rgba(150, 131, 95, 0.08) 63%);
+            background: linear-gradient(90deg, rgba(4, 37, 34, 0.05) 25%, rgba(4, 37, 34, 0.1) 37%, rgba(4, 37, 34, 0.05) 63%);
             background-size: 400% 100%;
             animation: shimmer 1.6s ease infinite;
         }
@@ -125,9 +130,9 @@
             bottom: 24px;
             left: 50%;
             transform: translateX(-50%) translateY(20px);
-            background: var(--card-bg);
+            background: var(--dark-green);
             border: 1px solid var(--gold-bright);
-            color: #e8e2d4;
+            color: #f7f5f0;
             padding: 12px 22px;
             border-radius: 10px;
             opacity: 0;
@@ -136,11 +141,16 @@
             z-index: 100;
             font-weight: 500;
             font-size: 14px;
+            box-shadow: 0 4px 14px rgba(4, 37, 34, 0.25);
         }
 
         .toast.show {
             opacity: 1;
             transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.new-notif {
+            border: 1px solid var(--gold-bright);
         }
 
         .ping-ring {
@@ -165,47 +175,47 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: var(--dark-green);
+            background: var(--bg-page);
         }
 
         ::-webkit-scrollbar-thumb {
-            background: rgba(150, 131, 95, 0.4);
+            background: rgba(150, 131, 95, 0.35);
             border-radius: 10px;
         }
     </style>
 </head>
 
 <body class="bg-noise min-h-screen">
-
+    <button onclick="history.back()" style="position: absolute; top: 10px; right: 300px; font-size: 20px;">✕</button>
     <div class="max-w-2xl mx-auto px-4 py-8 md:py-12">
 
         <!-- Header -->
         <div class="flex items-center justify-between mb-8">
             <div>
-                <h1 class="text-2xl md:text-3xl font-bold" style="color:#e8e2d4;">الإشعارات</h1>
-                <p class="text-sm mt-1" style="color:var(--gold);">تابع آخر التحديثات المتعلقة بطلباتك</p>
+                <h1 class="text-2xl md:text-3xl font-bold" style="color:var(--dark-green);">الإشعارات</h1>
+                <p class="text-sm mt-1" style="color:var(--text-sub);">تابع آخر التحديثات المتعلقة بطلباتك</p>
             </div>
             <div id="unreadBadge" class="hidden items-center gap-2 pe-4 ps-3 py-2 rounded-full"
-                style="background:rgba(150,131,95,0.12); border:1px solid rgba(201,162,39,0.4);">
+                style="background:rgba(4,37,34,0.06); border:1px solid rgba(4,37,34,0.15);">
                 <span class="relative flex items-center justify-center">
                     <span class="absolute inline-flex h-full w-full rounded-full opacity-60 ping-ring"
                         style="background:var(--gold-bright);"></span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        style="color:var(--gold-bright); position:relative; z-index:1;">
+                        style="color:var(--dark-green); position:relative; z-index:1;">
                         <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
                         <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
                     </svg>
                 </span>
-                <span id="unreadCount" class="text-sm font-bold" style="color:#e8e2d4;">0</span>
-                <span class="text-xs" style="color:var(--gold);">غير مقروءة</span>
+                <span id="unreadCount" class="text-sm font-bold" style="color:var(--dark-green);">0</span>
+                <span class="text-xs" style="color:var(--text-sub);">غير مقروءة</span>
             </div>
         </div>
 
         <!-- Filters -->
         <div class="flex justify-center mb-6">
             <div class="inline-flex items-center p-1 rounded-full"
-                style="background:var(--card-bg); border:1px solid rgba(150,131,95,0.25);">
+                style="background:var(--card-bg); border:1px solid var(--card-border);">
                 <button data-filter="unread"
                     class="filter-pill active px-6 py-2.5 rounded-full text-sm font-bold whitespace-nowrap">غير
                     مقروءة</button>
@@ -220,8 +230,8 @@
         <!-- Empty state -->
         <div id="emptyState" class="hidden flex-col items-center justify-center py-20 text-center">
             <div class="text-5xl mb-4">🔔</div>
-            <p style="color:#e8e2d4;" class="font-semibold text-lg">لا يوجد إشعارات </p>
-            <p style="color:var(--gold);" class="text-sm mt-1">سوف تظهر أي تحديثات جديدة على طلباتك</p>
+            <p style="color:var(--dark-green);" class="font-semibold text-lg">لا يوجد إشعارات </p>
+            <p style="color:var(--text-sub);" class="text-sm mt-1">سوف تظهر أي تحديثات جديدة على طلباتك</p>
         </div>
 
         <!-- Loading skeleton -->
@@ -235,16 +245,41 @@
         var API_BASE = "http://egovservices.runasp.net";
         var allNotifications = [];
         var currentFilter = "unread";
+        var lastUnreadCount = 0;
+        var isFirstLoad = true;
+        var POLL_INTERVAL = 60000;
 
         function getToken() {
             return localStorage.getItem("userToken");
         }
 
-        function showToast(msg) {
+        function showToast(msg, isNewNotif) {
             var t = document.getElementById("toast");
             t.textContent = msg;
             t.classList.add("show");
-            setTimeout(function () { t.classList.remove("show"); }, 2200);
+            if (isNewNotif) { t.classList.add("new-notif"); } else { t.classList.remove("new-notif"); }
+            setTimeout(function () {
+                t.classList.remove("show");
+                t.classList.remove("new-notif");
+            }, 2500);
+        }
+
+        function playNotificationSound() {
+            try {
+                var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                var oscillator = audioCtx.createOscillator();
+                var gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.type = "sine";
+                oscillator.frequency.value = 800;
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.5);
+            } catch (e) {
+                console.log("تعذر تشغيل الصوت: " + e);
+            }
         }
 
         function renderSkeleton() {
@@ -298,6 +333,7 @@
             } else {
                 badge.classList.add("hidden");
             }
+            return count;
         }
 
         function getFiltered() {
@@ -332,8 +368,8 @@
                 html += '<div class="' + cardClass + ' rounded-2xl p-4 flex gap-3 cursor-pointer" data-id="' + n.id + '">';
                 html += '<div class="icon-wrap ' + iconClass + '">' + iconSvg(n.notificationType) + '</div>';
                 html += '<div class="flex-1 min-w-0">';
-                html += '<h3 class="font-bold text-sm" style="color:#e8e2d4;">' + n.title + '</h3>';
-                html += '<p class="text-sm mt-1 leading-relaxed" style="color:#cfc8b8;">' + n.message + '</p>';
+                html += '<h3 class="font-bold text-sm" style="color:var(--dark-green);">' + n.title + '</h3>';
+                html += '<p class="text-sm mt-1 leading-relaxed" style="color:var(--text-sub);">' + n.message + '</p>';
                 html += '<span class="text-xs mt-2 block" style="color:var(--gold);">' + timeAgo(n.createdAt) + '</span>';
                 if (!n.isRead) {
                     html += '<button class="mark-read-btn text-xs font-semibold mt-2 mark-btn" data-id="' + n.id + '">تعليم كمقروء</button>';
@@ -375,11 +411,11 @@
                     if (!res.ok) { throw new Error("failed"); }
                     var notif = allNotifications.find(function (x) { return x.id === id; });
                     if (notif) { notif.isRead = true; }
-                    updateUnreadBadge();
+                    lastUnreadCount = updateUnreadBadge();
                     renderList();
                 })
                 .catch(function () {
-                    showToast("يوجد  مشكلة، حاول مرة اخرى ");
+                    showToast("يوجد  مشكلة، حاول مرة اخرى ", false);
                 });
         }
 
@@ -395,15 +431,42 @@
                     document.getElementById("loadingState").innerHTML = "";
                     if (data && data.success && data.data && data.data.notifications) {
                         allNotifications = data.data.notifications;
-                        updateUnreadBadge();
+                        lastUnreadCount = updateUnreadBadge();
                         renderList();
+                        isFirstLoad = false;
                     } else {
-                        showToast("لم يتم جلب الاشعارات ");
+                        showToast("لم يتم جلب الاشعارات ", false);
                     }
                 })
                 .catch(function () {
                     document.getElementById("loadingState").innerHTML = "";
-                    showToast("يوجد مشكلة بالاتصال، تأكد من اتصال الإنترنت");
+                    showToast("يوجد مشكلة بالاتصال، تأكد من اتصال الإنترنت", false);
+                });
+        }
+
+        function pollNotifications() {
+            var token = getToken();
+            fetch(API_BASE + "/api/Notifications", {
+                method: "GET",
+                headers: { "Authorization": "Bearer " + token }
+            })
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    if (data && data.success && data.data && data.data.notifications) {
+                        allNotifications = data.data.notifications;
+                        var newCount = updateUnreadBadge();
+
+                        if (!isFirstLoad && newCount > lastUnreadCount) {
+                            playNotificationSound();
+                            showToast("لديك إشعار جديد 🔔", true);
+                        }
+
+                        lastUnreadCount = newCount;
+                        renderList();
+                    }
+                })
+                .catch(function (err) {
+                    console.log("خطأ بفحص الإشعارات: " + err);
                 });
         }
 
@@ -418,6 +481,7 @@
         }
 
         loadNotifications();
+        setInterval(pollNotifications, POLL_INTERVAL);
     </script>
 
 </body>
