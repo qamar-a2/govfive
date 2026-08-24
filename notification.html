@@ -431,6 +431,9 @@
                     document.getElementById("loadingState").innerHTML = "";
                     if (data && data.success && data.data && data.data.notifications) {
                         allNotifications = data.data.notifications;
+                        allNotifications.sort(function (a, b) {
+    return new Date(b.createdAt) - new Date(a.createdAt);
+});
                         lastUnreadCount = updateUnreadBadge();
                         renderList();
                         isFirstLoad = false;
@@ -454,6 +457,9 @@
                 .then(function (data) {
                     if (data && data.success && data.data && data.data.notifications) {
                         allNotifications = data.data.notifications;
+                        allNotifications.sort(function (a, b) {
+    return new Date(b.createdAt) - new Date(a.createdAt);
+});
                         var newCount = updateUnreadBadge();
 
                         if (!isFirstLoad && newCount > lastUnreadCount) {
