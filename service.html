@@ -146,6 +146,11 @@
       opacity: 0.9;
     }
 
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     .file-picker {
       display: flex;
       align-items: center;
@@ -193,6 +198,46 @@
         grid-column: span 1;
       }
     }
+
+    .success-overlay {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 16px;
+      padding: 60px 32px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+    }
+
+    .success-overlay.visible {
+      display: flex;
+    }
+
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #2e6b4f;
+      color: #fff;
+      font-size: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .success-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #042522;
+    }
+
+    .success-subtext {
+      font-size: 14px;
+      color: #555;
+    }
   </style>
 </head>
 
@@ -201,14 +246,20 @@
     <div class="service-card" id="service-info">
     </div>
 
-    <div class="form-card">
+    <div class="form-card" id="form-card">
       <form id="dynamic-form" novalidate>
         <div class="form-grid" id="form-fields"></div>
         <button class="submit-btn">إرسال الطلب</button>
       </form>
     </div>
+
+    <div class="success-overlay" id="success-overlay">
+      <div class="success-icon">&#10003;</div>
+      <div class="success-title" id="success-title">تم استلام طلبك بنجاح</div>
+      <div class="success-subtext" id="success-subtext">يمكنك متابعة حالة طلبك لاحقاً</div>
+    </div>
   </div>
-  
+
 
   <script>
     //--------------هون الربط---------------/
@@ -219,6 +270,7 @@
     const BASE = "http://egovservices.runasp.net";
 
     let slotsDataMap = {}; // خزّنا فيها بيانات كل سلوت (slotId -> slotDate) ان نستخدمها بحقل التاريخ المخفي
+    let fileFieldNames = []; // خزّنا فيها أسماء الحقول يلي نوعها ملف/صورة، مشان نرفعها قبل السبميت
 
     //---------- جلب المواعيد المتاحة للفرع/الخدمة----------//
     async function loadAppointmentSlots() {
@@ -261,6 +313,7 @@
 
         const formFields = document.getElementById("form-fields");
         formFields.innerHTML = "";
+        fileFieldNames = [];
 
         const requiresAttendance = schema.branches && schema.branches.length > 0;
 
@@ -276,6 +329,26 @@
           // بس بنحطه كحقل مخفي وقيمته بتنعبى تلقائياً من تاريخ الموعد المختار
           if (requiresAttendance && field.label && field.label.indexOf("تاريخ الاستلام") !== -1) {
             formFields.innerHTML += "<input type='hidden' name='" + field.name + "' id='delivery-date-hidden' value=''>";
+            return;
+          }
+
+          // حقل من نوع ملف/صورة: منرسمه كـ file-picker ومنخزن اسمه مشان نرفعه قبل السبميت
+          if (field.type === "file" || field.type === "image") {
+            fileFieldNames.push(field.name);
+
+            var pickerHTML = "";
+            pickerHTML += "<div class='field-wrapper full-width'>";
+            pickerHTML += "<label>" + field.label + "</label>";
+            pickerHTML += "<label class='file-picker' for='file-input-" + field.name + "' id='file-picker-" + field.name + "'>";
+            pickerHTML += "<span class='file-picker-icon'>&#128206;</span>";
+            pickerHTML += "<span id='file-name-" + field.name + "'>لم يتم اختيار أي ملف</span>";
+            pickerHTML += "</label>";
+            pickerHTML += "<input type='file' id='file-input-" + field.name + "' name='" + field.name + "' accept='image/*' style='display:none' " + (field.required ? "data-required='true'" : "") + ">";
+            pickerHTML += "<div class='help-text'>الصيغ المقبولة: JPG, PNG</div>";
+            pickerHTML += "<div class='error-text' id='file-error-" + field.name + "'>هذا الحقل مطلوب</div>";
+            pickerHTML += "</div>";
+
+            formFields.innerHTML += pickerHTML;
             return;
           }
 
@@ -308,11 +381,68 @@
           }
         }
 
+        // ربط أحداث اختيار الملفات (تحديث اسم الملف الظاهر وحالة selected)
+        fileFieldNames.forEach(function (name) {
+          var fileInput = document.getElementById("file-input-" + name);
+          var picker = document.getElementById("file-picker-" + name);
+          var nameLabel = document.getElementById("file-name-" + name);
+          var errorLabel = document.getElementById("file-error-" + name);
+
+          if (fileInput) {
+            fileInput.addEventListener("change", function () {
+              if (fileInput.files.length > 0) {
+                nameLabel.textContent = fileInput.files[0].name;
+                picker.classList.add("selected");
+                if (errorLabel) errorLabel.classList.remove("visible");
+              } else {
+                nameLabel.textContent = "لم يتم اختيار أي ملف";
+                picker.classList.remove("selected");
+              }
+            });
+          }
+        });
+
       } catch (err) {
         console.error(err);
       }
 
     }
+
+    //---------- إخفاء الفورم وإظهار رسالة النجاح (بدون تحويل، منضل بنفس الصفحة) ----------//
+    function showSuccessMessage(message) {
+      var formCard = document.getElementById("form-card");
+      var overlay = document.getElementById("success-overlay");
+      var titleEl = document.getElementById("success-title");
+      var subtextEl = document.getElementById("success-subtext");
+
+      if (titleEl) titleEl.textContent = message || "تم استلام طلبك بنجاح";
+      if (subtextEl) subtextEl.style.display = "none";
+      if (formCard) formCard.style.display = "none";
+      if (overlay) overlay.classList.add("visible");
+    }
+
+    //---------- رفع ملف واحد على /api/files/upload ورجاعة fileId ----------//
+    async function uploadFile(fileInputElement) {
+      var uploadFormData = new FormData();
+      uploadFormData.append("file", fileInputElement.files[0]);
+
+      var uploadResponse = await fetch(BASE + "/api/files/upload", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + token
+        },
+        body: uploadFormData
+      });
+
+      var uploadResult = await uploadResponse.json();
+
+      if (!uploadResponse.ok || !uploadResult.success) {
+        throw new Error((uploadResult && uploadResult.message) || "فشل رفع الملف");
+      }
+
+      return uploadResult.data.fileId;
+    }
+
     //ربط ارسال الطلب ويعطي اشعار ويرجع ملف -------------ر-//
     async function submitServiceRequest(event) {
       if (event) event.preventDefault();
@@ -320,14 +450,80 @@
       const urlParams = new URLSearchParams(window.location.search);
       const currentServiceId = urlParams.get('id');
 
+      const submitBtn = document.querySelector(".submit-btn");
+
+      // ---- الخطوة 1: التحقق من الحقول المطلوبة من نوع ملف ورفعها أول شي ----
+      var uploadedFileIds = {};
+      var hasFileError = false;
+
+      for (var i = 0; i < fileFieldNames.length; i++) {
+        var fieldName = fileFieldNames[i];
+        var fileInput = document.getElementById("file-input-" + fieldName);
+        var errorLabel = document.getElementById("file-error-" + fieldName);
+
+        if (!fileInput) continue;
+
+        var isRequired = fileInput.getAttribute("data-required") === "true";
+
+        if (fileInput.files.length === 0) {
+          if (isRequired) {
+            if (errorLabel) errorLabel.classList.add("visible");
+            hasFileError = true;
+          }
+          continue;
+        }
+
+        if (errorLabel) errorLabel.classList.remove("visible");
+      }
+
+      if (hasFileError) {
+        alert("فضلاً اختر الملفات/الصور المطلوبة");
+        return;
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "جارِ رفع الملفات...";
+      }
+
+      try {
+        for (var j = 0; j < fileFieldNames.length; j++) {
+          var fName = fileFieldNames[j];
+          var fInput = document.getElementById("file-input-" + fName);
+          if (fInput && fInput.files.length > 0) {
+            var fileId = await uploadFile(fInput);
+            uploadedFileIds[fName] = fileId;
+          }
+        }
+      } catch (uploadError) {
+        console.error("Error uploading file:", uploadError);
+        alert("فشل رفع الملف: " + uploadError.message);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "إرسال الطلب";
+        }
+        return;
+      }
+
+      if (submitBtn) {
+        submitBtn.textContent = "جارِ إرسال الطلب...";
+      }
+
+      // ---- الخطوة 2: تجميع باقي الحقول (باستثناء حقول الملفات، الفرع، الموعد) ----
       const dynamicFields = {};
       const inputs = document.querySelectorAll("#form-fields input, #form-fields select, #form-fields textarea");
 
       inputs.forEach(input => {
-        if (input.name && input.id !== "branch-select" && input.id !== "slot-select") {
-          dynamicFields[input.name] = input.value;
-        }
+        if (!input.name) return;
+        if (input.id === "branch-select" || input.id === "slot-select") return;
+        if (input.type === "file") return; // هاي منضيفها لحالها تحت من uploadedFileIds
+        dynamicFields[input.name] = input.value;
       });
+
+      // ---- الخطوة 3: ضم fileId (أو أكتر من واحد) داخل نفس formData ----
+      for (var key in uploadedFileIds) {
+        dynamicFields[key] = uploadedFileIds[key];
+      }
 
       const branchSelect = document.getElementById("branch-select");
       const slotSelect = document.getElementById("slot-select");
@@ -357,15 +553,22 @@
         }
 
         const requestId = result.data.requestId;
-        alert(result.data.message || "تم إرسال الطلب بنجاح! 🎉");
+        const successMessage = result.data.message || "تم استلام طلبك بنجاح";
 
         if (currentServiceType === 0) {
+          // خدمة إلكترونية بالكامل: منجهز ونحمّل الوثيقة الأول، وبعدين منظهر رسالة النجاح
           await processAndDownloadDocument(requestId);
         }
+
+        showSuccessMessage(successMessage);
 
       } catch (error) {
         console.error("Error submitting form:", error);
         alert("حدث خطأ أثناء الاتصال بالسيرفر.");
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "إرسال الطلب";
+        }
       }
     }
     ////تجهيز تنزيل الملف هوون بلش ------------/
@@ -423,7 +626,7 @@
     });
     loadServiceSchema();
   </script>
-<script src="notif-check.js"></script>
+  <script src="notif-check.js"></script>
 </body>
 
 </html>
