@@ -30,7 +30,7 @@
             <p class="text-sm text-gray-600">أنا المساعد الذكي، كيف يمكنني مساعدتك اليوم؟</p>
         </div>
 
-        <div class="space-y-3 mb-6  text-right text-sm">
+        <div class="space-y-3 mb-6 text-right text-sm overflow-y-auto max-h-[350px] pr-2" id="chat-messages">
             <div class="w-full border border-gray-100 rounded-xl p-3  text-gray-700 hover:bg-gray-50 cursor-pointer transition ">الاستفسار عن معاملة</div>
             <div class="w-full border border-gray-100 rounded-xl p-3  text-gray-700 hover:bg-gray-50 cursor-pointer transition ">متطلبات خدمة معينة</div>
             <div class="w-full border border-gray-100 rounded-xl p-3  text-gray-700 hover:bg-gray-50 cursor-pointer transition">الدعم والمساعدة</div>
@@ -38,11 +38,11 @@
         </div>
 
         <div class="relative flex items-center">
-            <div class="w-7 h-7 bg-black absolute items-center justify-center rounded-full left-2 ">
-                 <i class="fa-solid fa-paper-plane absolute  top-[20%]  left-[50%] -translate-x-1/2 text-gov-bage text-xs "></i>
+            <div class="w-7 h-7 bg-[#042522] absolute items-center justify-center rounded-full left-2 cursor-pointer" onclick="sendMessage()" >
+                 <i class="fa-solid fa-paper-plane absolute  top-[20%]  left-[50%] -translate-x-1/2 text-white text-xs " ></i>
             </div>
     
-            <input type="text" placeholder="اكتب سؤالك هنا" class="w-full bg-gray-50 rounded-xl p-3 pl-10 outline-none text-sm text-right">
+            <input type="text" placeholder="اكتب سؤالك هنا" class="w-full bg-gray-50 rounded-xl p-3 pl-10 outline-none text-sm text-right" id="user-input">
         </div>              
     </div>
 </div>
@@ -55,6 +55,137 @@
      div_Ai.classList.remove("flex")
     div_Ai.classList.add("hidden")
 }
+// -----------------------------------------------------
+// للربط
+let conversationHistory = []
+
+
+async function sendMessage(suggestedText = null) {
+    if (typeof suggestedText !== 'string') {
+        suggestedText = null;
+    }
+
+    const inputElement = document.getElementById("user-input");
+    const messageText = suggestedText || inputElement.value.trim();
+
+    if (!messageText) return;
+
+    const chatContainer = document.getElementById("chat-messages");
+
+    if (conversationHistory.length === 0) {
+        chatContainer.innerHTML = "";
+    }
+
+    conversationHistory.push({ role: "user", content: messageText });
+    appendMessage(messageText, "user"); 
+    
+   
+    if (!suggestedText) inputElement.value = ""; 
+
+   
+    const loadingId = showLoadingIndicator();
+const token = localStorage.getItem("userToken");
+    try {
+        const response = await fetch("http://egovservices.runasp.net/api/assistant/chat", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                messages: conversationHistory
+            })
+        });
+
+        removeLoadingIndicator(loadingId);
+
+      if (response.ok) {
+            const data = await response.json();
+            const aiReply = data.reply || data.message || data.content || data; 
+            conversationHistory.push({ role: "assistant", content: aiReply });
+            appendMessage(aiReply, "assistant");
+        }
+        
+    } catch (error) {
+        
+        removeLoadingIndicator(loadingId);
+        console.error("Error:", error);
+    }
+}
+
+
+
+// ---------------------------------------------------------
+//لتصميم الرسائل بين المستعدم والذكاء
+function appendMessage(text, sender) {
+    const chatContainer = document.getElementById("chat-messages");
+    const msgWrapper = document.createElement("div");
+    msgWrapper.classList.add("flex", "w-full", "mb-3", sender === "user" ? "justify-start" : "justify-end");
+
+    const msgBubble = document.createElement("div");
+    msgBubble.classList.add("max-w-[85%]", "p-3", "rounded-2xl", "text-sm", "leading-relaxed");
+msgBubble.setAttribute("dir", "rtl");
+    if (sender === "user") {
+        msgBubble.classList.add("bg-gray-100", "text-gray-800", "rounded-tl-none");
+    } else {
+        msgBubble.classList.add("bg-gov-primary", "text-white", "rounded-tr-none");
+    }
+    let formattedText = text
+        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold">$1</strong>') 
+            .replace(/\*/g, '') 
+            .replace(/\\n/g, '<br>') 
+            .replace(/\n/g, '<br>');
+
+    msgBubble.innerHTML = formattedText;
+  
+    msgWrapper.appendChild(msgBubble);
+    chatContainer.appendChild(msgWrapper);
+
+   
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// -------------------------------------
+// مؤشر التحميل
+function showLoadingIndicator() {
+    const chatContainer = document.getElementById("chat-messages");
+    const id = "loading-" + Date.now();
+    const loadingHTML = `
+        <div id="${id}" class="flex justify-end mb-3">
+            <div class="bg-gov-primary text-white p-3 rounded-2xl text-xs flex items-center gap-1 rounded-tr-none" dir="rtl">
+                <span>جاري التفكير</span>
+                <span class="animate-pulse tracking-widest">...</span>
+            </div>
+        </div>
+    `;
+    chatContainer.insertAdjacentHTML("beforeend", loadingHTML);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    return id;
+}
+// دالة مشان يحذف جاري التفكير بعد ما يرجع الرد
+function removeLoadingIndicator(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+}
+
+// --------------------------------------------------------------
+// للضغط عالانتر 
+document.getElementById("user-input").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        sendMessage();
+    }
+});
+// --------------------------------------------------------------
+// الاسئلة المقترحة
+document.addEventListener("DOMContentLoaded", () => {
+    const defaultButtons = document.querySelectorAll("#chat-messages > div");
+    defaultButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const text = btn.innerText;
+            sendMessage(text);
+        });
+    });
+});
 </script>
 </body>
 </html>
