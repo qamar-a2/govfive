@@ -562,7 +562,9 @@
         const servicesContent = document.getElementById("services-content");
         if (servicesContent) {
           servicesContent.innerHTML = "";
-          services.forEach(s => {
+          services.forEach(s => {const targetUrl = s.paymentType
+  ? `bills.html?id=${s.id}&type=${s.paymentType}`
+  : `service.html?id=${s.id}`;
             servicesContent.innerHTML += `
   <div class="service-card">
     <div class="service-top">
@@ -585,7 +587,7 @@
         <div class="label">الرسوم</div>
         <div class="price text-[#042522]">${s.serviceFee} ل.س</div>
       </div>
-    <button class="start-btn" onclick="window.location.href='service.html?id=${s.id}'">
+    <button class="start-btn" onclick="window.location.href='${targetUrl}'">
   بدء الخدمة
 </button>
     </div>

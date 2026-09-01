@@ -68,7 +68,7 @@
 
   <!-- Modal -->
   <div id="modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl p-6 w-full max-w-md">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-4">
         <h3 class="font-bold text-[#042522] text-lg">تفاصيل الطلب</h3>
         <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-xl">x</button>
@@ -88,7 +88,7 @@
             class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-[#042522]">
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <button onclick="updateStatus('Approved')"
+          <button onclick="updateStatus('AppointmentConfirmed')"
             class="bg-green-500 text-white py-2 rounded-xl text-sm font-bold hover:bg-green-600 transition">
             قبول الطلب
           </button>
@@ -97,13 +97,13 @@
             رفض الطلب
           </button>
         </div>
-        <button id="confirm-reject" onclick="updateStatus('Rejected')"
+        <button id="confirm-reject" onclick="updateStatus('AppointmentCancelled')"
           class="hidden w-full bg-red-700 text-white py-2 rounded-xl text-sm font-bold">
           تاكيد الرفض
         </button>
-        <button onclick="addNote()"
+        <button onclick="editRequest()"
           class="w-full bg-[#96835F] text-white py-2 rounded-xl text-sm font-bold hover:bg-[#96835F]/90 transition">
-          اضافة ملاحظة
+          تعديل الطلب
         </button>
         <div id="modal-msg" class="text-sm text-center hidden"></div>
       </div>
@@ -142,10 +142,10 @@
 
         var total = allRequests.length;
         var pending = allRequests.filter(function (r) {
-          return r.status === "PendingPayment" || r.status === "UnderReview" || r.status === "Pending";
+          return r.status === "PendingPayment" || r.status === "UnderReview" || r.status === "DocumentsUnderReview" || r.status === "Pending";
         }).length;
         var done = allRequests.filter(function (r) {
-          return r.status === "Completed" || r.status === "Approved";
+          return r.status === "Completed" || r.status === "AppointmentConfirmed";
         }).length;
 
         document.getElementById("stat-total").textContent = total;
@@ -163,16 +163,19 @@
     function getStatusLabel(status) {
       if (status === "PendingPayment") return "بانتظار الدفع";
       if (status === "UnderReview") return "قيد المراجعة";
+      if (status === "DocumentsUnderReview") return "قيد مراجعة المستندات";
       if (status === "Approved") return "مقبول";
       if (status === "Rejected") return "مرفوض";
+      if (status === "AppointmentConfirmed") return "تم تأكيد الموعد";
+      if (status === "AppointmentCancelled") return "تم إلغاء الموعد";
       if (status === "Completed") return "مكتمل";
       return status || "";
     }
 
     function getStatusClass(status) {
-      if (status === "Approved" || status === "Completed") return "bg-green-100 text-green-700";
-      if (status === "Rejected") return "bg-red-100 text-red-700";
-      if (status === "UnderReview") return "bg-purple-100 text-purple-700";
+      if (status === "Approved" || status === "Completed" || status === "AppointmentConfirmed") return "bg-green-100 text-green-700";
+      if (status === "Rejected" || status === "AppointmentCancelled") return "bg-red-100 text-red-700";
+      if (status === "UnderReview" || status === "DocumentsUnderReview") return "bg-purple-100 text-purple-700";
       return "bg-yellow-100 text-yellow-700";
     }
 
@@ -204,26 +207,112 @@
       });
     }
 
-    function openModal(id) {
+    // فتح المودال: يجيب تفاصيل الطلب الكاملة من GET /api/Employee/requests/{id}
+    async function openModal(id) {
       currentRequestId = id;
-      var req = allRequests.find(function (r) { return r.id === id; });
-      if (!req) return;
-
-      document.getElementById("modal-content").innerHTML =
-        "<div class='space-y-2 text-sm bg-gray-50 rounded-xl p-3'>" +
-        "<div class='flex justify-between'><span class='text-gray-500'>الخدمة:</span><span class='font-bold'>" + (req.serviceName || "") + "</span></div>" +
-        "<div class='flex justify-between'><span class='text-gray-500'>المواطن:</span><span class='font-bold'>" + (req.citizenName || "") + "</span></div>" +
-        "<div class='flex justify-between'><span class='text-gray-500'>الرقم الوطني:</span><span>" + (req.citizenNationalNumber || "") + "</span></div>" +
-        "<div class='flex justify-between'><span class='text-gray-500'>الرقم المرجعي:</span><span class='text-xs text-gray-400'>" + (req.referenceNumber || "") + "</span></div>" +
-        "<div class='flex justify-between'><span class='text-gray-500'>تاريخ التقديم:</span><span>" + (req.submissionDate ? req.submissionDate.slice(0, 10) : "") + "</span></div>" +
-        "<div class='flex justify-between'><span class='text-gray-500'>الحالة:</span><span>" + getStatusLabel(req.status) + "</span></div>" +
-        "</div>";
 
       document.getElementById("reject-section").classList.add("hidden");
       document.getElementById("confirm-reject").classList.add("hidden");
       document.getElementById("notes-input").value = "";
       document.getElementById("modal-msg").classList.add("hidden");
+      document.getElementById("modal-content").innerHTML = "<div class='text-center text-gray-400 py-6'>جاري تحميل التفاصيل...</div>";
       document.getElementById("modal").classList.remove("hidden");
+
+      try {
+        var res = await fetch(BASE + "/api/Employee/requests/" + id, {
+          headers: { "Authorization": "Bearer " + token }
+        });
+        var result = await res.json();
+        var req = result.data || result;
+        renderModalContent(req);
+      } catch (err) {
+        console.error(err);
+        document.getElementById("modal-content").innerHTML = "<div class='text-center text-red-400 py-6'>حدث خطا في تحميل التفاصيل</div>";
+      }
+    }
+
+    // يبني محتوى المودال، وبيكتشف حقول الملفات/الصور جوا formData والمرفقات
+    function renderModalContent(req) {
+      var formData = {};
+      try {
+        formData = typeof req.formData === "string" ? JSON.parse(req.formData) : (req.formData || {});
+      } catch (err) {
+        formData = {};
+      }
+
+      var html = "<div class='space-y-2 text-sm bg-gray-50 rounded-xl p-3'>" +
+        "<div class='flex justify-between'><span class='text-gray-500'>الخدمة:</span><span class='font-bold'>" + (req.serviceName || "") + "</span></div>" +
+        "<div class='flex justify-between'><span class='text-gray-500'>المواطن:</span><span class='font-bold'>" + (req.citizenName || "") + "</span></div>" +
+        "<div class='flex justify-between'><span class='text-gray-500'>الرقم الوطني:</span><span>" + (req.citizenNationalNumber || "") + "</span></div>" +
+        "<div class='flex justify-between'><span class='text-gray-500'>الرقم المرجعي:</span><span class='text-xs text-gray-400'>" + (req.referenceNumber || "") + "</span></div>" +
+        "<div class='flex justify-between'><span class='text-gray-500'>تاريخ التقديم:</span><span>" + (req.submissionDate ? req.submissionDate.slice(0, 10) : "") + "</span></div>" +
+        "<div class='flex justify-between'><span class='text-gray-500'>الحالة:</span><span>" + getStatusLabel(req.status) + "</span></div>";
+
+      if (req.processingNotes) {
+        html += "<div class='flex justify-between'><span class='text-gray-500'>ملاحظات المعالجة:</span><span>" + req.processingNotes + "</span></div>";
+      }
+      if (req.rejectionReason) {
+        html += "<div class='flex justify-between'><span class='text-gray-500'>سبب الرفض:</span><span>" + req.rejectionReason + "</span></div>";
+      }
+      html += "</div>";
+
+      var fileFields = [];
+      var formKeys = Object.keys(formData);
+      if (formKeys.length > 0) {
+        html += "<div class='space-y-2 text-sm bg-gray-50 rounded-xl p-3 mt-3'>";
+        formKeys.forEach(function (key) {
+          var value = formData[key];
+          var lowerKey = key.toLowerCase();
+          var isFile = lowerKey.indexOf("photo") !== -1 || lowerKey.indexOf("image") !== -1 || lowerKey.indexOf("file") !== -1;
+          if (isFile && value) {
+            var placeholderId = "file-" + Math.random().toString(36).slice(2);
+            html += "<div><div class='text-xs text-gray-400 mb-1'>" + key + "</div><div id='" + placeholderId + "' class='text-xs text-gray-400'>جاري تحميل المرفق...</div></div>";
+            fileFields.push({ id: placeholderId, fileId: value });
+          } else {
+            html += "<div class='flex justify-between'><span class='text-gray-500'>" + key + ":</span><span>" + value + "</span></div>";
+          }
+        });
+        html += "</div>";
+      }
+
+      if (req.attachments && req.attachments.length > 0) {
+        html += "<div class='space-y-2 text-sm bg-gray-50 rounded-xl p-3 mt-3'><div class='text-gray-500 mb-1'>المرفقات:</div>";
+        req.attachments.forEach(function (att) {
+          var attFileId = typeof att === "string" ? att : (att.fileId || att.id);
+          var placeholderId = "file-" + Math.random().toString(36).slice(2);
+          html += "<div id='" + placeholderId + "' class='text-xs text-gray-400 mb-2'>جاري تحميل المرفق...</div>";
+          fileFields.push({ id: placeholderId, fileId: attFileId });
+        });
+        html += "</div>";
+      }
+
+      document.getElementById("modal-content").innerHTML = html;
+
+      fileFields.forEach(function (f) {
+        if (f.fileId) attachFilePreview(f.fileId, f.id);
+      });
+    }
+
+    // يجيب الملف بتوكن الدخول ويعرضه كصورة او كرابط تحميل حسب نوعه
+    async function attachFilePreview(fileId, targetId) {
+      var target = document.getElementById(targetId);
+      if (!target) return;
+      try {
+        var res = await fetch(BASE + "/api/files/" + fileId, {
+          headers: { "Authorization": "Bearer " + token }
+        });
+        if (!res.ok) throw new Error("file fetch failed");
+        var blob = await res.blob();
+        var url = URL.createObjectURL(blob);
+        if (blob.type && blob.type.indexOf("image") === 0) {
+          target.innerHTML = "<a href='" + url + "' target='_blank'><img src='" + url + "' class='rounded-lg max-h-40 border border-gray-200' alt='مرفق'></a>";
+        } else {
+          target.innerHTML = "<a href='" + url + "' target='_blank' download class='text-[#042522] underline text-sm'>عرض / تحميل المرفق</a>";
+        }
+      } catch (err) {
+        console.error(err);
+        target.innerHTML = "<span class='text-xs text-red-400'>تعذر تحميل المرفق</span>";
+      }
     }
 
     function closeModal() {
@@ -238,13 +327,18 @@
 
     async function updateStatus(newStatus) {
       if (!currentRequestId) return;
+
+      if (newStatus === "AppointmentConfirmed" || newStatus === "AppointmentCancelled") {
+        if (!confirm("هل أنت متأكد؟")) return;
+      }
+
       var notes = document.getElementById("notes-input").value.trim();
       var reason = document.getElementById("reject-reason").value.trim();
       var msg = document.getElementById("modal-msg");
 
       try {
         var body = { "newStatus": newStatus, "processingNotes": notes };
-        if (newStatus === "Rejected") body["rejectionReason"] = reason;
+        if (newStatus === "AppointmentCancelled") body["rejectionReason"] = reason;
 
         var res = await fetch(BASE + "/api/Employee/requests/" + currentRequestId + "/status", {
           method: "PATCH",
@@ -256,7 +350,7 @@
         });
 
         if (res.ok) {
-          msg.textContent = newStatus === "Approved" ? "تم قبول الطلب" : "تم رفض الطلب";
+          msg.textContent = newStatus === "AppointmentConfirmed" ? "تم قبول الطلب" : "تم رفض الطلب";
           msg.className = "text-sm text-center text-green-500";
           msg.classList.remove("hidden");
           setTimeout(function () { closeModal(); loadRequests(); }, 1500);
@@ -270,39 +364,41 @@
       }
     }
 
-    async function addNote() {
+    // تعديل الطلب: نفس اند بوينت الحالة، بيرجع الطلب فورا لقيد مراجعة المستندات - بدون اي ملاحظة
+    async function editRequest() {
       if (!currentRequestId) return;
-      var note = document.getElementById("notes-input").value.trim();
       var msg = document.getElementById("modal-msg");
-      if (!note) {
-        msg.textContent = "اكتب ملاحظة اولا";
-        msg.className = "text-sm text-center text-red-500";
-        msg.classList.remove("hidden");
-        return;
-      }
       try {
-        var res = await fetch(BASE + "/api/Employee/requests/" + currentRequestId + "/note", {
-          method: "POST",
+        var body = { "newStatus": "DocumentsUnderReview", "rejectionReason": null, "processingNotes": null };
+        var res = await fetch(BASE + "/api/Employee/requests/" + currentRequestId + "/status", {
+          method: "PATCH",
           headers: {
             "Authorization": "Bearer " + token,
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ "note": note })
+          body: JSON.stringify(body)
         });
         if (res.ok) {
-          msg.textContent = "تمت اضافة الملاحظة";
+          msg.textContent = "تم تعديل الطلب الى قيد مراجعة المستندات";
           msg.className = "text-sm text-center text-green-500";
           msg.classList.remove("hidden");
-          document.getElementById("notes-input").value = "";
+          setTimeout(function () { closeModal(); loadRequests(); }, 1500);
+        } else {
+          msg.textContent = "حدث خطا، حاول مجددا";
+          msg.className = "text-sm text-center text-red-500";
+          msg.classList.remove("hidden");
         }
-      } catch (err) { console.error(err); }
+      } catch (err) {
+        console.error(err);
+      }
     }
 
     //---مشان قصة الدحول بحساب موظف ----/
     document.addEventListener("DOMContentLoaded", function () {
       var role = (localStorage.getItem("userRole") || "").toLowerCase();
       if (role === "admin") {
-        document.getElementById("adminBtn").classList.remove("hidden");
+        var adminBtn = document.getElementById("adminBtn");
+        if (adminBtn) adminBtn.classList.remove("hidden");
       }
     });
     loadUserInfo();
