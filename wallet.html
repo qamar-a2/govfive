@@ -9,8 +9,6 @@
     <link rel="stylesheet" href="global.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-       
-
         body {
             background: #F6F4EE;
         }
@@ -36,7 +34,7 @@
         }
 
         .balance-card {
-            background:#042522;
+            background: #042522;
             position: relative;
             overflow: hidden;
         }
@@ -292,8 +290,13 @@
             return code;
         }
 
+        // العمليات "الداخلة" للمحفظة (بترجع مصاري للمستخدم): الشحن + الاسترداد
+        function isIncomingTransaction(type) {
+            return type === "Deposit" || type === "Refund";
+        }
+
         function txIconSvg(type) {
-            if (type === "Deposit") {
+            if (isIncomingTransaction(type)) {
                 return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E3B2E" stroke-width="2.2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
             }
             return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="2.2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
@@ -308,10 +311,10 @@
             var html = "";
             for (var i = 0; i < transactions.length; i++) {
                 var tx = transactions[i];
-                var isDeposit = tx.transactionType === "Deposit";
-                var amountColor = isDeposit ? "text-[#0E3B2E]" : "text-[#C9A227]";
-                var sign = isDeposit ? "+" : "-";
-                var bg = isDeposit ? "bg-[#E9F2EC]" : "bg-[#FBF3DD]";
+                var isIncoming = isIncomingTransaction(tx.transactionType);
+                var amountColor = isIncoming ? "text-[#0E3B2E]" : "text-[#C9A227]";
+                var sign = isIncoming ? "+" : "-";
+                var bg = isIncoming ? "bg-[#E9F2EC]" : "bg-[#FBF3DD]";
 
                 html += '<div class="tx-row py-4 flex items-center gap-3">';
                 html += '  <div class="w-10 h-10 rounded-full ' + bg + ' flex items-center justify-center shrink-0">' + txIconSvg(tx.transactionType) + '</div>';
