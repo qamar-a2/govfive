@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الفواتير - GovFive</title>
+    <link rel="stylesheet" href="global.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #EFEBE3;
+            color: #042522;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .back-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #fff;
+            border: 1.2px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #042522;
+        }
+
+        .back-btn:hover {
+            border-color: #96835F;
+        }
+
+        .back-btn svg {
+            transform: rotate(180deg);
+        }
+
+        .page-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #042522;
+        }
+
+        .search-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+            margin-bottom: 24px;
+        }
+
+        .type-badge {
+            display: inline-flex;
+            align-items: center;
+            background: #96835F;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        .field-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 18px;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #042522;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.2px solid #ccc;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            background: #fff;
+            color: #042522;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input::placeholder {
+            color: #999;
+            font-family: inherit;
+        }
+
+        input:focus {
+            border-color: #2e6b4f;
+            box-shadow: 0 0 0 4px rgba(150, 129, 96, 0.09);
+        }
+
+        .search-btn {
+            width: 100%;
+            padding: 14px;
+            background: #042522;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .search-btn:hover {
+            opacity: 0.9;
+        }
+
+        .search-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .error-text {
+            font-size: 13px;
+            color: #b91c1c;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .error-text.visible {
+            display: block;
+        }
+
+        .summary-card {
+            display: none;
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+            margin-bottom: 24px;
+            justify-content: space-around;
+            text-align: center;
+            gap: 10px;
+        }
+
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .summary-num {
+            font-size: 20px;
+            font-weight: 800;
+            color: #042522;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .bills-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .bill-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+        }
+
+        .bill-top {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .status-badge {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        .status-badge.status-unpaid {
+            background: #fbe4e4;
+            color: #b91c1c;
+        }
+
+        .status-badge.status-paid {
+            background: #e2f3e8;
+            color: #2e6b4f;
+        }
+
+        .bill-desc {
+            font-size: 15px;
+            font-weight: 700;
+            color: #042522;
+            margin-bottom: 4px;
+            text-align: right;
+        }
+
+        .bill-ref {
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 4px;
+            text-align: right;
+        }
+
+        .bill-date {
+            font-size: 12px;
+            color: #777;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-align: right;
+        }
+
+        .bill-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bill-amount {
+            font-size: 17px;
+            font-weight: 800;
+            color: #042522;
+        }
+
+        .pay-btn {
+            background: #042522;
+            color: #fff;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 10px 24px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .pay-btn:hover {
+            background: #96835F;
+        }
+
+        .pay-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .empty-text {
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+            padding: 30px 0;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #042522;
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: bottom 0.3s ease;
+            z-index: 999;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .toast.visible {
+            bottom: 30px;
+        }
+
+        /* Payment confirmation modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(4, 37, 34, 0.55);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.visible {
+            display: flex;
+        }
+
+        .confirm-modal {
+            background: #042522;
+            color: #fff;
+            border-radius: 18px;
+            padding: 28px;
+            max-width: 360px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .confirm-modal h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .confirm-modal p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #EFEBE3;
+            margin-bottom: 24px;
+        }
+
+        .confirm-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .confirm-actions button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .confirm-cancel-btn {
+            background: transparent;
+            border: 1.2px solid rgba(255, 255, 255, 0.5);
+            color: #fff;
+        }
+
+        .confirm-cancel-btn:hover {
+            border-color: #fff;
+        }
+
+        .confirm-pay-btn {
+            background: #96835F;
+            border: none;
+            color: #fff;
+        }
+
+        .confirm-pay-btn:hover {
+            opacity: 0.9;
+        }
+
+        .confirm-pay-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="page-header">
+            <button class="back-btn" aria-label="رجوع" onclick="goBack()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12" />
+                    <polyline points="12 19 5 12 12 5" />
+                </svg>
+            </button>
+            <h1 id="page-title">الفواتير</h1>
+        </div>
+
+        <div class="search-card">
+            <div class="type-badge" id="type-badge">جارِ التحميل...</div>
+
+            <div class="field-wrapper">
+                <label id="ref-label" for="reference-input">الرقم المرجعي</label>
+                <input type="text" id="reference-input">
+            </div>
+
+            <button class="search-btn" id="search-btn">بحث عن الفواتير</button>
+            <div class="error-text" id="search-error"></div>
+        </div>
+
+        <div class="summary-card" id="summary-card">
+            <div class="summary-item">
+                <span class="summary-num" id="total-count">0</span>
+                <span class="summary-label">عدد الفواتير</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-num" id="unpaid-count">0</span>
+                <span class="summary-label">غير مدفوعة</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-num" id="unpaid-amount">0</span>
+                <span class="summary-label">المبلغ المستحق</span>
+            </div>
+        </div>
+
+        <div class="bills-list" id="bills-list"></div>
+    </div>
+
+    <div class="modal-overlay" id="confirm-overlay">
+        <div class="confirm-modal">
+            <h2>تأكيد الدفع</h2>
+            <p id="confirm-message"></p>
+            <div class="confirm-actions">
+                <button class="confirm-cancel-btn" id="confirm-cancel-btn">إلغاء</button>
+                <button class="confirm-pay-btn" id="confirm-pay-btn">دفع</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        var params = new URLSearchParams(window.location.search);
+        var serviceId = params.get("id");
+        var paymentType = params.get("type");
+        var token = localStorage.getItem("userToken");
+        var BASE = "http://egovservices.runasp.net";
+        var pendingPayItemId = null;
+
+        var typeLabels = {
+            electricity: "فواتير الكهرباء",
+            violation: "المخالفات المرورية",
+            transport: "خدمات النقل"
+        };
+
+        var refLabels = {
+            electricity: "رقم العداد",
+            violation: "رقم المخالفة",
+            transport: "الرقم المرجعي"
+        };
+
+        var refPlaceholders = {
+            electricity: "مثال: MTR-001234",
+            violation: "مثال: حلب-78933",
+            transport: "أدخل الرقم المرجعي"
+        };
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function initPage() {
+            var badge = document.getElementById("type-badge");
+            var refLabel = document.getElementById("ref-label");
+            var refInput = document.getElementById("reference-input");
+            var title = document.getElementById("page-title");
+            var searchBtn = document.getElementById("search-btn");
+
+            if (!paymentType) {
+                badge.textContent = "نوع الخدمة غير محدد";
+                searchBtn.disabled = true;
+                return;
+            }
+
+            var label = typeLabels[paymentType] || paymentType;
+            badge.textContent = label;
+            title.textContent = label;
+            refLabel.textContent = refLabels[paymentType] || "الرقم المرجعي";
+            refInput.placeholder = refPlaceholders[paymentType] || "";
+
+            searchBtn.addEventListener("click", searchBills);
+            document.getElementById("confirm-cancel-btn").addEventListener("click", closePayConfirm);
+            document.getElementById("confirm-pay-btn").addEventListener("click", confirmPay);
+
+            refInput.addEventListener("input", function () {
+                if (this.value.trim() === "") {
+                    document.getElementById("summary-card").style.display = "none";
+                    document.getElementById("bills-list").innerHTML = "";
+                    document.getElementById("search-error").classList.remove("visible");
+                }
+            });
+        }
+
+        function searchBills() {
+            var refInput = document.getElementById("reference-input");
+            var referenceNumber = refInput.value.trim();
+            var errorEl = document.getElementById("search-error");
+            errorEl.classList.remove("visible");
+            errorEl.textContent = "";
+
+            if (!referenceNumber) {
+                errorEl.textContent = "الرجاء إدخال الرقم";
+                errorEl.classList.add("visible");
+                return;
+            }
+
+            var searchBtn = document.getElementById("search-btn");
+            searchBtn.disabled = true;
+            searchBtn.textContent = "جارِ البحث...";
+
+            fetch(BASE + "/api/payments/" + paymentType + "/" + encodeURIComponent(referenceNumber), {
+                headers: { "Authorization": "Bearer " + token }
+            })
+                .then(function (res) {
+                    return res.json().then(function (result) {
+                        return { ok: res.ok, result: result };
+                    });
+                })
+                .then(function (payload) {
+                    if (!payload.ok || !payload.result.success) {
+                        errorEl.textContent = (payload.result && payload.result.message) || "تعذر جلب الفواتير";
+                        errorEl.classList.add("visible");
+                        document.getElementById("summary-card").style.display = "none";
+                        document.getElementById("bills-list").innerHTML = "";
+                        return;
+                    }
+                    renderBills(payload.result.data);
+                })
+                .catch(function (err) {
+                    console.error(err);
+                    errorEl.textContent = "حدث خطأ أثناء الاتصال بالسيرفر";
+                    errorEl.classList.add("visible");
+                })
+                .finally(function () {
+                    searchBtn.disabled = false;
+                    searchBtn.textContent = "بحث عن الفواتير";
+                });
+        }
+
+        function renderBills(data) {
+            var badge = document.getElementById("type-badge");
+            if (data.typeLabel) badge.textContent = data.typeLabel;
+
+            var summaryCard = document.getElementById("summary-card");
+            summaryCard.style.display = "flex";
+            document.getElementById("total-count").textContent = data.totalCount != null ? data.totalCount : (data.items || []).length;
+            document.getElementById("unpaid-count").textContent = data.unpaidCount != null ? data.unpaidCount : 0;
+            document.getElementById("unpaid-amount").textContent = (data.totalUnpaidAmount != null ? data.totalUnpaidAmount : 0) + " ل.س";
+
+            var list = document.getElementById("bills-list");
+            list.innerHTML = "";
+
+            var items = data.items || [];
+
+            if (items.length === 0) {
+                list.innerHTML = "<div class='empty-text'>لا توجد فواتير لهذا الرقم</div>";
+                return;
+            }
+
+            items.forEach(function (item) {
+                var labelText = item.statusLabel || "";
+                var isPaid = labelText.indexOf("مدفوعة") !== -1 && labelText.indexOf("غير") === -1;
+                var isUnpaid = !isPaid;
+                var statusClass = isUnpaid ? "status-unpaid" : "status-paid";
+
+                var cardHTML = "";
+                cardHTML += "<div class='bill-card' id='bill-" + item.id + "'>";
+                cardHTML += "<div class='bill-top'>";
+                cardHTML += "<span class='status-badge " + statusClass + "'>" + item.statusLabel + "</span>";
+                cardHTML += "</div>";
+                cardHTML += "<div class='bill-desc'>" + item.description + "</div>";
+                cardHTML += "<div class='bill-ref'>" + item.referenceNumber + "</div>";
+                cardHTML += "<div class='bill-date'>" + (item.date || "") + "</div>";
+                cardHTML += "<div class='bill-footer'>";
+                cardHTML += "<div class='bill-amount'>" + item.amount + " ل.س</div>";
+                if (isUnpaid) {
+                    cardHTML += "<button class='pay-btn' data-item-id='" + item.id + "' data-amount='" + item.amount + "' data-desc=\"" + (item.description || "").replace(/"/g, "&quot;") + "\">ادفع</button>";
+                }
+                cardHTML += "</div>";
+                cardHTML += "</div>";
+
+                list.innerHTML += cardHTML;
+            });
+
+            var payButtons = list.querySelectorAll(".pay-btn");
+            payButtons.forEach(function (btn) {
+                btn.addEventListener("click", function () {
+                    openPayConfirm(
+                        btn.getAttribute("data-item-id"),
+                        btn.getAttribute("data-amount"),
+                        btn.getAttribute("data-desc")
+                    );
+                });
+            });
+        }
+
+        function openPayConfirm(itemId, amount, desc) {
+            pendingPayItemId = itemId;
+            var message = "هل تريد دفع " + amount + " ل.س عن " + desc + "؟";
+            document.getElementById("confirm-message").textContent = message;
+            document.getElementById("confirm-overlay").classList.add("visible");
+        }
+
+        function closePayConfirm() {
+            pendingPayItemId = null;
+            document.getElementById("confirm-overlay").classList.remove("visible");
+        }
+
+        function confirmPay() {
+            var itemId = pendingPayItemId;
+            closePayConfirm();
+            if (itemId) {
+                payBill(itemId);
+            }
+        }
+
+        function payBill(itemId) {
+            var card = document.getElementById("bill-" + itemId);
+            var btn = card ? card.querySelector(".pay-btn") : null;
+
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = "جارِ الدفع...";
+            }
+
+            fetch(BASE + "/api/payments/" + paymentType + "/" + itemId + "/pay", {
+                method: "POST",
+                headers: { "Authorization": "Bearer " + token }
+            })
+                .then(function (res) {
+                    return res.json().then(function (result) {
+                        return { ok: res.ok, result: result };
+                    });
+                })
+                .then(function (payload) {
+                    if (!payload.ok || !payload.result.success) {
+                        alert("فشل الدفع: " + ((payload.result && payload.result.message) || "تأكد من رصيد المحفظة"));
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.textContent = "ادفع";
+                        }
+                        return;
+                    }
+
+                    showToast(payload.result.data.message || "تم الدفع بنجاح");
+
+                    if (card) {
+                        var statusBadge = card.querySelector(".status-badge");
+                        if (statusBadge) {
+                            statusBadge.textContent = "مدفوعة";
+                            statusBadge.classList.remove("status-unpaid");
+                            statusBadge.classList.add("status-paid");
+                        }
+                        if (btn) btn.remove();
+                    }
+
+                    refreshSummary();
+                })
+                .catch(function (err) {
+                    console.error(err);
+                    alert("حدث خطأ أثناء الاتصال بالسيرفر.");
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.textContent = "ادفع";
+                    }
+                });
+        }
+
+        function refreshSummary() {
+            var referenceNumber = document.getElementById("reference-input").value.trim();
+            if (!referenceNumber) return;
+
+            fetch(BASE + "/api/payments/" + paymentType + "/" + encodeURIComponent(referenceNumber), {
+                headers: { "Authorization": "Bearer " + token }
+            })
+                .then(function (res) { return res.json(); })
+                .then(function (result) {
+                    if (result && result.success) {
+                        document.getElementById("unpaid-count").textContent = result.data.unpaidCount != null ? result.data.unpaidCount : 0;
+                        document.getElementById("unpaid-amount").textContent = (result.data.totalUnpaidAmount != null ? result.data.totalUnpaidAmount : 0) + " ل.س";
+                    }
+                })
+                .catch(function (err) { console.error(err); });
+        }
+
+        function showToast(message) {
+            var toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.classList.add("visible");
+            setTimeout(function () {
+                toast.classList.remove("visible");
+            }, 3500);
+        }
+
+        document.addEventListener("DOMContentLoaded", initPage);
+    </script>
+    <script src="notif-check.js"></script>
+</body>
+
+</html>
