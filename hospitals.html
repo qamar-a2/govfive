@@ -270,8 +270,10 @@
           </select>
         </div>
         <div class="field">
-          <label for="specialtyInput">التخصص (اختياري)</label>
-          <input type="text" id="specialtyInput" placeholder="مثال: أطفال">
+          <label for="specialtySelect">التخصص (اختياري)</label>
+          <select id="specialtySelect">
+            <option value="">كل التخصصات</option>
+          </select>
         </div>
       </div>
       <button class="search-btn" id="searchBtn">بحث</button>
@@ -294,12 +296,28 @@
       "الحسكة", "القامشلي"
     ];
 
+    var SPECIALTIES = [
+      "أطفال", "باطنة", "جراحة عامة", "نسائية وتوليد", "عظمية",
+      "قلبية", "عيون", "أنف وأذن وحنجرة", "أسنان", "جلدية",
+      "مسالك بولية", "أعصاب", "نفسية", "طوارئ وحوادث", "أورام"
+    ];
+
     function fillGovernorates() {
       var select = document.getElementById("governorateSelect");
       GOVERNORATES.forEach(function (gov) {
         var opt = document.createElement("option");
         opt.value = gov;
         opt.textContent = gov;
+        select.appendChild(opt);
+      });
+    }
+
+    function fillSpecialties() {
+      var select = document.getElementById("specialtySelect");
+      SPECIALTIES.forEach(function (spec) {
+        var opt = document.createElement("option");
+        opt.value = spec;
+        opt.textContent = spec;
         select.appendChild(opt);
       });
     }
@@ -370,7 +388,7 @@
       }
 
       var governorate = document.getElementById("governorateSelect").value;
-      var specialty = document.getElementById("specialtyInput").value.trim();
+      var specialty = document.getElementById("specialtySelect").value;
 
       var url = BASE + "/api/hospitals/" + ministryId;
       var qs = [];
@@ -399,6 +417,7 @@
     document.getElementById("searchBtn").addEventListener("click", searchHospitals);
 
     fillGovernorates();
+    fillSpecialties();
   </script>
   <script src="notif-check.js"></script>
 </body>
