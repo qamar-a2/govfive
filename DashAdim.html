@@ -199,10 +199,15 @@
 <!-- ------------------------------------------------------------------------ -->
     <script>
 let allRequests = [];
-    function viewRequest(id) {
-        localStorage.setItem('selectedRequestId', id);
-        window.location.href = 'details.html'; 
+   function viewRequest(id, email = '') {
+    localStorage.setItem('selectedRequestId', id);
+    if (email) {
+        localStorage.setItem('selectedUserEmail', email);
+    } else {
+        localStorage.removeItem('selectedUserEmail');
     }
+    window.location.href = 'details.html'; 
+}
 
         
         
@@ -411,6 +416,9 @@ function displayTable(requests) {
     }
 
     requests.forEach(req => {
+        // الاستفادة من البريد الإلكتروني الموجود في كائن الطلب إن وجد
+        const userEmail = req.email || req.userEmail || req.citizenEmail || '';
+
         tbody.innerHTML += `
             <tr class="border-b text-xs">
                 <td class="py-1 px-4">${req.referenceNumber || '-'}</td>
@@ -418,7 +426,7 @@ function displayTable(requests) {
                 <td class="py-1">${req.serviceName || '-'}</td>
                 <td class="py-1 text-orange-500">${req.status || '-'}</td>
                 <td class="py-1">
-                    <button onclick="viewRequest('${req.id}')" class="text-blue-500 hover:underline">عرض</button>
+                    <button onclick="viewRequest('${req.id}', '${userEmail}')" class="text-blue-500 hover:underline">عرض</button>
                 </td>
             </tr>
         `;

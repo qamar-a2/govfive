@@ -593,12 +593,15 @@
     </div>
     </div>`;
           });
+          // ----------------------------------
+          
+
           // 3. ---------الفروع-------/
           const bRes = await fetch(`${BASE}/api/Ministries/${ministryId}/branches`, {
             headers: { "Authorization": `Bearer ${token}` }
           });
           const bResult = await bRes.json();
-          const branches = bResult.data || bResult;
+          const branches = bResult.data || [];
 
           // عدد الفروع بالـ stat card
           if (nums[0]) nums[0].textContent = branches.length || 0;
@@ -609,7 +612,7 @@
             branchesContent.innerHTML = "";
 
             // تجميع الفروع حسب المدينة
-            const cities = {};
+          const cities = {};
             branches.forEach(b => {
               const city = b.city || "أخرى";
               if (!cities[city]) cities[city] = [];
@@ -626,7 +629,13 @@
           ${city}
         </div>
         <div class="branch-grid">
-          ${cities[city].map(b => `
+          ${cities[city].map(b => {
+            // تجهيز زر الخريطة للإحداثيات
+            let mapButton = '';
+            if (b.latitude && b.longitude) {
+              mapButton = `<a href="https://www.google.com/maps/search/?api=1&query=${b.latitude},${b.longitude}" target="_blank" style="text-decoration: none; text-align: center; display: block; background: var(--surface); color: #EFEBE3; padding: 10px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; margin-top: 10px;">📍 عرض على الخريطة</a>`;
+            }            
+            return `
           <div class="branch-card">
             <div class="branch-top">
               <span class="city-tag">${city}</span>
@@ -643,7 +652,9 @@
 
               <div class="phone-number">${b.phone || b.phoneNumber || "---"}</div>
             </div>
-          </div>`).join("")}
+            ${mapButton}
+          </div>`;
+          }).join("")}
         </div>
       </div>`;
             });
