@@ -522,146 +522,158 @@
  
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const ministryId = params.get("id");
-    const token = localStorage.getItem("userToken");
-    const BASE = "http://egovservices.runasp.net";
+    var params = new URLSearchParams(window.location.search);
+    var ministryId = params.get("id");
+    var token = localStorage.getItem("userToken");
+    var BASE = "http://egovservices.runasp.net";
+
+    // نوع الخدمة الجديد "دليل على الخريطة" (المستشفيات وما شابه)
+    var MAP_DIRECTORY_TYPE = 4;
 
     async function loadMinistryData() {
       if (!ministryId) return;
 
       try {
-        // 1.ربط  تفاصيل الوزارة
-        const res = await fetch(`${BASE}/api/Ministries/${ministryId}`, {
-          headers: { "Authorization": `Bearer ${token}` }
+        // 1. ربط تفاصيل الوزارة
+        var res = await fetch(BASE + "/api/Ministries/" + ministryId, {
+          headers: { "Authorization": "Bearer " + token }
         });
-        const result = await res.json();
-        const m = result.data || result;
+        var result = await res.json();
+        var m = result.data || result;
 
         document.querySelector(".ar-name").textContent = m.name || "";
         document.querySelector(".en-name").textContent = m.description || "";
 
-        // ربط الصورة 
-        const logoDiv = document.querySelector(".entity-logo");
+        // ربط الصورة
+        var logoDiv = document.querySelector(".entity-logo");
         if (m.logoUrl) {
-          logoDiv.innerHTML = `<img src="${BASE}${m.logoUrl}" style="width:38px;height:38px;object-fit:contain;">`;
+          logoDiv.innerHTML = "<img src=\"" + BASE + m.logoUrl + "\" style=\"width:38px;height:38px;object-fit:contain;\">";
         }
 
-        // 2.  ربط الخدمات
-        const sRes = await fetch(`${BASE}/api/Ministries/${ministryId}/services`, {
-          headers: { "Authorization": `Bearer ${token}` }
+        // 2. ربط الخدمات
+        var sRes = await fetch(BASE + "/api/Ministries/" + ministryId + "/services", {
+          headers: { "Authorization": "Bearer " + token }
         });
-        const sResult = await sRes.json();
-        const services = sResult.data || sResult;
+        var sResult = await sRes.json();
+        var services = sResult.data || sResult;
 
-        // عدد الخدمات بالـ stat card ربط 
-        const nums = document.querySelectorAll(".num");
+        // عدد الخدمات بالـ stat card
+        var nums = document.querySelectorAll(".num");
         if (nums[1]) nums[1].textContent = services.length || 0;
 
-        // محتوى الخدمات 
-        const servicesContent = document.getElementById("services-content");
+        // محتوى الخدمات
+        var servicesContent = document.getElementById("services-content");
         if (servicesContent) {
           servicesContent.innerHTML = "";
-          services.forEach(s => {const targetUrl = s.paymentType
-  ? `bills.html?id=${s.id}&type=${s.paymentType}`
-  : `service.html?id=${s.id}`;
-            servicesContent.innerHTML += `
-  <div class="service-card">
-    <div class="service-top">
-      <span class="badge">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>
-        ${s.serviceType === "Digital" ? "Digital" : "Appointment"}
-      </span>
-     
-    </div>
-    <h3 class="service-title">${s.name}</h3>
-    <p class="service-desc">${s.description || ""}</p>
-    ${s.requirements ? `
-  <div class="requirements-box" style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 12px; text-align: right; border: 2px solid #D6D3CE;">
-    <strong style="color: #96835F; font-size: 12px; display: block; margin-bottom: 4px;">📋 المتطلبات:</strong>
-    <p style="font-size: 11px; color: gray; margin: 0;">${s.requirements}</p>
-  </div>
- `: ''}
-    <div class="service-footer">
-      <div class="price-block">
-        <div class="label">الرسوم</div>
-        <div class="price text-[#042522]">${s.serviceFee} ل.س</div>
-      </div>
-    <button class="start-btn" onclick="window.location.href='${targetUrl}'">
-  بدء الخدمة
-</button>
-    </div>
-    </div>`;
-          });
-          // ----------------------------------
-          
+          services.forEach(function (s) {
+            // تحديد وجهة زر "بدء الخدمة" حسب نوع الخدمة
+            var targetUrl;
+            if (s.serviceType === MAP_DIRECTORY_TYPE) {
+              targetUrl = "hospitals.html?id=" + ministryId + "&serviceId=" + s.id;
+            } else if (s.paymentType) {
+              targetUrl = "bills.html?id=" + s.id + "&type=" + s.paymentType;
+            } else {
+              targetUrl = "service.html?id=" + s.id;
+            }
 
-          // 3. ---------الفروع-------/
-          const bRes = await fetch(`${BASE}/api/Ministries/${ministryId}/branches`, {
-            headers: { "Authorization": `Bearer ${token}` }
+            // ليبل نوع الخدمة: نستخدم النص العربي الجاهز من الباك اند مباشرة
+            var typeLabel = s.serviceTypeLabel || "خدمة";
+
+            var requirementsHtml = "";
+            if (s.requirements) {
+              requirementsHtml =
+                "<div class=\"requirements-box\" style=\"background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 12px; text-align: right; border: 2px solid #D6D3CE;\">" +
+                  "<strong style=\"color: #96835F; font-size: 12px; display: block; margin-bottom: 4px;\">📋 المتطلبات:</strong>" +
+                  "<p style=\"font-size: 11px; color: gray; margin: 0;\">" + s.requirements + "</p>" +
+                "</div>";
+            }
+
+            servicesContent.innerHTML +=
+              "<div class=\"service-card\">" +
+                "<div class=\"service-top\">" +
+                  "<span class=\"badge\">" +
+                    "<svg width=\"13\" height=\"13\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\"/></svg>" +
+                    typeLabel +
+                  "</span>" +
+                "</div>" +
+                "<h3 class=\"service-title\">" + s.name + "</h3>" +
+                "<p class=\"service-desc\">" + (s.description || "") + "</p>" +
+                requirementsHtml +
+                "<div class=\"service-footer\">" +
+                  "<div class=\"price-block\">" +
+                    "<div class=\"label\">الرسوم</div>" +
+                    "<div class=\"price text-[#042522]\">" + s.serviceFee + " ل.س</div>" +
+                  "</div>" +
+                  "<button class=\"start-btn\" onclick=\"window.location.href='" + targetUrl + "'\">بدء الخدمة</button>" +
+                "</div>" +
+              "</div>";
           });
-          const bResult = await bRes.json();
-          const branches = bResult.data || [];
+
+          // 3. الفروع
+          var bRes = await fetch(BASE + "/api/Ministries/" + ministryId + "/branches", {
+            headers: { "Authorization": "Bearer " + token }
+          });
+          var bResult = await bRes.json();
+          var branches = bResult.data || [];
 
           // عدد الفروع بالـ stat card
           if (nums[0]) nums[0].textContent = branches.length || 0;
 
           // محتوى الفروع
-          const branchesContent = document.getElementById("branches-content");
+          var branchesContent = document.getElementById("branches-content");
           if (branchesContent) {
             branchesContent.innerHTML = "";
 
             // تجميع الفروع حسب المدينة
-          const cities = {};
-            branches.forEach(b => {
-              const city = b.city || "أخرى";
+            var cities = {};
+            branches.forEach(function (b) {
+              var city = b.city || "أخرى";
               if (!cities[city]) cities[city] = [];
               cities[city].push(b);
             });
 
-            Object.keys(cities).forEach(city => {
-              branchesContent.innerHTML += `
-      <div class="city-section">
-        <div class="city-header">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="4" y="9" width="6" height="12"/><rect x="14" y="4" width="6" height="17"/>
-          </svg>
-          ${city}
-        </div>
-        <div class="branch-grid">
-          ${cities[city].map(b => {
-            // تجهيز زر الخريطة للإحداثيات
-            let mapButton = '';
-            if (b.latitude && b.longitude) {
-              mapButton = `<a href="https://www.google.com/maps/search/?api=1&query=${b.latitude},${b.longitude}" target="_blank" style="text-decoration: none; text-align: center; display: block; background: var(--surface); color: #EFEBE3; padding: 10px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; margin-top: 10px;">📍 عرض على الخريطة</a>`;
-            }            
-            return `
-          <div class="branch-card">
-            <div class="branch-top">
-              <span class="city-tag">${city}</span>
-              <span class="branch-name">${b.name}</span>
-            </div>
-            <div class="branch-address">${b.address || ""}</div>
-            <div class="branch-phone">
-              <div class="phone-label" style="display:flex; align-items:center; gap:6px;">
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#042522" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
-  </svg>
-  رقم الاتصال
-</div>
+            Object.keys(cities).forEach(function (city) {
+              var cardsHtml = cities[city].map(function (b) {
+                var mapButton = "";
+                if (b.latitude && b.longitude) {
+                  mapButton =
+                    "<a href=\"https://www.google.com/maps/search/?api=1&query=" + b.latitude + "," + b.longitude + "\" target=\"_blank\" style=\"text-decoration: none; text-align: center; display: block; background: var(--surface); color: #EFEBE3; padding: 10px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; margin-top: 10px;\">📍 عرض على الخريطة</a>";
+                }
 
-              <div class="phone-number">${b.phone || b.phoneNumber || "---"}</div>
-            </div>
-            ${mapButton}
-          </div>`;
-          }).join("")}
-        </div>
-      </div>`;
+                return (
+                  "<div class=\"branch-card\">" +
+                    "<div class=\"branch-top\">" +
+                      "<span class=\"city-tag\">" + city + "</span>" +
+                      "<span class=\"branch-name\">" + b.name + "</span>" +
+                    "</div>" +
+                    "<div class=\"branch-address\">" + (b.address || "") + "</div>" +
+                    "<div class=\"branch-phone\">" +
+                      "<div class=\"phone-label\" style=\"display:flex; align-items:center; gap:6px;\">" +
+                        "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#042522\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">" +
+                          "<path d=\"M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z\"/>" +
+                        "</svg>" +
+                        "رقم الاتصال" +
+                      "</div>" +
+                      "<div class=\"phone-number\">" + (b.phone || b.phoneNumber || "---") + "</div>" +
+                    "</div>" +
+                    mapButton +
+                  "</div>"
+                );
+              }).join("");
+
+              branchesContent.innerHTML +=
+                "<div class=\"city-section\">" +
+                  "<div class=\"city-header\">" +
+                    "<svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\">" +
+                      "<rect x=\"4\" y=\"9\" width=\"6\" height=\"12\"/><rect x=\"14\" y=\"4\" width=\"6\" height=\"17\"/>" +
+                    "</svg>" +
+                    city +
+                  "</div>" +
+                  "<div class=\"branch-grid\">" + cardsHtml + "</div>" +
+                "</div>";
             });
           }
-          // --------------------------------------------------------
         }
-
 
       } catch (err) {
         console.error(err);
@@ -669,7 +681,7 @@
     }
 
     function showTab(tab) {
-      const isServices = tab === 'services';
+      var isServices = tab === 'services';
       document.getElementById('tab-services').classList.toggle('active', isServices);
       document.getElementById('tab-branches').classList.toggle('active', !isServices);
       document.getElementById('tab-services').setAttribute('aria-selected', isServices);
@@ -680,10 +692,6 @@
 
     loadMinistryData();
     showTab('services');
-
- 
-      
-    
 
   </script>
   <script src="notif-check.js"></script>

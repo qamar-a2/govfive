@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>دليل المستشفيات الحكومية - GovFive</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="global.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Tajawal:wght@400;500;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --surface: #042522;
+      --gold: #96835F;
+      --gold-light: #ddc18b;
+      --text-muted: #8fa89b;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Qomra', 'Tajawal', sans-serif;
+      background-color: #EFEBE3;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 0 60px;
+    }
+
+    header.top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--surface);
+      border: none;
+      cursor: pointer;
+    }
+
+    header.top-bar h1 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--surface);
+    }
+
+    .filter-box {
+      background: #F3F0EA;
+      border: 1px solid #D6D3CE;
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin: 0 24px 22px;
+    }
+
+    .filter-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    @media (min-width: 560px) {
+      .filter-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--surface);
+      margin-bottom: 6px;
+    }
+
+    .field select,
+    .field input {
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid #D6D3CE;
+      background: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--surface);
+    }
+
+    .search-btn {
+      width: 100%;
+      background: var(--surface);
+      color: #EFEBE3;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 13px;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      transition: background .15s ease;
+    }
+
+    .search-btn:hover {
+      background: #96835F;
+    }
+
+    .results {
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 680px) {
+      .results {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .state-msg {
+      padding: 30px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 14px;
+      grid-column: 1 / -1;
+    }
+
+    .hospital-card {
+      background: #F3F0EA;
+      border-radius: var(--radius-md);
+      padding: 18px;
+      border: 1px solid #D6D3CE;
+    }
+
+    .hospital-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--surface);
+      margin-bottom: 6px;
+    }
+
+    .hospital-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .tag {
+      background: var(--gold);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+
+    .tag.status-ok {
+      background: #2f6d4a;
+    }
+
+    .tag.status-partial {
+      background: #a17a2b;
+    }
+
+    .hospital-address {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .beds-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .beds-box {
+      flex: 1;
+      background: rgba(4,37,34,0.06);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .beds-box .beds-num {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--surface);
+    }
+
+    .beds-box .beds-label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .phone-box {
+      background: rgba(255,255,255,0.4);
+      border: 1px solid #D6D3CE;
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      margin-bottom: 10px;
+    }
+
+    .phone-box .phone-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .phone-box .phone-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--surface);
+    }
+
+    .map-btn {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      background: var(--surface);
+      color: #EFEBE3;
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <header class="top-bar">
+      <button class="icon-btn" aria-label="رجوع" onclick="history.back()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+      </button>
+      <h1>دليل المستشفيات الحكومية</h1>
+      <span style="width:38px;"></span>
+    </header>
+
+    <div class="filter-box">
+      <div class="filter-row">
+        <div class="field">
+          <label for="governorateSelect">المحافظة</label>
+          <select id="governorateSelect">
+            <option value="">كل المحافظات</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="specialtyInput">التخصص (اختياري)</label>
+          <input type="text" id="specialtyInput" placeholder="مثال: أطفال">
+        </div>
+      </div>
+      <button class="search-btn" id="searchBtn">بحث</button>
+    </div>
+
+    <div class="results" id="resultsContainer">
+      <div class="state-msg" id="stateMsg">اختر المحافظة ثم اضغط بحث</div>
+    </div>
+  </div>
+
+  <script>
+    var params = new URLSearchParams(window.location.search);
+    var ministryId = params.get("id");
+    var token = localStorage.getItem("userToken");
+    var BASE = "http://egovservices.runasp.net";
+
+    var GOVERNORATES = [
+      "دمشق", "ريف دمشق", "حلب", "حمص", "حماة", "اللاذقية", "طرطوس",
+      "إدلب", "درعا", "السويداء", "القنيطرة", "دير الزور", "الرقة",
+      "الحسكة", "القامشلي"
+    ];
+
+    function fillGovernorates() {
+      var select = document.getElementById("governorateSelect");
+      GOVERNORATES.forEach(function (gov) {
+        var opt = document.createElement("option");
+        opt.value = gov;
+        opt.textContent = gov;
+        select.appendChild(opt);
+      });
+    }
+
+    function statusTagClass(status) {
+      if (!status) return "";
+      if (status.indexOf("يعمل بشكل كامل") !== -1) return "status-ok";
+      if (status.indexOf("جزئي") !== -1) return "status-partial";
+      return "";
+    }
+
+    function renderHospitals(hospitals) {
+      var container = document.getElementById("resultsContainer");
+      container.innerHTML = "";
+
+      if (!hospitals || hospitals.length === 0) {
+        container.innerHTML = "<div class=\"state-msg\">لا توجد نتائج مطابقة</div>";
+        return;
+      }
+
+      hospitals.forEach(function (h) {
+        var mapButton = "";
+        if (h.latitude && h.longitude) {
+          mapButton =
+            "<a class=\"map-btn\" target=\"_blank\" href=\"https://www.google.com/maps/search/?api=1&query=" +
+            h.latitude + "," + h.longitude + "\">📍 عرض على الخريطة</a>";
+        }
+
+        var opStatusClass = statusTagClass(h.operationalStatus);
+
+        var cardHtml =
+          "<div class=\"hospital-card\">" +
+            "<div class=\"hospital-name\">" + h.name + "</div>" +
+            "<div class=\"hospital-tags\">" +
+              "<span class=\"tag\">" + (h.governorate || "") + "</span>" +
+              (h.specialty ? "<span class=\"tag\">" + h.specialty + "</span>" : "") +
+              (h.operationalStatus ? "<span class=\"tag " + opStatusClass + "\">" + h.operationalStatus + "</span>" : "") +
+            "</div>" +
+            "<div class=\"hospital-address\">" + (h.address || "") + "</div>" +
+            "<div class=\"beds-row\">" +
+              "<div class=\"beds-box\">" +
+                "<div class=\"beds-num\">" + (h.bedsActual != null ? h.bedsActual : "-") + "</div>" +
+                "<div class=\"beds-label\">أسرّة فعلية</div>" +
+              "</div>" +
+              "<div class=\"beds-box\">" +
+                "<div class=\"beds-num\">" + (h.bedsTheoretical != null ? h.bedsTheoretical : "-") + "</div>" +
+                "<div class=\"beds-label\">أسرّة نظرية</div>" +
+              "</div>" +
+            "</div>" +
+            "<div class=\"phone-box\">" +
+              "<div class=\"phone-label\">رقم الاتصال</div>" +
+              "<div class=\"phone-value\">" + (h.phoneNumber || "---") + "</div>" +
+            "</div>" +
+            mapButton +
+          "</div>";
+
+        container.innerHTML += cardHtml;
+      });
+    }
+
+    async function searchHospitals() {
+      var container = document.getElementById("resultsContainer");
+      container.innerHTML = "<div class=\"state-msg\">جاري البحث...</div>";
+
+      if (!ministryId) {
+        container.innerHTML = "<div class=\"state-msg\">تعذر تحديد الوزارة</div>";
+        return;
+      }
+
+      var governorate = document.getElementById("governorateSelect").value;
+      var specialty = document.getElementById("specialtyInput").value.trim();
+
+      var url = BASE + "/api/hospitals/" + ministryId;
+      var qs = [];
+      if (governorate) qs.push("governorate=" + encodeURIComponent(governorate));
+      if (specialty) qs.push("specialty=" + encodeURIComponent(specialty));
+      if (qs.length > 0) url += "?" + qs.join("&");
+
+      try {
+        var res = await fetch(url, {
+          headers: { "Authorization": "Bearer " + token }
+        });
+        var result = await res.json();
+
+        if (!result.success) {
+          container.innerHTML = "<div class=\"state-msg\">حدث خطأ أثناء جلب البيانات</div>";
+          return;
+        }
+
+        renderHospitals(result.data || []);
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = "<div class=\"state-msg\">تعذر الاتصال بالخادم</div>";
+      }
+    }
+
+    document.getElementById("searchBtn").addEventListener("click", searchHospitals);
+
+    fillGovernorates();
+  </script>
+  <script src="notif-check.js"></script>
+</body>
+
+</html>

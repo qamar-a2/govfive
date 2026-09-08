@@ -60,6 +60,17 @@
 </head>
 
 <body class="text-gray-800">
+    <script>
+        (function () {
+          var role = localStorage.getItem("userRole");
+          if (role) {
+            role = role.toLowerCase();
+            if (role === "employee" || role === "admin") {
+              window.location.replace("blocked.html");
+            }
+          }
+        })();
+        </script>
     <div class="main-back parent min-h-screen  bg-left-bottom bg-[length:100%_100%] bg-no-repeat bg-fixed">
         <nav class="bg-white/80 backdrop-blur-xl sticky top-1 z-50 shadow-sm rounded-3xl w-[73.5%] mx-auto">
             <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
@@ -160,7 +171,7 @@
         </div>
         <!-- footer -->
         <div class="max-w-6xl mx-auto px-4 text-center text-gray-500 text-sm">
-            &copy; 2026 جميع الحقوق محفوظة - تطوير قمر المهندسة تنسيق فني رونه
+            &copy; 2026 -جميع الحقوق محفوظه
         </div>
     </footer>
 

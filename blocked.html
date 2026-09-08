@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>غير مسموح</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #042522;
+    font-family: Tajawal, sans-serif;
+    color: #ffffff;
+    text-align: center;
+  }
+  button {
+    background-color: #C9A227;
+    color: #042522;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 16px;
+  }
+</style>
+</head>
+<body>
+  <div>
+    <p style="font-size:20px">هذا الموقع مخصص للمواطنين فقط</p>
+    <button id="backBtn">العودة</button>
+  </div>
+
+  <script>
+  (function () {
+    var role = localStorage.getItem("userRole");
+    var btn = document.getElementById("backBtn");
+
+    if (role) {
+      role = role.toLowerCase();
+    }
+
+    if (role === "admin") {
+      btn.textContent = "العودة إلى لوحة الأدمن";
+      btn.onclick = function () {
+        window.location.replace("DashAdim.html");
+      };
+    } else {
+      btn.textContent = "العودة إلى لوحة الموظف";
+      btn.onclick = function () {
+        window.location.replace("dashEmp.html");
+      };
+    }
+  })();
+  </script>
+</body>
+</html>
